@@ -330,7 +330,6 @@ body {
 }
 
 .producto-card:hover {
-    transform: translateY(-8px);
     box-shadow: 0 12px 40px rgba(0, 43, 92, 0.15);
     border-color: var(--unab-azul);
 }
@@ -342,7 +341,7 @@ body {
 }
 
 .producto-card:hover .card-img-top {
-    transform: scale(1.08);
+    transform: scale(1.00);
 }
 
 .producto-card .card-body {
@@ -402,7 +401,6 @@ body {
 
 .btn-vista-rapida:hover {
     background: var(--unab-azul-oscuro);
-    transform: translateY(-2px);
 }
 
 .btn-favorito {
@@ -415,7 +413,31 @@ body {
 .btn-favorito.activo {
     background: var(--unab-rojo);
     color: var(--unab-blanco);
+}
+
+/* Botón Agregar al Carrito Directo */
+.btn-agregar-carrito {
+    background: var(--unab-verde);
+    color: var(--unab-blanco);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-agregar-carrito:hover {
+    background: #1e7e34;
     transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-agregar-carrito:disabled {
+    background: var(--unab-gris);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Estados vacíos */

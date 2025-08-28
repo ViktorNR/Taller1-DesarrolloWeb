@@ -295,6 +295,13 @@ function renderizarCatalogo() {
                             <i class="fas fa-heart"></i>
                         </button>
                     </div>
+                    <div class="mt-2">
+                        <button class="btn btn-agregar-carrito w-100" onclick="agregarAlCarritoDirecto(${producto.id})" 
+                                ${producto.stock === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            ${producto.stock === 0 ? 'Sin Stock' : 'Agregar al Carrito'}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -388,6 +395,36 @@ function cambiarCantidad(delta) {
 }
 
 // Carrito
+function agregarAlCarritoDirecto(productoId) {
+    const producto = AppState.productos.find(p => p.id === productoId);
+    if (!producto) return;
+    
+    if (producto.stock === 0) {
+        mostrarToast('Producto sin stock disponible', 'error');
+        return;
+    }
+    
+    // Agregar directamente con cantidad 1
+    const itemExistente = AppState.carrito.find(item => item.id === productoId);
+    
+    if (itemExistente) {
+        itemExistente.cantidad += 1;
+    } else {
+        AppState.carrito.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            imagen: producto.imagenes[0],
+            cantidad: 1,
+            stock: producto.stock
+        });
+    }
+    
+    guardarEstadoPersistente();
+    actualizarContadores();
+    mostrarToast(`"${producto.nombre}" agregado al carrito`, 'success');
+}
+
 function agregarAlCarrito(productoId) {
     const producto = AppState.productos.find(p => p.id === productoId);
     if (!producto) return;
@@ -880,6 +917,7 @@ function sanitizeHTML(str) {
 window.abrirVistaRapida = abrirVistaRapida;
 window.toggleFavorito = toggleFavorito;
 window.agregarAlCarrito = agregarAlCarrito;
+window.agregarAlCarritoDirecto = agregarAlCarritoDirecto;
 window.cambiarCantidad = cambiarCantidad;
 window.cambiarCantidadCarrito = cambiarCantidadCarrito;
 window.eliminarDelCarrito = eliminarDelCarrito;
