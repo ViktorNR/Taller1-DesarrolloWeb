@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini-Marketplace Universitario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-store me-2"></i>Mini-Marketplace
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#catalogo">Catálogo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#favoritos">Favoritos</a>
+                    </li>
+                </ul>
+                
+                <!-- Búsqueda -->
+                <form class="d-flex me-3" id="searchForm">
+                    <input class="form-control me-2" type="search" placeholder="Buscar productos..." id="searchInput">
+                    <button class="btn btn-outline-light" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                
+                <!-- Carrito y Favoritos -->
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-light me-2" id="favoritosBtn" title="Favoritos">
+                        <i class="fas fa-heart"></i>
+                        <span class="badge bg-danger ms-1" id="favoritosCount">0</span>
+                    </button>
+                    <button class="btn btn-outline-light" id="carritoBtn" title="Carrito">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge bg-warning text-dark ms-1" id="carritoCount">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+        <!-- Filtros y Ordenamiento -->
+        <section class="mb-4" id="filtros">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <select class="form-select" id="categoriaFilter">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="precioFilter">
+                        <option value="">Rango de precio</option>
+                        <option value="0-10000">$0 - $10.000</option>
+                        <option value="10000-25000">$10.000 - $25.000</option>
+                        <option value="25000-50000">$25.000 - $50.000</option>
+                        <option value="50000+">$50.000+</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="ratingFilter">
+                        <option value="">Rating mínimo</option>
+                        <option value="4">4+ estrellas</option>
+                        <option value="3">3+ estrellas</option>
+                        <option value="2">2+ estrellas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="ordenFilter">
+                        <option value="">Ordenar por</option>
+                        <option value="precio-asc">Precio: menor a mayor</option>
+                        <option value="precio-desc">Precio: mayor a menor</option>
+                        <option value="rating-desc">Mejor rating</option>
+                        <option value="nombre-asc">Nombre A-Z</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary w-100" id="limpiarFiltros">
+                        <i class="fas fa-times me-2"></i>Limpiar filtros
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catálogo de Productos -->
+        <section id="catalogo">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">Catálogo de Productos</h2>
+                    <div id="productosGrid" class="row g-4">
+                        <!-- Los productos se cargarán dinámicamente aquí -->
+                    </div>
+                    <div id="productosVacios" class="text-center py-5 d-none">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No se encontraron productos</h4>
+                        <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Vista Rápida -->
+    <div class="modal fade" id="productoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Vista Rápida</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Contenido del modal se cargará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito -->
+    <div class="modal fade" id="carritoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Carrito de Compras</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="carritoItems">
+                        <!-- Items del carrito se cargarán dinámicamente -->
+                    </div>
+                    <div id="carritoVacio" class="text-center py-4 d-none">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Tu carrito está vacío</h5>
+                        <p class="text-muted">Agrega algunos productos para comenzar</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div>
+                            <strong>Total: $<span id="carritoTotal">0</span></strong>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-outline-danger me-2" id="vaciarCarrito">
+                                <i class="fas fa-trash me-2"></i>Vaciar
+                            </button>
+                            <button type="button" class="btn btn-primary" id="irCheckout">
+                                <i class="fas fa-credit-card me-2"></i>Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Favoritos -->
+    <div class="modal fade" id="favoritosModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mis Favoritos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="favoritosItems">
+                        <!-- Items de favoritos se cargarán dinámicamente -->
+                    </div>
+                    <div id="favoritosVacio" class="text-center py-4 d-none">
+                        <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No tienes favoritos</h5>
+                        <p class="text-muted">Agrega productos a tus favoritos para verlos aquí</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Checkout -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Checkout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="checkoutForm">
+                        <div class="row">
+                            <!-- Información Personal -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3">Información Personal</h6>
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre completo *</label>
+                                    <input type="text" class="form-control" id="nombre" required>
+                                    <div class="invalid-feedback">Por favor ingresa tu nombre completo</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo electrónico *</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                    <div class="invalid-feedback">Por favor ingresa un correo válido</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono">
+                                </div>
+                            </div>
+                            
+                            <!-- Dirección de Envío -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3">Dirección de Envío</h6>
+                                <div class="mb-3">
+                                    <label for="direccion" class="form-label">Dirección *</label>
+                                    <input type="text" class="form-control" id="direccion" required>
+                                    <div class="invalid-feedback">Por favor ingresa tu dirección</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comuna" class="form-label">Comuna/Ciudad *</label>
+                                    <input type="text" class="form-control" id="comuna" required>
+                                    <div class="invalid-feedback">Por favor ingresa tu comuna o ciudad</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="codigoPostal" class="form-label">Código Postal</label>
+                                    <input type="text" class="form-control" id="codigoPostal">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Método de Envío -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="mb-3">Método de Envío</h6>
+                                <div id="opcionesEnvio">
+                                    <!-- Opciones de envío se cargarán dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cupón de Descuento -->
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h6 class="mb-3">Cupón de Descuento</h6>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="cuponCodigo" placeholder="Código del cupón">
+                                    <button class="btn btn-outline-secondary" type="button" id="aplicarCupon">
+                                        Aplicar
+                                    </button>
+                                </div>
+                                <div id="cuponMensaje" class="mt-2"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Resumen de Compra -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h6 class="mb-3">Resumen de Compra</h6>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="resumenCompra">
+                                            <!-- Resumen se cargará dinámicamente -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmarCompra">
+                        <i class="fas fa-check me-2"></i>Confirmar Compra
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmacionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-check-circle me-2"></i>Compra Confirmada
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-shopping-bag fa-3x text-success mb-3"></i>
+                    <h5>¡Gracias por tu compra!</h5>
+                    <p>Tu número de orden es: <strong id="numeroOrden"></strong></p>
+                    <p class="text-muted">Recibirás un correo de confirmación pronto.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast para notificaciones -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastNotificacion" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-info-circle me-2" id="toastIcon"></i>
+                <strong class="me-auto" id="toastTitle">Notificación</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastBody">
+                <!-- Mensaje del toast -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

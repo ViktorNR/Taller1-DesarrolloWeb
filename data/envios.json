@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "nombre": "Envío Estándar",
+    "descripcion": "Entrega en 3-5 días hábiles",
+    "precio": 5000,
+    "tiempo": "3-5 días hábiles",
+    "icono": "fas fa-truck"
+  },
+  {
+    "id": 2,
+    "nombre": "Envío Express",
+    "descripcion": "Entrega en 1-2 días hábiles",
+    "precio": 12000,
+    "tiempo": "1-2 días hábiles",
+    "icono": "fas fa-shipping-fast"
+  },
+  {
+    "id": 3,
+    "nombre": "Envío Premium",
+    "descripcion": "Entrega el mismo día (Santiago)",
+    "precio": 25000,
+    "tiempo": "Mismo día",
+    "icono": "fas fa-rocket"
+  },
+  {
+    "id": 4,
+    "nombre": "Retiro en Tienda",
+    "descripcion": "Retira gratis en nuestras tiendas",
+    "precio": 0,
+    "tiempo": "Inmediato",
+    "icono": "fas fa-store"
+  }
+]
