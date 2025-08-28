@@ -39,11 +39,11 @@ Cantidades ±, totales dinámicos, vaciar con confirmación en modal; persistenc
 
 Formulario (nombre, correo, dirección, comuna/ciudad, envío, pago); validaciones visibles; cupones; resumen y confirmación (número de orden simulado).
 
-Favoritos (Wishlist)
+### Favoritos (Wishlist)
 
 Agregar/quitar, mover al carrito; persistencia automática.
 
-Interfaz Básica
+## Interfaz Básica
 
 Landing/Home que explica el marketplace y navegación clara hacia Catálogo / Carrito / Favoritos / Checkout.
 
@@ -63,7 +63,7 @@ Favoritos
 
 (Opcional) Confirmación de compra
 
-Características del Mini–Marketplace
+## Características del Mini–Marketplace
 
 UI obligatoria: modales (vista rápida, confirmación), validaciones (formularios, rango de precio), componentes visuales (cards, grid, alerts, toasts, badges).
 
@@ -71,7 +71,7 @@ Persistencia: carrito y favoritos en localStorage.
 
 Feedback: toasts/alerts al agregar al carrito, cupones aplicados, etc.
 
-Datos y Persistencia (JSON)
+## Datos y Persistencia (JSON)
 
 Coloca los JSON en /data y consúmelos con fetch (si el navegador bloquea file://, usar Apache/XAMPP).
 
@@ -81,7 +81,7 @@ Estructura y muestras incluidas en los adjuntos.
 
 Persistencia de carrito y favoritos en localStorage (clave de namespacing clara; p. ej., mm_cart, mm_favs).
 
-API interna (Funciones JS mínimas)
+## API interna (Funciones JS mínimas)
 
 Carga/render: loadJSON(url), renderCatalogo(lista), aplicarFiltrosYOrden()
 
@@ -91,7 +91,7 @@ Favoritos: toggleFavorito(id), renderFavoritos()
 
 Checkout: validarCheckout(formData), aplicarCupon(codigo), confirmarCompra()
 
-Requisitos de Seguridad
+## Requisitos de Seguridad
 
 Validación estricta de entradas (formularios y filtros).
 
@@ -103,11 +103,11 @@ No almacenar datos sensibles en localStorage.
 
 Estructura el código en módulos o funciones puras y evita estados globales frágiles.
 
-Variables de Entorno
+## Variables de Entorno
 
 No aplica en este prototipo. Todo es frontend estático con datos en JSON y persistencia en el navegador.
 
-Enfoque de Desarrollo
+## Enfoque de Desarrollo
 
 No crees una carpeta, trabaja en la carpeta actual (puedes crear subcarpetas locales como data/ e img/).
 
@@ -129,13 +129,13 @@ Paso 8: Pruebas manuales (ruta feliz/errores), checklist de aceptación, mejoras
 
 Paso 9: README con pasos de ejecución en Apache y notas de diseño.
 
-Despliegue
+## Despliegue
 
 Ejecutar en Apache (XAMPP/WAMP/LAMP). No usar dev servers de frameworks. Documenta cómo levantar el proyecto localmente.
 
 Publica el código en GitHub con historial claro (commits descriptivos, ramas/PRs) y README.
 
-Criterios de Éxito
+## Criterios de Éxito
 
 Vistas completas: Home, Modal Producto, Carrito, Checkout, Favoritos (+ confirmación opcional).
 
@@ -149,7 +149,7 @@ Consumo de datos desde JSON con fetch (sobre Apache).
 
 Repositorio en GitHub con README y ramas/PRs.
 
-Entregables
+## Entregables
 
 Código fuente del prototipo.
 
@@ -161,7 +161,7 @@ README: instrucciones de ejecución en Apache y guía de uso.
 
 Modo de Trabajo y Formato de Respuesta
 
-Responde SIEMPRE en este orden:
+### Responde SIEMPRE en este orden:
 
 Plan breve (bullet points, 6–10 ítems).
 
@@ -175,7 +175,7 @@ Pruebas manuales (ruta feliz, errores, vacíos).
 
 Checklist de aceptación marcado (✓/✗) y próximos pasos.
 
-Documentos Adjuntos
+## Documentos Adjuntos
 
 Se adjuntarán los documentos con el detalle de requisitos y datos de ejemplo: “Caso-miniAmazon-1.pdf”  y “Desarrollo_Web_y_Movil-3.pdf”. Debes implementarlo exactamente como se describe allí.
 
