@@ -417,7 +417,7 @@ body {
 
 /* Botón Agregar al Carrito Directo */
 .btn-agregar-carrito {
-    background: var(--unab-verde);
+    background: var(--unab-gris);
     color: var(--unab-blanco);
     border: none;
     padding: 10px 16px;
@@ -428,9 +428,8 @@ body {
 }
 
 .btn-agregar-carrito:hover {
-    background: #1e7e34;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    background: var(--unab-rojo);
+    color: var(--unab-blanco);
 }
 
 .btn-agregar-carrito:disabled {
