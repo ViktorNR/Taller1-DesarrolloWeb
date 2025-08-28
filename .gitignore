@@ -1,3 +1,5 @@
+# Mini-Marketplace UNAB - Archivos a ignorar
+
 # Dependencias
 node_modules/
 npm-debug.log*
@@ -10,10 +12,22 @@ build/
 *.min.js
 *.min.css
 
-# Archivos de configuración del sistema
+# Archivos de entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
 .DS_Store
 Thumbs.db
-desktop.ini
 
 # Archivos de IDE
 .vscode/
@@ -22,67 +36,71 @@ desktop.ini
 *.swo
 *~
 
-# Archivos de log
-*.log
-logs/
+# Archivos de sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Archivos temporales
-*.tmp
-*.temp
-.cache/
+# Archivos de XAMPP/WAMP
+htdocs/
+www/
+xampp/
+wamp/
 
-# Archivos de entorno
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Archivos de backup
+# Archivos de respaldo
 *.bak
 *.backup
 *.old
 
-# Archivos de base de datos
-*.db
-*.sqlite
-*.sqlite3
+# Archivos de caché
+.cache/
+*.cache
 
 # Archivos de configuración local
 config.local.js
 settings.local.json
 
-# Archivos de Apache (si se generan automáticamente)
-.htaccess.bak
-httpd.conf.bak
-
-# Archivos de XAMPP/WAMP específicos
-xampp/
-wamp/
-lamp/
-
-# Archivos de imágenes temporales
-temp/
-uploads/
-img/temp/
+# Archivos de prueba
+test/
+tests/
+*.test.js
+*.spec.js
 
 # Archivos de documentación generados
-docs/build/
-docs/_build/
+docs/
+*.pdf
+*.doc
+*.docx
 
-# Archivos de testing
-coverage/
-.nyc_output/
-test-results/
+# Archivos de base de datos
+*.db
+*.sqlite
+*.sql
 
-# Archivos de package managers
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+# Archivos de imagen grandes
+*.psd
+*.ai
+*.sketch
+*.fig
 
-# Archivos de TypeScript (si se agregan en el futuro)
-*.tsbuildinfo
+# Archivos comprimidos
+*.zip
+*.rar
+*.7z
+*.tar.gz
 
-# Archivos de Sass (si se agregan en el futuro)
-*.sass
-*.scss
+# Archivos de video
+*.mp4
+*.avi
+*.mov
+*.wmv
+
+# Archivos de audio
+*.mp3
+*.wav
+*.flac
+*.aac

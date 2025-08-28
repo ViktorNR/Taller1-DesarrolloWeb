@@ -1,7 +1,7 @@
 [
   {
     "codigo": "ESTUDIANTE20",
-    "descripcion": "20% de descuento para estudiantes",
+    "descripcion": "20% de descuento para estudiantes UNAB activos",
     "descuento": 20,
     "tipo": "porcentaje",
     "minimo": 50000,
@@ -11,7 +11,7 @@
   },
   {
     "codigo": "PRIMERACOMPRA",
-    "descripcion": "15% de descuento en tu primera compra",
+    "descripcion": "15% de descuento en tu primera compra UNAB",
     "descuento": 15,
     "tipo": "porcentaje",
     "minimo": 30000,
@@ -21,7 +21,7 @@
   },
   {
     "codigo": "TECNOLOGIA10",
-    "descripcion": "10% de descuento en productos de tecnología",
+    "descripcion": "10% de descuento en productos de tecnología UNAB",
     "descuento": 10,
     "tipo": "porcentaje",
     "minimo": 100000,
@@ -40,8 +40,8 @@
     "fechaExpiracion": "2025-12-31"
   },
   {
-    "codigo": "FLASH5000",
-    "descripcion": "Descuento fijo de $5.000",
+    "codigo": "UNAB5000",
+    "descripcion": "Descuento fijo de $5.000 para comunidad UNAB",
     "descuento": 5000,
     "tipo": "fijo",
     "minimo": 25000,

@@ -1,4 +1,5 @@
-// Mini-Marketplace Universitario - Aplicación Principal
+// Mini-Marketplace UNAB - Universidad Andrés Bello
+// Aplicación Principal con Identidad Visual Institucional
 // Autor: Asistente IA
 // Fecha: 2025
 
@@ -22,8 +23,8 @@ const AppState = {
 
 // Constantes
 const STORAGE_KEYS = {
-    CARRITO: 'mm_cart',
-    FAVORITOS: 'mm_favs'
+    CARRITO: 'unab_cart',
+    FAVORITOS: 'unab_favs'
 };
 
 // Inicialización de la aplicación
@@ -46,7 +47,7 @@ async function inicializarApp() {
         renderizarCatalogo();
         actualizarContadores();
         
-        console.log('Aplicación inicializada correctamente');
+        console.log('Mini-Marketplace UNAB inicializado correctamente');
     } catch (error) {
         console.error('Error al inicializar la aplicación:', error);
         mostrarToast('Error al cargar la aplicación', 'error');
@@ -71,7 +72,7 @@ async function cargarDatos() {
         // Poblar filtros de categoría
         poblarFiltroCategoria();
         
-        console.log('Datos cargados:', {
+        console.log('Datos UNAB cargados:', {
             productos: productos.length,
             categorias: categorias.length,
             envios: envios.length,
@@ -354,12 +355,12 @@ function abrirVistaRapida(productoId) {
                     </div>
                     
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary" onclick="agregarAlCarrito(${producto.id})" 
+                        <button class="btn btn-checkout" onclick="agregarAlCarrito(${producto.id})" 
                                 ${producto.stock === 0 ? 'disabled' : ''}>
                             <i class="fas fa-shopping-cart me-2"></i>
                             ${producto.stock === 0 ? 'Sin Stock' : 'Agregar al Carrito'}
                         </button>
-                        <button class="btn btn-outline-danger" onclick="toggleFavorito(${producto.id})">
+                        <button class="btn btn-favorito" onclick="toggleFavorito(${producto.id})">
                             <i class="fas fa-heart me-2"></i>
                             ${esFavorito(producto.id) ? 'Quitar de Favoritos' : 'Agregar a Favoritos'}
                         </button>
@@ -573,12 +574,12 @@ function renderizarFavoritos() {
                 </div>
                 <div class="col-md-4">
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary btn-sm" onclick="moverAFavoritosACarrito(${producto.id})" 
+                        <button class="btn btn-checkout btn-sm" onclick="moverAFavoritosACarrito(${producto.id})" 
                                 ${producto.stock === 0 ? 'disabled' : ''}>
                             <i class="fas fa-shopping-cart me-2"></i>
                             ${producto.stock === 0 ? 'Sin Stock' : 'Mover al Carrito'}
                         </button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="toggleFavorito(${producto.id})">
+                        <button class="btn btn-favorito btn-sm" onclick="toggleFavorito(${producto.id})">
                             <i class="fas fa-heart-broken me-2"></i>Quitar
                         </button>
                     </div>
@@ -760,7 +761,7 @@ function confirmarCompra() {
     
     setTimeout(() => {
         // Generar número de orden
-        const numeroOrden = 'ORD-' + Date.now().toString().slice(-8);
+        const numeroOrden = 'UNAB-' + Date.now().toString().slice(-8);
         document.getElementById('numeroOrden').textContent = numeroOrden;
         
         // Limpiar carrito y cupón

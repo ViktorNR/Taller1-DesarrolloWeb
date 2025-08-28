@@ -2,34 +2,35 @@
   {
     "id": 1,
     "nombre": "Laptop HP Pavilion 15",
-    "descripcion": "Laptop de 15.6 pulgadas con procesador Intel Core i5, 8GB RAM, 256GB SSD. Perfecta para estudiantes y trabajo.",
+    "descripcion": "Laptop de 15.6 pulgadas con procesador Intel Core i5, 8GB RAM, 256GB SSD. Perfecta para estudiantes y trabajo académico.",
     "precio": 450000,
     "categoria": "Tecnología",
     "stock": 15,
     "rating": 4.5,
     "imagenes": [
-      "https://via.placeholder.com/400x300/007bff/ffffff?text=HP+Laptop",
-      "https://via.placeholder.com/400x300/6c757d/ffffff?text=HP+Laptop+2",
-      "https://via.placeholder.com/400x300/28a745/ffffff?text=HP+Laptop+3"
+      "https://via.placeholder.com/400x300/002B5C/ffffff?text=HP+Laptop+UNAB",
+      "https://via.placeholder.com/400x300/6C757D/ffffff?text=HP+Laptop+2",
+      "https://via.placeholder.com/400x300/C8102E/ffffff?text=HP+Laptop+3"
     ],
     "caracteristicas": [
       "Procesador Intel Core i5-1135G7",
       "8GB DDR4 RAM",
       "256GB SSD NVMe",
       "Pantalla 15.6\" Full HD",
-      "Windows 11 Home"
+      "Windows 11 Home",
+      "Garantía UNAB 2 años"
     ]
   },
   {
     "id": 2,
     "nombre": "Smartphone Samsung Galaxy A54",
-    "descripcion": "Smartphone Android con cámara de 50MP, pantalla AMOLED de 6.4 pulgadas y batería de 5000mAh.",
+    "descripcion": "Smartphone Android con cámara de 50MP, pantalla AMOLED de 6.4 pulgadas y batería de 5000mAh. Ideal para estudiantes.",
     "precio": 320000,
     "categoria": "Tecnología",
     "stock": 25,
     "rating": 4.3,
     "imagenes": [
-      "https://via.placeholder.com/400x300/6f42c1/ffffff?text=Samsung+Galaxy",
+      "https://via.placeholder.com/400x300/6f42c1/ffffff?text=Galaxy+A54+UNAB",
       "https://via.placeholder.com/400x300/dc3545/ffffff?text=Galaxy+A54+2",
       "https://via.placeholder.com/400x300/fd7e14/ffffff?text=Galaxy+A54+3"
     ],
@@ -38,19 +39,20 @@
       "Pantalla 6.4\" AMOLED",
       "Batería 5000mAh",
       "Procesador Exynos 1380",
-      "128GB almacenamiento"
+      "128GB almacenamiento",
+      "Soporte UNAB Mobile"
     ]
   },
   {
     "id": 3,
     "nombre": "Auriculares Sony WH-1000XM4",
-    "descripcion": "Auriculares inalámbricos con cancelación de ruido activa, hasta 30 horas de batería y calidad de sonido premium.",
+    "descripcion": "Auriculares inalámbricos con cancelación de ruido activa, hasta 30 horas de batería. Perfectos para estudio y biblioteca.",
     "precio": 280000,
     "categoria": "Audio",
     "stock": 12,
     "rating": 4.8,
     "imagenes": [
-      "https://via.placeholder.com/400x300/20c997/ffffff?text=Sony+Headphones",
+      "https://via.placeholder.com/400x300/20c997/ffffff?text=Sony+UNAB",
       "https://via.placeholder.com/400x300/17a2b8/ffffff?text=WH-1000XM4+2",
       "https://via.placeholder.com/400x300/6f42c1/ffffff?text=WH-1000XM4+3"
     ],
@@ -59,40 +61,42 @@
       "30 horas de batería",
       "Bluetooth 5.0",
       "Control táctil",
-      "Aplicación Sony Headphones"
+      "Aplicación Sony Headphones",
+      "Descuento estudiante UNAB"
     ]
   },
   {
     "id": 4,
-    "nombre": "Libro: El Señor de los Anillos",
-    "descripcion": "Trilogía completa de J.R.R. Tolkien en edición de lujo con tapa dura y mapas detallados de la Tierra Media.",
+    "nombre": "Libro: El Señor de los Anillos - Edición UNAB",
+    "descripcion": "Trilogía completa de J.R.R. Tolkien en edición especial UNAB con tapa dura, mapas detallados y notas académicas.",
     "precio": 45000,
     "categoria": "Libros",
     "stock": 30,
     "rating": 4.9,
     "imagenes": [
-      "https://via.placeholder.com/400x300/28a745/ffffff?text=El+Señor+de+los+Anillos",
+      "https://via.placeholder.com/400x300/28a745/ffffff?text=LOTR+UNAB",
       "https://via.placeholder.com/400x300/ffc107/ffffff?text=LOTR+2",
       "https://via.placeholder.com/400x300/dc3545/ffffff?text=LOTR+3"
     ],
     "caracteristicas": [
       "Trilogía completa",
-      "Tapa dura",
+      "Tapa dura premium",
       "Mapas detallados",
-      "Edición ilustrada",
-      "Traducción oficial"
+      "Edición ilustrada UNAB",
+      "Traducción oficial",
+      "Incluye guía de estudio"
     ]
   },
   {
     "id": 5,
     "nombre": "Cafetera Express Breville",
-    "descripcion": "Cafetera espresso semiautomática con molinillo integrado, perfecta para amantes del café de calidad.",
+    "descripcion": "Cafetera espresso semiautomática con molinillo integrado. Perfecta para el café de calidad que mereces en la universidad.",
     "precio": 380000,
     "categoria": "Hogar",
     "stock": 8,
     "rating": 4.6,
     "imagenes": [
-      "https://via.placeholder.com/400x300/6c757d/ffffff?text=Breville+Coffee",
+      "https://via.placeholder.com/400x300/6c757d/ffffff?text=Breville+UNAB",
       "https://via.placeholder.com/400x300/007bff/ffffff?text=Cafetera+2",
       "https://via.placeholder.com/400x300/28a745/ffffff?text=Cafetera+3"
     ],
@@ -101,19 +105,20 @@
       "Presión 15 bares",
       "Temporizador programable",
       "Vaporizador de leche",
-      "Filtro de agua"
+      "Filtro de agua",
+      "Garantía extendida UNAB"
     ]
   },
   {
     "id": 6,
-    "nombre": "Bicicleta de Montaña Trek",
-    "descripcion": "Bicicleta de montaña con cuadro de aluminio, suspensión delantera y frenos de disco hidráulicos.",
+    "nombre": "Bicicleta de Montaña Trek - UNAB Sport",
+    "descripcion": "Bicicleta de montaña con cuadro de aluminio, suspensión delantera y frenos de disco hidráulicos. Para deportes UNAB.",
     "precio": 520000,
     "categoria": "Deportes",
     "stock": 5,
     "rating": 4.4,
     "imagenes": [
-      "https://via.placeholder.com/400x300/ffc107/ffffff?text=Trek+Bike",
+      "https://via.placeholder.com/400x300/ffc107/ffffff?text=Trek+UNAB",
       "https://via.placeholder.com/400x300/28a745/ffffff?text=MTB+2",
       "https://via.placeholder.com/400x300/007bff/ffffff?text=MTB+3"
     ],
@@ -122,19 +127,20 @@
       "Suspensión delantera 100mm",
       "Frenos de disco hidráulicos",
       "21 velocidades",
-      "Neumáticos 27.5\""
+      "Neumáticos 27.5\"",
+      "Colores oficiales UNAB"
     ]
   },
   {
     "id": 7,
-    "nombre": "Guitarra Acústica Yamaha",
-    "descripcion": "Guitarra acústica de concierto con tapa de abeto sólido, perfecta para principiantes y músicos intermedios.",
+    "nombre": "Guitarra Acústica Yamaha - UNAB Music",
+    "descripcion": "Guitarra acústica de concierto con tapa de abeto sólido. Perfecta para la escuela de música UNAB y estudiantes.",
     "precio": 180000,
     "categoria": "Música",
     "stock": 18,
     "rating": 4.7,
     "imagenes": [
-      "https://via.placeholder.com/400x300/dc3545/ffffff?text=Yamaha+Guitar",
+      "https://via.placeholder.com/400x300/dc3545/ffffff?text=Yamaha+UNAB",
       "https://via.placeholder.com/400x300/6f42c1/ffffff?text=Guitarra+2",
       "https://via.placeholder.com/400x300/20c997/ffffff?text=Guitarra+3"
     ],
@@ -143,19 +149,20 @@
       "Fondo y aros de meranti",
       "Mástil de nato",
       "Diapasón de palisandro",
-      "Incluye funda rígida"
+      "Incluye funda rígida",
+      "Programa música UNAB"
     ]
   },
   {
     "id": 8,
-    "nombre": "Cámara Canon EOS R50",
-    "descripcion": "Cámara mirrorless con sensor APS-C de 24.2MP, grabación 4K y conectividad WiFi integrada.",
+    "nombre": "Cámara Canon EOS R50 - UNAB Photography",
+    "descripcion": "Cámara mirrorless con sensor APS-C de 24.2MP, grabación 4K. Ideal para la escuela de comunicación UNAB.",
     "precio": 650000,
     "categoria": "Fotografía",
     "stock": 10,
     "rating": 4.5,
     "imagenes": [
-      "https://via.placeholder.com/400x300/17a2b8/ffffff?text=Canon+EOS+R50",
+      "https://via.placeholder.com/400x300/17a2b8/ffffff?text=Canon+UNAB",
       "https://via.placeholder.com/400x300/6c757d/ffffff?text=Cámara+2",
       "https://via.placeholder.com/400x300/ffc107/ffffff?text=Cámara+3"
     ],
@@ -164,19 +171,20 @@
       "Grabación 4K 30fps",
       "WiFi y Bluetooth",
       "Pantalla táctil articulada",
-      "Enfoque automático Dual Pixel"
+      "Enfoque automático Dual Pixel",
+      "Curso fotografía UNAB incluido"
     ]
   },
   {
     "id": 9,
-    "nombre": "Mesa de Estudio IKEA",
-    "descripcion": "Mesa de escritorio moderna con estante integrado, perfecta para estudiantes y trabajo desde casa.",
+    "nombre": "Mesa de Estudio IKEA - UNAB Design",
+    "descripcion": "Mesa de escritorio moderna con estante integrado. Diseñada especialmente para el espacio de estudio UNAB.",
     "precio": 85000,
     "categoria": "Muebles",
     "stock": 22,
     "rating": 4.2,
     "imagenes": [
-      "https://via.placeholder.com/400x300/6c757d/ffffff?text=IKEA+Desk",
+      "https://via.placeholder.com/400x300/6c757d/ffffff?text=IKEA+UNAB",
       "https://via.placeholder.com/400x300/28a745/ffffff?text=Mesa+2",
       "https://via.placeholder.com/400x300/007bff/ffffff?text=Mesa+3"
     ],
@@ -185,19 +193,20 @@
       "Material de pino macizo",
       "Estante integrado",
       "Fácil montaje",
-      "Garantía 10 años"
+      "Garantía 10 años",
+      "Colores institucionales UNAB"
     ]
   },
   {
     "id": 10,
-    "nombre": "Set de Cocina Profesional",
-    "descripcion": "Set completo de ollas y sartenes antiadherentes con mango ergonómico, ideal para cocina profesional.",
+    "nombre": "Set de Cocina Profesional - UNAB Chef",
+    "descripcion": "Set completo de ollas y sartenes antiadherentes. Perfecto para la escuela de gastronomía UNAB.",
     "precio": 150000,
     "categoria": "Cocina",
     "stock": 35,
     "rating": 4.3,
     "imagenes": [
-      "https://via.placeholder.com/400x300/ffc107/ffffff?text=Cookware+Set",
+      "https://via.placeholder.com/400x300/ffc107/ffffff?text=UNAB+Chef",
       "https://via.placeholder.com/400x300/dc3545/ffffff?text=Ollas+2",
       "https://via.placeholder.com/400x300/6f42c1/ffffff?text=Ollas+3"
     ],
@@ -206,7 +215,8 @@
       "Revestimiento antiadherente",
       "Mangos ergonómicos",
       "Apta para todo tipo de cocinas",
-      "Lavable en lavavajillas"
+      "Lavable en lavavajillas",
+      "Certificación UNAB Gastronomía"
     ]
   }
 ]

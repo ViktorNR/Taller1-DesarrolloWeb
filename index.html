@@ -3,53 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini-Marketplace Universitario</title>
+    <title>Mini-Marketplace UNAB - Universidad Andrés Bello</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <header class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <i class="fas fa-store me-2"></i>Mini-Marketplace
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#catalogo">Catálogo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#favoritos">Favoritos</a>
-                    </li>
-                </ul>
-                
-                <!-- Búsqueda -->
-                <form class="d-flex me-3" id="searchForm">
-                    <input class="form-control me-2" type="search" placeholder="Buscar productos..." id="searchInput">
-                    <button class="btn btn-outline-light" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-                
-                <!-- Carrito y Favoritos -->
-                <div class="d-flex align-items-center">
-                    <button class="btn btn-outline-light me-2" id="favoritosBtn" title="Favoritos">
-                        <i class="fas fa-heart"></i>
-                        <span class="badge bg-danger ms-1" id="favoritosCount">0</span>
-                    </button>
-                    <button class="btn btn-outline-light" id="carritoBtn" title="Carrito">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="badge bg-warning text-dark ms-1" id="carritoCount">0</span>
-                    </button>
+    <!-- Header UNAB Style -->
+    <header class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainHeader">
+        <div class="container-fluid">
+            <!-- Top Navigation Bar (Azul oscuro institucional) -->
+            <div class="top-navbar">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <ul class="nav top-links">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#estudiantes">Estudiantes</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#academicos">Académicos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#egresados">Egresados</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#biblioteca">Biblioteca</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#unab-virtual">UNAB Virtual</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                        Redes Sociales
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"><i class="fab fa-facebook me-2"></i>Facebook</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fab fa-twitter me-2"></i>Twitter</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fab fa-instagram me-2"></i>Instagram</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fab fa-linkedin me-2"></i>LinkedIn</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="language-selector">
+                                <i class="fas fa-flag me-2"></i>
+                                <span>ES</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Main Header Section -->
+            <div class="main-header">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="unab-brand">
+                                <div class="unab-logo">
+                                    <div class="logo-emblem">
+                                        <div class="emblem-shape"></div>
+                                        <div class="emblem-shape"></div>
+                                        <div class="emblem-shape"></div>
+                                    </div>
+                                    <div class="logo-text">
+                                        <h1>Universidad Andrés Bello</h1>
+                                        <h2>Mini-Marketplace Universitario</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="header-actions">
+                                <button class="btn btn-search" id="searchToggle">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="btn btn-admision">ADMISIÓN</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Navigation Bar -->
+            <nav class="navbar navbar-expand-lg" id="mainNav">
+                <div class="container">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#catalogo">Catálogo</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#favoritos">Favoritos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#universidad">Universidad</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#facultades">Facultades</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#postgrados">Postgrados</a>
+                            </li>
+                        </ul>
+                        
+                        <!-- Búsqueda -->
+                        <form class="d-flex me-3" id="searchForm">
+                            <input class="form-control" type="search" placeholder="Buscar productos..." id="searchInput">
+                            <button class="btn btn-search-submit" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                        
+                        <!-- Carrito y Favoritos -->
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-favoritos" id="favoritosBtn" title="Favoritos">
+                                <i class="fas fa-heart"></i>
+                                <span class="badge" id="favoritosCount">0</span>
+                            </button>
+                            <button class="btn btn-carrito" id="carritoBtn" title="Carrito">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="badge" id="carritoCount">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </div>
     </header>
 
@@ -90,7 +176,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-outline-secondary w-100" id="limpiarFiltros">
+                    <button class="btn btn-limpiar" id="limpiarFiltros">
                         <i class="fas fa-times me-2"></i>Limpiar filtros
                     </button>
                 </div>
@@ -101,14 +187,14 @@
         <section id="catalogo">
             <div class="row">
                 <div class="col-12">
-                    <h2 class="mb-4">Catálogo de Productos</h2>
+                    <h2 class="section-title">Catálogo de Productos</h2>
                     <div id="productosGrid" class="row g-4">
                         <!-- Los productos se cargarán dinámicamente aquí -->
                     </div>
-                    <div id="productosVacios" class="text-center py-5 d-none">
-                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                        <h4 class="text-muted">No se encontraron productos</h4>
-                        <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
+                    <div id="productosVacios" class="estado-vacio d-none">
+                        <i class="fas fa-search"></i>
+                        <h4>No se encontraron productos</h4>
+                        <p>Intenta ajustar los filtros de búsqueda</p>
                     </div>
                 </div>
             </div>
@@ -142,10 +228,10 @@
                     <div id="carritoItems">
                         <!-- Items del carrito se cargarán dinámicamente -->
                     </div>
-                    <div id="carritoVacio" class="text-center py-4 d-none">
-                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Tu carrito está vacío</h5>
-                        <p class="text-muted">Agrega algunos productos para comenzar</p>
+                    <div id="carritoVacio" class="estado-vacio d-none">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h5>Tu carrito está vacío</h5>
+                        <p>Agrega algunos productos para comenzar</p>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -154,10 +240,10 @@
                             <strong>Total: $<span id="carritoTotal">0</span></strong>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-outline-danger me-2" id="vaciarCarrito">
+                            <button type="button" class="btn btn-vaciar" id="vaciarCarrito">
                                 <i class="fas fa-trash me-2"></i>Vaciar
                             </button>
-                            <button type="button" class="btn btn-primary" id="irCheckout">
+                            <button type="button" class="btn btn-checkout" id="irCheckout">
                                 <i class="fas fa-credit-card me-2"></i>Checkout
                             </button>
                         </div>
@@ -179,10 +265,10 @@
                     <div id="favoritosItems">
                         <!-- Items de favoritos se cargarán dinámicamente -->
                     </div>
-                    <div id="favoritosVacio" class="text-center py-4 d-none">
-                        <i class="fas fa-heart fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">No tienes favoritos</h5>
-                        <p class="text-muted">Agrega productos a tus favoritos para verlos aquí</p>
+                    <div id="favoritosVacio" class="estado-vacio d-none">
+                        <i class="fas fa-heart"></i>
+                        <h5>No tienes favoritos</h5>
+                        <p>Agrega productos a tus favoritos para verlos aquí</p>
                     </div>
                 </div>
             </div>
@@ -202,7 +288,7 @@
                         <div class="row">
                             <!-- Información Personal -->
                             <div class="col-md-6">
-                                <h6 class="mb-3">Información Personal</h6>
+                                <h6 class="checkout-section-title">Información Personal</h6>
                                 <div class="mb-3">
                                     <label for="nombre" class="form-label">Nombre completo *</label>
                                     <input type="text" class="form-control" id="nombre" required>
@@ -221,7 +307,7 @@
                             
                             <!-- Dirección de Envío -->
                             <div class="col-md-6">
-                                <h6 class="mb-3">Dirección de Envío</h6>
+                                <h6 class="checkout-section-title">Dirección de Envío</h6>
                                 <div class="mb-3">
                                     <label for="direccion" class="form-label">Dirección *</label>
                                     <input type="text" class="form-control" id="direccion" required>
@@ -242,7 +328,7 @@
                         <!-- Método de Envío -->
                         <div class="row mt-3">
                             <div class="col-12">
-                                <h6 class="mb-3">Método de Envío</h6>
+                                <h6 class="checkout-section-title">Método de Envío</h6>
                                 <div id="opcionesEnvio">
                                     <!-- Opciones de envío se cargarán dinámicamente -->
                                 </div>
@@ -252,10 +338,10 @@
                         <!-- Cupón de Descuento -->
                         <div class="row mt-3">
                             <div class="col-md-6">
-                                <h6 class="mb-3">Cupón de Descuento</h6>
+                                <h6 class="checkout-section-title">Cupón de Descuento</h6>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="cuponCodigo" placeholder="Código del cupón">
-                                    <button class="btn btn-outline-secondary" type="button" id="aplicarCupon">
+                                    <button class="btn btn-aplicar-cupon" type="button" id="aplicarCupon">
                                         Aplicar
                                     </button>
                                 </div>
@@ -266,12 +352,10 @@
                         <!-- Resumen de Compra -->
                         <div class="row mt-4">
                             <div class="col-12">
-                                <h6 class="mb-3">Resumen de Compra</h6>
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div id="resumenCompra">
-                                            <!-- Resumen se cargará dinámicamente -->
-                                        </div>
+                                <h6 class="checkout-section-title">Resumen de Compra</h6>
+                                <div class="resumen-card">
+                                    <div id="resumenCompra">
+                                        <!-- Resumen se cargará dinámicamente -->
                                     </div>
                                 </div>
                             </div>
@@ -280,7 +364,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="confirmarCompra">
+                    <button type="button" class="btn btn-confirmar" id="confirmarCompra">
                         <i class="fas fa-check me-2"></i>Confirmar Compra
                     </button>
                 </div>
@@ -299,7 +383,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <i class="fas fa-shopping-bag fa-3x text-success mb-3"></i>
+                    <i class="fas fa-shopping-bag"></i>
                     <h5>¡Gracias por tu compra!</h5>
                     <p>Tu número de orden es: <strong id="numeroOrden"></strong></p>
                     <p class="text-muted">Recibirás un correo de confirmación pronto.</p>
@@ -324,6 +408,60 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer UNAB Style -->
+    <footer class="footer-unab">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="footer-brand">
+                        <div class="unab-logo-footer">
+                            <div class="logo-emblem-footer">
+                                <div class="emblem-shape-footer"></div>
+                                <div class="emblem-shape-footer"></div>
+                                <div class="emblem-shape-footer"></div>
+                            </div>
+                            <div class="logo-text-footer">
+                                <h3>Universidad Andrés Bello</h3>
+                                <p>Mini-Marketplace Universitario</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul class="footer-links">
+                        <li><a href="#catalogo">Catálogo</a></li>
+                        <li><a href="#favoritos">Favoritos</a></li>
+                        <li><a href="#carrito">Carrito</a></li>
+                        <li><a href="#checkout">Checkout</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-phone me-2"></i>+56 2 2661 8000</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@unab.cl</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Santiago, Chile</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="footer-divider">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2025 Universidad Andrés Bello. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
