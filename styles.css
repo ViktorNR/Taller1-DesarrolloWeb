@@ -108,7 +108,7 @@ body {
     font-size: 1.8rem;
     font-weight: 700;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.0;
 }
 
 .logo-text h2 {
@@ -1054,6 +1054,11 @@ body {
     border-top: 2px solid currentColor;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+.emblem-image {
+    width: 80px;   /* Ajusta el tamaño a lo que necesites */
+    height: auto;   /* Mantiene la proporción de la imagen */
 }
 
 @keyframes spin {
