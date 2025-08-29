@@ -704,14 +704,26 @@ function eliminarDelCarrito(productoId) {
 function confirmarVaciarCarrito() {
     if (AppState.carrito.length === 0) return;
     
-    if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-        AppState.carrito = [];
-        guardarEstadoPersistente();
-        renderizarCarrito();
-        actualizarContadores();
-        mostrarToast('Carrito vaciado', 'info');
-    }
+    // Mostrar el modal de confirmación
+    const modal = new bootstrap.Modal(document.getElementById('modalVaciarCarrito'));
+    modal.show();
 }
+
+// Nueva función para ejecutar el vaciado
+function vaciarCarritoConfirmado() {
+    AppState.carrito = [];
+    guardarEstadoPersistente();
+    renderizarCarrito();
+    actualizarContadores();
+    mostrarToast('Carrito vaciado', 'info');
+    
+    // Cerrar el modal de confirmación
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalVaciarCarrito'));
+    modal.hide();
+}
+
+// Agregar el event listener para el botón de confirmación
+document.getElementById('confirmarVaciar').addEventListener('click', vaciarCarritoConfirmado);
 
 // Favoritos
 function toggleFavorito(productoId) {

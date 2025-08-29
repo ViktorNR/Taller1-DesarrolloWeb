@@ -204,6 +204,39 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIRMACIÓN PARA VACIAR CARRITO -->
+<div class="modal fade modal-confirmar" id="modalVaciarCarrito" tabindex="-1" aria-labelledby="modalVaciarCarritoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalVaciarCarritoLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Confirmar Acción
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="warning-icon">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h4 class="mb-3">¿Vaciar el carrito?</h4>
+                <p class="text-muted mb-0">
+                    Esta acción eliminará todos los productos de tu carrito de compras. 
+                    <strong>No se puede deshacer.</strong>
+                </p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary btn-cancelar me-3" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger btn-confirmar" id="confirmarVaciar">
+                    <i class="fas fa-check me-2"></i>Sí, vaciar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Modal de Favoritos -->
     <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
