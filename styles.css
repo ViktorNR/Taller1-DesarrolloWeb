@@ -294,18 +294,19 @@ body {
 }
 
 .btn-limpiar {
-    background: var(--unab-gris);
+    background: var(--unab-rojo-oscuro);
     color: var(--unab-blanco);
-    border: none;
-    padding: 12px 20px;
+    border: 2px solid var(--unab-rojo-oscuro);
+    padding: 10px 20px;
     border-radius: 8px;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .btn-limpiar:hover {
-    background: var(--unab-gris-oscuro);
-    transform: translateY(-2px);
+    background: var(--unab-blanco);
+    color: var(--unab-rojo-oscuro);
+    border: 2px solid var(--unab-rojo-oscuro);
 }
 
 /* Botón de filtros móvil */
@@ -472,24 +473,25 @@ body {
 
 /* Botones de acción */
 .btn-vista-rapida {
-    background: var(--unab-azul);
-    color: var(--unab-blanco);
-    border: none;
+    background: var(--unab-blanco);
+    color: var(--unab-azul);
+    border: 2px solid var(--unab-azul);
 }
 
 .btn-vista-rapida:hover {
-    background: var(--unab-azul-oscuro);
+    background: var(--unab-azul);
+    color: var(--unab-blanco);
 }
 
 .btn-favorito {
     background: var(--unab-blanco);
-    color: var(--unab-rojo);
-    border: 2px solid var(--unab-rojo);
+    color: var(--unab-rojo-oscuro);
+    border: 2px solid var(--unab-rojo-oscuro);
 }
 
 .btn-favorito:hover,
 .btn-favorito.activo {
-    background: var(--unab-rojo);
+    background: var(--unab-rojo-oscuro);
     color: var(--unab-blanco);
 }
 
@@ -497,7 +499,7 @@ body {
 .btn-agregar-carrito {
     background: var(--unab-gris);
     color: var(--unab-blanco);
-    border: none;
+    border: 2px solid var(--unab-gris);
     padding: 10px 16px;
     border-radius: 8px;
     font-weight: 500;
@@ -506,8 +508,9 @@ body {
 }
 
 .btn-agregar-carrito:hover {
-    background: var(--unab-rojo);
-    color: var(--unab-blanco);
+    background: var(--unab-blanco);
+    color: var(--unab-rojo-oscuro);
+    border: 2px solid var(--unab-rojo-oscuro);
 }
 
 .btn-agregar-carrito:disabled {
