@@ -137,6 +137,9 @@ function configurarEventos() {
     document.getElementById('ordenFilter').addEventListener('change', aplicarFiltros);
     document.getElementById('limpiarFiltros').addEventListener('click', limpiarFiltros);
     
+    // Toggle de filtros móvil
+    document.getElementById('toggleFiltrosBtn').addEventListener('click', toggleFiltrosMovil);
+    
     // Carrito y favoritos
     document.getElementById('carritoBtn').addEventListener('click', abrirCarrito);
     document.getElementById('favoritosBtn').addEventListener('click', abrirFavoritos);
@@ -200,6 +203,32 @@ function limpiarFiltros() {
     };
     
     renderizarCatalogo();
+}
+
+// Toggle de filtros en móvil
+function toggleFiltrosMovil() {
+    const filtrosContenido = document.getElementById('filtrosContenido');
+    const filtrosBtnText = document.getElementById('filtrosBtnText');
+    const filtrosBtnIcon = document.getElementById('filtrosBtnIcon');
+    
+    if (filtrosContenido.classList.contains('d-none')) {
+        // Mostrar filtros
+        filtrosContenido.classList.remove('d-none');
+        filtrosContenido.classList.add('mostrar');
+        filtrosBtnText.textContent = 'Ocultar Filtros';
+        filtrosBtnIcon.classList.remove('fa-chevron-down');
+        filtrosBtnIcon.classList.add('fa-chevron-up');
+    } else {
+        // Ocultar filtros
+        filtrosContenido.classList.add('ocultar');
+        setTimeout(() => {
+            filtrosContenido.classList.remove('mostrar', 'ocultar');
+            filtrosContenido.classList.add('d-none');
+        }, 400);
+        filtrosBtnText.textContent = 'Mostrar Filtros';
+        filtrosBtnIcon.classList.remove('fa-chevron-up');
+        filtrosBtnIcon.classList.add('fa-chevron-down');
+    }
 }
 
 function obtenerProductosFiltrados() {
@@ -923,3 +952,4 @@ window.cambiarCantidadCarrito = cambiarCantidadCarrito;
 window.eliminarDelCarrito = eliminarDelCarrito;
 window.moverAFavoritosACarrito = moverAFavoritosACarrito;
 window.seleccionarEnvio = seleccionarEnvio;
+window.toggleFiltrosMovil = toggleFiltrosMovil;

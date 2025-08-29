@@ -260,7 +260,7 @@ body {
 
 /* Filtros */
 #filtros {
-    background: var(--unab-blanco);
+    background: var(--unab-azul);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 43, 92, 0.08);
@@ -294,6 +294,73 @@ body {
 .btn-limpiar:hover {
     background: var(--unab-gris-oscuro);
     transform: translateY(-2px);
+}
+
+/* Botón de filtros móvil */
+.btn-filtros-movil {
+    background: var(--unab-azul);
+    color: var(--unab-blanco);
+    border: none;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btn-filtros-movil:hover {
+    background: var(--unab-azul-oscuro);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 43, 92, 0.3);
+}
+
+.btn-filtros-movil:active {
+    transform: translateY(0);
+}
+
+/* Contenedor de filtros colapsible */
+.filtros-contenido {
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+.filtros-contenido.mostrar {
+    display: block !important;
+    animation: slideDown 0.4s ease-out;
+}
+
+.filtros-contenido.ocultar {
+    animation: slideUp 0.4s ease-in;
+}
+
+/* Animaciones para filtros */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-20px);
+    }
 }
 
 /* Títulos de sección */
@@ -992,6 +1059,21 @@ body {
     
     .section-title {
         font-size: 1.8rem;
+    }
+    
+    /* Filtros móvil específicos */
+    #filtros {
+        padding: 1.5rem;
+    }
+    
+    .btn-filtros-movil {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .form-select {
+        font-size: 0.85rem;
+        padding: 10px 14px;
     }
 }
 

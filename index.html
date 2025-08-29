@@ -84,42 +84,54 @@
     <main class="container-fluid py-4">
         <!-- Filtros y Ordenamiento -->
         <section class="mb-4" id="filtros">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <select class="form-select" id="categoriaFilter">
-                        <option value="">Todas las categorías</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select" id="precioFilter">
-                        <option value="">Rango de precio</option>
-                        <option value="0-10000">$0 - $10.000</option>
-                        <option value="10000-25000">$10.000 - $25.000</option>
-                        <option value="25000-50000">$25.000 - $50.000</option>
-                        <option value="50000+">$50.000+</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select" id="ratingFilter">
-                        <option value="">Rating mínimo</option>
-                        <option value="4">4+ estrellas</option>
-                        <option value="3">3+ estrellas</option>
-                        <option value="2">2+ estrellas</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select" id="ordenFilter">
-                        <option value="">Ordenar por</option>
-                        <option value="precio-asc">Precio: menor a mayor</option>
-                        <option value="precio-desc">Precio: mayor a menor</option>
-                        <option value="rating-desc">Mejor rating</option>
-                        <option value="nombre-asc">Nombre A-Z</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-limpiar" id="limpiarFiltros">
-                        <i class="fas fa-times me-2"></i>Limpiar filtros
-                    </button>
+            <!-- Botón para abrir/cerrar filtros en móvil -->
+            <div class="d-md-none mb-3">
+                <button class="btn btn-filtros-movil w-100" type="button" id="toggleFiltrosBtn">
+                    <i class="fas fa-filter me-2"></i>
+                    <span id="filtrosBtnText">Mostrar Filtros</span>
+                    <i class="fas fa-chevron-down ms-auto" id="filtrosBtnIcon"></i>
+                </button>
+            </div>
+            
+            <!-- Contenedor de filtros colapsible -->
+            <div id="filtrosContenido" class="filtros-contenido d-none d-md-block">
+                <div class="row g-3">
+                    <div class="col-md-3 col-12">
+                        <select class="form-select" id="categoriaFilter">
+                            <option value="">Todas las categorías</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-12">
+                        <select class="form-select" id="precioFilter">
+                            <option value="">Rango de precio</option>
+                            <option value="0-10000">$0 - $10.000</option>
+                            <option value="10000-25000">$10.000 - $25.000</option>
+                            <option value="25000-50000">$25.000 - $50.000</option>
+                            <option value="50000+">$50.000+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-12">
+                        <select class="form-select" id="ratingFilter">
+                            <option value="">Rating mínimo</option>
+                            <option value="4">4+ estrellas</option>
+                            <option value="3">3+ estrellas</option>
+                            <option value="2">2+ estrellas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-12">
+                        <select class="form-select" id="ordenFilter">
+                            <option value="">Ordenar por</option>
+                            <option value="precio-asc">Precio: menor a mayor</option>
+                            <option value="precio-desc">Precio: mayor a menor</option>
+                            <option value="rating-desc">Mejor rating</option>
+                            <option value="nombre-asc">Nombre A-Z</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <button class="btn btn-limpiar w-100" id="limpiarFiltros">
+                            <i class="fas fa-times me-2"></i>Limpiar filtros
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
