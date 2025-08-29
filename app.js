@@ -1066,6 +1066,73 @@ function sanitizeHTML(str) {
     return div.innerHTML;
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("checkoutForm");
+  if (!form) return; // por si la página no tiene este formulario
+
+  const inputs = form.querySelectorAll("input");
+
+  // Si quieres retrasar la validación hasta que la persona deje de teclear, ajusta este valor (>0 activa el debounce)
+  const LIVE_DEBOUNCE_MS = 0; // prueba con 300 si quieres validar 300ms después de parar de escribir
+
+  const debounce = (fn, ms) => {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(null, args), ms);
+    };
+  };
+
+  const validate = (input) => {
+    // Limpia cualquier mensaje personalizado previo
+    input.setCustomValidity("");
+
+    // (Opcional) Ejemplo de mensaje personalizado para teléfono
+
+
+    if (input.checkValidity()) {
+      input.classList.remove("is-invalid");
+      input.classList.add("is-valid");
+    } else {
+      input.classList.remove("is-valid");
+      input.classList.add("is-invalid");
+    }
+  };
+
+  inputs.forEach((input) => {
+    // Validación mientras escribe
+    const onType = LIVE_DEBOUNCE_MS > 0 ? debounce(() => validate(input), LIVE_DEBOUNCE_MS)
+                                        : () => validate(input);
+    input.addEventListener("input", onType);
+
+    // Validación al salir del campo
+    input.addEventListener("blur", () => validate(input));
+
+    // Forzar que Bootstrap muestre el error cuando el navegador marque inválido
+    input.addEventListener(
+      "invalid",
+      (e) => {
+        e.preventDefault(); // evita el tooltip nativo feo
+        validate(input);
+      },
+      true
+    );
+  });
+
+  // Validación al enviar
+  form.addEventListener("submit", (e) => {
+    if (!form.checkValidity()) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    form.classList.add("was-validated");
+  });
+});
+
+
+
+
+
 // Exportar funciones para uso global
 window.abrirVistaRapida = abrirVistaRapida;
 window.toggleFavorito = toggleFavorito;
