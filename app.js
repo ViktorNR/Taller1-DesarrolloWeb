@@ -393,11 +393,31 @@ function abrirVistaRapida(productoId) {
                     </div>
                     <p class="mb-3">${producto.descripcion}</p>
                     
-                    <div class="cantidad-control">
-                        <label for="cantidadProducto">Cantidad:</label>
-                        <button class="btn btn-outline-secondary" onclick="cambiarCantidad(-1)">-</button>
-                        <input type="number" class="form-control" id="cantidadProducto" value="1" min="1" max="${producto.stock}">
-                        <button class="btn btn-outline-secondary" onclick="cambiarCantidad(1)">+</button>
+                    <!-- Control de cantidad con botones circulares -->
+                    <div class="mb-3">
+                        <label for="cantidadProducto" class="form-label fw-bold mb-2" style="color: var(--unab-azul);">Cantidad:</label>
+                        <div class="input-group" style="max-width: 150px;">
+                            <!-- Botón Menos -->
+                            <button class="btn btn-outline-primary d-flex align-items-center justify-content-center" 
+                                    type="button" onclick="cambiarCantidad(-1)" 
+                                    style="background-color: var(--unab-azul); color: var(--unab-blanco); border-color: var(--unab-azul);
+                                           border-radius: 50%; width: 40px; height: 40px;">
+                                <i class="fas fa-minus"></i>
+                            </button>
+
+                            <!-- Input Cantidad -->
+                            <input type="number" class="form-control text-center fw-bold" 
+                                   id="cantidadProducto" value="1" min="1" max="${producto.stock}" 
+                                   style="max-width: 70px; border-color: var(--unab-azul);">
+
+                            <!-- Botón Más -->
+                            <button class="btn btn-outline-primary d-flex align-items-center justify-content-center" 
+                                    type="button" onclick="cambiarCantidad(1)" 
+                                    style="background-color: var(--unab-azul); color: var(--unab-blanco); border-color: var(--unab-azul);
+                                           border-radius: 50%; width: 40px; height: 40px;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="d-grid gap-2">
@@ -486,10 +506,45 @@ function abrirVistaRapida(productoId) {
     }, 100);
 }
 
-function cambiarCantidad(delta) {
-    const input = document.getElementById('cantidadProducto');
-    const nuevaCantidad = Math.max(1, Math.min(parseInt(input.value) + delta, parseInt(input.max)));
-    input.value = nuevaCantidad;
+// Función reutilizable para cambiar cantidad con validación robusta
+function cambiarCantidad(delta, inputId = 'cantidadProducto') {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    const valorActual = parseInt(input.value) || 1;
+    const minimo = parseInt(input.min) || 1;
+    const maximo = parseInt(input.max) || 25;
+    
+    // Calcular nueva cantidad dentro del rango válido
+    const nuevaCantidad = Math.max(minimo, Math.min(valorActual + delta, maximo));
+    
+    // Solo actualizar si el valor cambió
+    if (nuevaCantidad !== valorActual) {
+        input.value = nuevaCantidad;
+        
+        // Trigger change event para cualquier listener
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Feedback visual para el botón
+        const btn = event?.target?.closest('button');
+        if (btn) {
+            btn.style.transform = 'scale(0.95)';
+            btn.style.transition = 'transform 0.1s ease';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 100);
+        }
+    }
+    
+    // Deshabilitar botones según límites
+    const container = input.closest('.input-group');
+    if (container) {
+        const btnMinus = container.querySelector('button:first-child');
+        const btnPlus = container.querySelector('button:last-child');
+        
+        if (btnMinus) btnMinus.disabled = nuevaCantidad <= minimo;
+        if (btnPlus) btnPlus.disabled = nuevaCantidad >= maximo;
+    }
 }
 
 // Carrito

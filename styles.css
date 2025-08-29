@@ -4,6 +4,7 @@
 :root {
     --unab-azul: #002B5C;        /* Azul oscuro institucional */
     --unab-rojo: #C8102E;        /* Rojo institucional */
+    --unab-rojo-oscuro: #A60D25; /* Rojo oscuro */
     --unab-blanco: #FFFFFF;      /* Blanco */
     --unab-gris-claro: #F5F5F5;  /* Gris claro */
     --unab-gris: #6C757D;        /* Gris medio */
@@ -156,7 +157,7 @@ body {
 }
 
 .btn-admision:hover {
-    background: #A60D25;
+    background: var(--unab-rojo-oscuro);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
 }
@@ -606,23 +607,25 @@ body {
 /* Estilos específicos para los controles del modal */
 #galeriaProducto .carousel-control-prev,
 #galeriaProducto .carousel-control-next {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 0.9 !important;
-    z-index: 15 !important;
-    pointer-events: auto !important;
-    cursor: pointer !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    cursor: default !important;
 }
 
-/* Asegurar que los indicadores sean visibles */
+/* Ocultar indicadores del carrusel */
 #galeriaProducto .carousel-indicators {
-    z-index: 15 !important;
-    visibility: visible !important;
+    display: none !important;
+    visibility: hidden !important;
+    z-index: -1 !important;
 }
 
 #galeriaProducto .carousel-indicators button {
-    visibility: visible !important;
-    opacity: 0.7 !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
 /* Hover effects para los controles */
@@ -769,6 +772,7 @@ body {
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
+    flex-wrap: nowrap;
 }
 
 .cantidad-control .form-control {
@@ -776,6 +780,7 @@ body {
     text-align: center;
     border: 2px solid var(--unab-gris-claro);
     border-radius: 8px;
+    flex-shrink: 0;
 }
 
 .cantidad-control .btn {
@@ -788,10 +793,58 @@ body {
     background: var(--unab-azul);
     color: var(--unab-blanco);
     border: none;
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: 1.2rem;
 }
 
 .cantidad-control .btn:hover {
-    background: var(--unab-azul-oscuro);
+    background: var(--unab-rojo);
+    transform: scale(1.05);
+}
+
+.cantidad-control label {
+    font-weight: 600;
+    color: var(--unab-azul);
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+/* Quitar flechas de los inputs tipo number en Chrome, Safari, Edge */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Quitar flechas en Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Estilos específicos para el modal de producto */
+.producto-modal-info .cantidad-control {
+    background: var(--unab-gris-claro);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid var(--unab-gris-claro);
+    transition: all 0.3s ease;
+}
+
+.producto-modal-info .cantidad-control:hover {
+    border-color: var(--unab-azul);
+    background: var(--unab-blanco);
+}
+
+.producto-modal-info .cantidad-control .form-control {
+    border-color: var(--unab-azul);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.producto-modal-info .cantidad-control .form-control:focus {
+    border-color: var(--unab-rojo);
+    box-shadow: 0 0 0 0.2rem rgba(200, 16, 46, 0.25);
 }
 
 /* Carrito */
@@ -1089,9 +1142,8 @@ body {
 }
 
 .btn-confirmar:hover {
-    background: #A60D25;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(200, 16, 46, 0.3);
+    background: var(--unab-azul);
+    color: var(--unab-blanco);
 }
 
 /* Toast personalizado */
