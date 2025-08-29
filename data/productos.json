@@ -23,16 +23,16 @@
   },
   {
     "id": 2,
-    "nombre": "Smartphone Samsung Galaxy A54",
+    "nombre": "Smartphone Samsung Galaxy A54 5G",
     "descripcion": "Smartphone Android con cámara de 50MP, pantalla AMOLED de 6.4 pulgadas y batería de 5000mAh. Ideal para estudiantes.",
     "precio": 320000,
     "categoria": "Tecnología",
     "stock": 25,
     "rating": 4.3,
     "imagenes": [
-      "https://via.placeholder.com/400x300/6f42c1/ffffff?text=Galaxy+A54+UNAB",
-      "https://via.placeholder.com/400x300/dc3545/ffffff?text=Galaxy+A54+2",
-      "https://via.placeholder.com/400x300/fd7e14/ffffff?text=Galaxy+A54+3"
+      "https://images.samsung.com/is/image/samsung/assets/latin/mircrosite/galaxy-a54/Desk-a54.jpg?$1440_N_JPG$",
+      "https://tiendaempresas.entel.cl/media/catalog/product/cache/e83b319fe15d087a014efa16f11c0f36/s/m/sm-a546ezkaltl_1_1.jpg",
+      "https://home.ripley.cl/store/Attachment/WOP/D191/2000395908316/2000395908316-3.jpg"
     ],
     "caracteristicas": [
       "Cámara principal 50MP",

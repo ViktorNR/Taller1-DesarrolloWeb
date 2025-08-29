@@ -351,7 +351,7 @@ function abrirVistaRapida(productoId) {
     modalBody.innerHTML = `
         <div class="row">
             <div class="col-md-6">
-                <div id="galeriaProducto" class="carousel slide" data-bs-ride="carousel">
+                <div id="galeriaProducto" class="carousel slide">
                     <div class="carousel-inner">
                         ${producto.imagenes.map((img, index) => `
                             <div class="carousel-item ${index === 0 ? 'active' : ''}">
@@ -359,7 +359,17 @@ function abrirVistaRapida(productoId) {
                             </div>
                         `).join('')}
                     </div>
+                    
                     ${producto.imagenes.length > 1 ? `
+                        <!-- Indicadores del carrusel -->
+                        <div class="carousel-indicators">
+                            ${producto.imagenes.map((_, index) => `
+                                <button type="button" data-bs-target="#galeriaProducto" data-bs-slide-to="${index}" 
+                                        class="${index === 0 ? 'active' : ''}" aria-label="Slide ${index + 1}"></button>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- Controles de navegación -->
                         <button class="carousel-control-prev" type="button" data-bs-target="#galeriaProducto" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon"></span>
                         </button>
@@ -414,7 +424,66 @@ function abrirVistaRapida(productoId) {
     `;
     
     const modalInstance = new bootstrap.Modal(modal);
+    
+    // Limpiar carrusel cuando se cierre el modal
+    modal.addEventListener('hidden.bs.modal', function () {
+        const carousel = document.getElementById('galeriaProducto');
+        if (carousel && carousel._carousel) {
+            carousel._carousel.dispose();
+            carousel._carousel = null;
+        }
+    });
+    
     modalInstance.show();
+    
+    // Inicializar el carrusel correctamente
+    setTimeout(() => {
+        const carousel = document.getElementById('galeriaProducto');
+        if (carousel && producto.imagenes.length > 1) {
+            // Destruir instancia previa si existe
+            if (carousel._carousel) {
+                carousel._carousel.dispose();
+            }
+            
+            // Inicializar carrusel con opciones correctas
+            const carouselInstance = new bootstrap.Carousel(carousel, {
+                interval: false,    // Sin cambio automático
+                wrap: true,         // Loop infinito
+                keyboard: true,     // Navegación con teclado
+                pause: false        // No pausar en hover
+            });
+            
+            // Guardar referencia para poder destruir después
+            carousel._carousel = carouselInstance;
+            
+            // Asegurar que los controles sean visibles y funcionales
+            const prevButton = carousel.querySelector('.carousel-control-prev');
+            const nextButton = carousel.querySelector('.carousel-control-next');
+            
+            if (prevButton) {
+                prevButton.style.display = 'flex';
+                prevButton.style.visibility = 'visible';
+                prevButton.style.opacity = '0.9';
+                prevButton.style.pointerEvents = 'auto';
+            }
+            
+            if (nextButton) {
+                nextButton.style.display = 'flex';
+                nextButton.style.visibility = 'visible';
+                nextButton.style.opacity = '0.9';
+                nextButton.style.pointerEvents = 'auto';
+            }
+            
+            // Agregar eventos para debugging
+            carousel.addEventListener('slide.bs.carousel', function (event) {
+                console.log('Carrusel cambiando a slide:', event.to);
+            });
+            
+            carousel.addEventListener('slid.bs.carousel', function (event) {
+                console.log('Carrusel cambió a slide:', event.to);
+            });
+        }
+    }, 100);
 }
 
 function cambiarCantidad(delta) {
