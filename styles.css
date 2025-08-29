@@ -1269,6 +1269,8 @@ input[type=number] {
 
 /* Footer UNAB Style */
 .footer-unab {
+    margin: 0;
+    width: 100%;
     background: var(--unab-azul);
     color: var(--unab-blanco);
     padding: 3rem 0 2rem;
@@ -1297,12 +1299,12 @@ input[type=number] {
     border-radius: 2px;
 }
 
-.logo-text-footer h3 {
+.logo-text-footer h1 {
     color: var(--unab-blanco);
-    font-size: 1.4rem;
+   font-size: 1.8rem;
     font-weight: 700;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.0;
 }
 
 .logo-text-footer p {
