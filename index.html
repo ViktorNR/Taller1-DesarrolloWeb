@@ -205,22 +205,26 @@
     </div>
 
     <!-- Modal de Favoritos -->
-    <div class="modal fade" id="favoritosModal" tabindex="-1">
+    <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Mis Favoritos</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="favoritosModalLabel">
+                        <i class="fas fa-heart me-2"></i>
+                        Mis Favoritos
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="favoritosItems">
-                        <!-- Items de favoritos se cargarán dinámicamente -->
+                    <div id="favoritosContainer">
+                        <!-- Contenido dinámico: productos favoritos o estado vacío -->
                     </div>
-                    <div id="favoritosVacio" class="estado-vacio d-none">
-                        <i class="fas fa-heart"></i>
-                        <h5>No tienes favoritos</h5>
-                        <p>Agrega productos a tus favoritos para verlos aquí</p>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>
+                        Cerrar
+                    </button>
                 </div>
             </div>
         </div>

@@ -184,6 +184,17 @@ body {
     background-color: var(--unab-rojo-claro);
 }
 
+/* Enlace de favoritos específico */
+#mainNav .navbar-nav .nav-link[href="#favoritos"] {
+    cursor: pointer;
+    position: relative;
+}
+
+#mainNav .navbar-nav .nav-link[href="#favoritos"]:hover {
+    color: var(--unab-rojo);
+    background-color: var(--unab-rojo-claro);
+}
+
 /* Búsqueda */
 #searchForm {
     position: relative;
@@ -1021,7 +1032,96 @@ input[type=number] {
     }
 }
 
-/* Favoritos */
+/* Modal de Favoritos */
+.favorito-card {
+    background: var(--unab-blanco);
+    border-radius: 12px;
+    border: 1px solid var(--unab-gris-claro);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 43, 92, 0.08);
+}
+
+.favorito-card:hover {
+    box-shadow: 0 6px 25px rgba(0, 43, 92, 0.15);
+    border-color: var(--unab-azul);
+    transform: translateY(-2px);
+}
+
+.favorito-card-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.favorito-card:hover .favorito-card-img {
+    transform: scale(1.05);
+}
+
+.favorito-card-body {
+    padding: 1rem;
+}
+
+.favorito-card-title {
+    color: var(--unab-azul);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.favorito-card-precio {
+    font-weight: 700;
+    color: var(--unab-rojo);
+    font-size: 1.1rem;
+}
+
+.favorito-card-stock {
+    color: var(--unab-gris);
+    font-size: 0.85rem;
+}
+
+.favorito-remove-btn {
+    width: 30px;
+    height: 30px;
+    background-color: var(--unab-rojo) !important;
+    border: none !important;
+    transition: all 0.3s ease;
+}
+
+.favorito-remove-btn:hover {
+    background-color: var(--unab-rojo-oscuro) !important;
+    transform: scale(1.1);
+}
+
+/* Estado vacío en favoritos */
+#favoritosModal .estado-vacio {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#favoritosModal .estado-vacio i {
+    color: var(--unab-gris) !important;
+    margin-bottom: 1.5rem;
+}
+
+#favoritosModal .estado-vacio h4 {
+    color: var(--unab-azul);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+#favoritosModal .estado-vacio p {
+    color: var(--unab-gris);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Legacy styles mantenidos para compatibilidad */
 .favorito-item {
     background: var(--unab-blanco);
     border-radius: 12px;

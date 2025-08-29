@@ -144,6 +144,14 @@ function configurarEventos() {
     document.getElementById('carritoBtn').addEventListener('click', abrirCarrito);
     document.getElementById('favoritosBtn').addEventListener('click', abrirFavoritos);
     
+    // Interceptar clics en enlaces de favoritos para abrir el modal
+    document.querySelectorAll('a[href="#favoritos"]').forEach(enlace => {
+        enlace.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevenir navegación
+            abrirFavoritos();
+        });
+    });
+    
     // Checkout
     document.getElementById('irCheckout').addEventListener('click', abrirCheckout);
     document.getElementById('confirmarCompra').addEventListener('click', confirmarCompra);
@@ -732,51 +740,86 @@ function abrirFavoritos() {
     modal.show();
 }
 
+// Agregar evento para refrescar favoritos cuando se abra el modal
+document.addEventListener('DOMContentLoaded', function() {
+    const favoritosModal = document.getElementById('favoritosModal');
+    if (favoritosModal) {
+        favoritosModal.addEventListener('show.bs.modal', function() {
+            renderizarFavoritos();
+        });
+    }
+});
+
 function renderizarFavoritos() {
-    const favoritosItems = document.getElementById('favoritosItems');
-    const favoritosVacio = document.getElementById('favoritosVacio');
+    const favoritosContainer = document.getElementById('favoritosContainer');
+    
+    if (!favoritosContainer) return;
     
     if (AppState.favoritos.length === 0) {
-        favoritosItems.innerHTML = '';
-        favoritosVacio.classList.remove('d-none');
+        // Estado vacío con diseño UNAB
+        favoritosContainer.innerHTML = `
+            <div class="estado-vacio text-center py-5">
+                <i class="fas fa-heart text-muted mb-4" style="font-size: 4rem; opacity: 0.3;"></i>
+                <h4 style="color: var(--unab-azul); font-weight: 600;">No tienes favoritos</h4>
+                <p class="text-muted mb-4">Agrega productos a tus favoritos para verlos aquí</p>
+                <button class="btn btn-primary" data-bs-dismiss="modal" style="background-color: var(--unab-azul);">
+                    <i class="fas fa-shopping-bag me-2"></i>
+                    Explorar Productos
+                </button>
+            </div>
+        `;
         return;
     }
     
-    favoritosVacio.classList.add('d-none');
-    
     const productosFavoritos = AppState.productos.filter(p => AppState.favoritos.includes(p.id));
     
-    favoritosItems.innerHTML = productosFavoritos.map(producto => `
-        <div class="favorito-item">
-            <div class="row align-items-center">
-                <div class="col-md-2">
-                    <img src="${producto.imagenes[0]}" class="favorito-item-img" alt="${producto.nombre}">
-                </div>
-                <div class="col-md-6">
-                    <div class="favorito-item-info">
-                        <h6>${producto.nombre}</h6>
-                        <div class="favorito-item-precio">$${formatearPrecio(producto.precio)}</div>
-                        <div class="rating">
-                            ${generarEstrellas(producto.rating)}
-                            <span class="ms-2">(${producto.rating})</span>
+    favoritosContainer.innerHTML = `
+        <div class="mb-3">
+            <h6 class="text-muted">
+                <i class="fas fa-heart text-danger me-2"></i>
+                ${AppState.favoritos.length} producto${AppState.favoritos.length !== 1 ? 's' : ''} en favoritos
+            </h6>
+        </div>
+        <div class="row g-3">
+            ${productosFavoritos.map(producto => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="favorito-card h-100">
+                        <div class="position-relative">
+                            <img src="${producto.imagenes[0]}" class="favorito-card-img" alt="${producto.nombre}">
+                            <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 rounded-circle favorito-remove-btn" 
+                                    onclick="eliminarFavorito(${producto.id})" title="Quitar de favoritos">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="favorito-card-body">
+                            <h6 class="favorito-card-title text-truncate" title="${producto.nombre}">${producto.nombre}</h6>
+                            <div class="favorito-card-precio mb-2">$${formatearPrecio(producto.precio)}</div>
+                            <div class="rating mb-3">
+                                ${generarEstrellas(producto.rating)}
+                                <span class="ms-2 small text-muted">(${producto.rating})</span>
+                            </div>
+                            <div class="favorito-card-stock mb-3">
+                                <i class="fas fa-box me-1"></i>
+                                <small class="text-muted">
+                                    ${producto.stock > 0 ? `${producto.stock} disponibles` : 'Sin stock'}
+                                </small>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-agregar-carrito" onclick="moverFavoritoACarrito(${producto.id})" 
+                                        ${producto.stock === 0 ? 'disabled' : ''}>
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    ${producto.stock === 0 ? 'Sin Stock' : 'Agregar al Carrito'}
+                                </button>
+                                <button class="btn btn-vista-rapida" onclick="abrirVistaRapida(${producto.id})" data-bs-dismiss="modal">
+                                    <i class="fas fa-eye me-1"></i>Vista Rápida
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-checkout btn-sm" onclick="moverAFavoritosACarrito(${producto.id})" 
-                                ${producto.stock === 0 ? 'disabled' : ''}>
-                            <i class="fas fa-shopping-cart me-2"></i>
-                            ${producto.stock === 0 ? 'Sin Stock' : 'Mover al Carrito'}
-                        </button>
-                        <button class="btn btn-favorito btn-sm" onclick="toggleFavorito(${producto.id})">
-                            <i class="fas fa-heart-broken me-2"></i>Quitar
-                        </button>
-                    </div>
-                </div>
-            </div>
+            `).join('')}
         </div>
-    `).join('');
+    `;
 }
 
 function moverAFavoritosACarrito(productoId) {
@@ -809,6 +852,55 @@ function moverAFavoritosACarrito(productoId) {
     actualizarContadores();
     renderizarFavoritos();
     mostrarToast(`"${producto.nombre}" movido al carrito`, 'success');
+}
+
+// Función para eliminar producto de favoritos
+function eliminarFavorito(productoId) {
+    const index = AppState.favoritos.indexOf(productoId);
+    if (index !== -1) {
+        AppState.favoritos.splice(index, 1);
+        guardarEstadoPersistente();
+        actualizarContadores();
+        renderizarFavoritos();
+        
+        const producto = AppState.productos.find(p => p.id === productoId);
+        mostrarToast(`${producto?.nombre || 'Producto'} removido de favoritos`, 'info');
+    }
+}
+
+// Función para mover producto de favoritos al carrito (sin remover de favoritos)
+function moverFavoritoACarrito(productoId) {
+    const producto = AppState.productos.find(p => p.id === productoId);
+    if (!producto || producto.stock === 0) {
+        mostrarToast('Producto no disponible', 'error');
+        return;
+    }
+    
+    // Agregar al carrito
+    const itemExistente = AppState.carrito.find(item => item.id === productoId);
+    
+    if (itemExistente) {
+        if (itemExistente.cantidad < producto.stock) {
+            itemExistente.cantidad += 1;
+            mostrarToast(`${producto.nombre} agregado al carrito (${itemExistente.cantidad})`, 'success');
+        } else {
+            mostrarToast('Stock máximo alcanzado', 'warning');
+            return;
+        }
+    } else {
+        AppState.carrito.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            imagen: producto.imagenes[0],
+            cantidad: 1,
+            stock: producto.stock
+        });
+        mostrarToast(`${producto.nombre} agregado al carrito`, 'success');
+    }
+    
+    guardarEstadoPersistente();
+    actualizarContadores();
 }
 
 // Checkout
@@ -1142,5 +1234,7 @@ window.cambiarCantidad = cambiarCantidad;
 window.cambiarCantidadCarrito = cambiarCantidadCarrito;
 window.eliminarDelCarrito = eliminarDelCarrito;
 window.moverAFavoritosACarrito = moverAFavoritosACarrito;
+window.eliminarFavorito = eliminarFavorito;
+window.moverFavoritoACarrito = moverFavoritoACarrito;
 window.seleccionarEnvio = seleccionarEnvio;
 window.toggleFiltrosMovil = toggleFiltrosMovil;
