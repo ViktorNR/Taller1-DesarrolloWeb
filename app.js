@@ -259,10 +259,12 @@ function obtenerProductosFiltrados() {
     
     // Aplicar filtro de precio
     if (AppState.filtros.precio) {
-        const [min, max] = AppState.filtros.precio.split('-').map(Number);
-        if (AppState.filtros.precio.includes('+')) {
+        let min, max;
+        if(AppState.filtros.precio.includes('+')) {
+            min = parseInt(AppState.filtros.precio.replace('+', ''), 10);
             productos = productos.filter(p => p.precio >= min);
         } else {
+            [min, max] = AppState.filtros.precio.split('-').map(Number);
             productos = productos.filter(p => p.precio >= min && p.precio <= max);
         }
     }
