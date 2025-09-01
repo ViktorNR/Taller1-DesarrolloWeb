@@ -72,11 +72,11 @@
     "precio": 45000,
     "categoria": "Libros",
     "stock": 30,
-    "rating": 4.9,
+    "rating": 1,
     "imagenes": [
-      "https://via.placeholder.com/400x300/28a745/ffffff?text=LOTR+UNAB",
-      "https://via.placeholder.com/400x300/ffc107/ffffff?text=LOTR+2",
-      "https://via.placeholder.com/400x300/dc3545/ffffff?text=LOTR+3"
+      "https://www.cosmerebooks.com.ar/cl/productos/box-set-el-senor-de-los-anillos-estuche/?srsltid=AfmBOor3MFF6qqzmNAZLIb2g5fIrlN1tU7QJWkIPa4WuvJ3Q-F0wnaMd",
+      "https://www.cosmerebooks.com.ar/cl/productos/box-set-el-senor-de-los-anillos-estuche/?srsltid=AfmBOor3MFF6qqzmNAZLIb2g5fIrlN1tU7QJWkIPa4WuvJ3Q-F0wnaMd",
+      "https://www.google.com/imgres?imgurl=https%3A%2F%2Fencantalibros.com%2Fwp-content%2Fuploads%2F2022%2F02%2F1000000000200.jpg&tbnid=lxZi2V3ewKVptM&vet=10CAsQxiAoBGoXChMI0M6zjqOzjwMVAAAAAB0AAAAAEBM..i&imgrefurl=https%3A%2F%2Fencantalibros.com%2Fproducto%2Fpack-el-senor-de-los-anillos%2F&docid=-dAcTZdjeskJNM&w=777&h=1080&itg=1&q=El%20se%C3%B1or%20de%20los%20anillos%20libro&ved=0CAsQxiAoBGoXChMI0M6zjqOzjwMVAAAAAB0AAAAAEBM"
     ],
     "caracteristicas": [
       "Trilogía completa",
@@ -94,7 +94,7 @@
     "precio": 380000,
     "categoria": "Hogar",
     "stock": 8,
-    "rating": 4.6,
+    "rating": 2,
     "imagenes": [
       "https://via.placeholder.com/400x300/6c757d/ffffff?text=Breville+UNAB",
       "https://via.placeholder.com/400x300/007bff/ffffff?text=Cafetera+2",
