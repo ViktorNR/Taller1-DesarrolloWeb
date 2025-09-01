@@ -126,9 +126,17 @@ function guardarEstadoPersistente() {
 
 // Configuración de eventos
 function configurarEventos() {
-    // Búsqueda
+    // Búsqueda Desktop
     document.getElementById('searchForm').addEventListener('submit', manejarBusqueda);
     document.getElementById('searchInput').addEventListener('input', manejarBusquedaEnTiempoReal);
+    
+    // Búsqueda Móvil
+    const searchFormMobile = document.getElementById('searchFormMobile');
+    const searchInputMobile = document.getElementById('searchInputMobile');
+    if (searchFormMobile && searchInputMobile) {
+        searchFormMobile.addEventListener('submit', manejarBusquedaMovil);
+        searchInputMobile.addEventListener('input', manejarBusquedaEnTiempoRealMovil);
+    }
     
     // Filtros
     document.getElementById('categoriaFilter').addEventListener('change', aplicarFiltros);
@@ -171,6 +179,34 @@ function manejarBusqueda(e) {
 
 function manejarBusquedaEnTiempoReal(e) {
     AppState.filtros.busqueda = e.target.value.trim();
+    // Sincronizar con búsqueda móvil
+    const searchInputMobile = document.getElementById('searchInputMobile');
+    if (searchInputMobile && searchInputMobile.value !== e.target.value) {
+        searchInputMobile.value = e.target.value;
+    }
+    aplicarFiltros();
+}
+
+// Funciones para búsqueda móvil
+function manejarBusquedaMovil(e) {
+    e.preventDefault();
+    const busqueda = document.getElementById('searchInputMobile').value.trim();
+    AppState.filtros.busqueda = busqueda;
+    // Sincronizar con búsqueda desktop
+    const searchInputDesktop = document.getElementById('searchInput');
+    if (searchInputDesktop) {
+        searchInputDesktop.value = busqueda;
+    }
+    aplicarFiltros();
+}
+
+function manejarBusquedaEnTiempoRealMovil(e) {
+    AppState.filtros.busqueda = e.target.value.trim();
+    // Sincronizar con búsqueda desktop
+    const searchInputDesktop = document.getElementById('searchInput');
+    if (searchInputDesktop && searchInputDesktop.value !== e.target.value) {
+        searchInputDesktop.value = e.target.value;
+    }
     aplicarFiltros();
 }
 
@@ -197,6 +233,10 @@ function aplicarFiltros() {
 
 function limpiarFiltros() {
     document.getElementById('searchInput').value = '';
+    const searchInputMobile = document.getElementById('searchInputMobile');
+    if (searchInputMobile) {
+        searchInputMobile.value = '';
+    }
     document.getElementById('categoriaFilter').value = '';
     document.getElementById('precioFilter').value = '';
     document.getElementById('ratingFilter').value = '';
@@ -345,6 +385,9 @@ function renderizarCatalogo() {
             </div>
         </div>
     `).join('');
+    
+    // Aplicar lazy loading para móvil (sin recursión)
+    aplicarLazyLoadingPostRender();
 }
 
 // Vista rápida de producto
@@ -1120,19 +1163,7 @@ function generarEstrellas(rating) {
     return html;
 }
 
-function actualizarContadores() {
-    const carritoCount = document.getElementById('carritoCount');
-    const favoritosCount = document.getElementById('favoritosCount');
-    
-    const totalCarrito = AppState.carrito.reduce((sum, item) => sum + item.cantidad, 0);
-    
-    carritoCount.textContent = totalCarrito;
-    favoritosCount.textContent = AppState.favoritos.length;
-    
-    // Ocultar contadores si están en 0
-    carritoCount.style.display = totalCarrito === 0 ? 'none' : 'inline';
-    favoritosCount.style.display = AppState.favoritos.length === 0 ? 'none' : 'inline';
-}
+// Función actualizada más abajo para incluir funcionalidades móviles
 
 function mostrarToast(mensaje, tipo = 'info') {
     const toast = document.getElementById('toastNotificacion');
@@ -1281,6 +1312,311 @@ function validarRutChileno(rut) {
 
 
 
+// ==============================
+// MEJORAS MÓVIL - Solo ≤ 767px
+// ==============================
+
+// Detección de dispositivo móvil
+const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+
+// Inicialización de funcionalidades móviles
+function inicializarMovil() {
+    if (isMobile()) {
+        console.log('Inicializando funcionalidades móviles');
+        
+        // Configurar lazy loading
+        configurarLazyLoading();
+        
+        // Configurar navegación móvil
+        configurarNavegacionMovil();
+        
+        // Optimizar imágenes para móvil
+        optimizarImagenesMovil();
+        
+        // Configurar gestos táctiles
+        configurarGestosTactiles();
+        
+        // Mejorar rendimiento en móvil
+        optimizarRendimientoMovil();
+    }
+}
+
+// Lazy loading de imágenes para móvil
+function configurarLazyLoading() {
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.dataset.src || img.dataset.mobileSrc;
+                    
+                    if (src) {
+                        img.src = src;
+                        img.classList.remove('lazy-loading');
+                        img.classList.add('fade-in');
+                        observer.unobserve(img);
+                    }
+                }
+            });
+        }, {
+            rootMargin: '50px 0px',
+            threshold: 0.1
+        });
+
+        // Observar todas las imágenes con lazy loading
+        document.querySelectorAll('img[data-src], img[data-mobile-src]').forEach(img => {
+            img.classList.add('lazy-loading');
+            imageObserver.observe(img);
+        });
+    }
+}
+
+// Configurar navegación móvil inferior
+function configurarNavegacionMovil() {
+    // Actualizar contadores en navegación móvil
+    actualizarContadoresMovil();
+    
+    // Configurar eventos de navegación
+    const navItems = document.querySelectorAll('.mobile-nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            // Feedback visual
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+            
+            // Actualizar estado activo
+            navItems.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // Configurar scroll suave al catálogo
+    document.getElementById('mobileNavCatalogo')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('catalogo')?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    });
+}
+
+// Función para enfocar búsqueda en móvil
+function enfocarBusquedaMovil() {
+    const searchInputMobile = document.getElementById('searchInputMobile');
+    if (searchInputMobile) {
+        searchInputMobile.focus();
+        searchInputMobile.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+        });
+    }
+}
+
+// Optimizar imágenes para móvil
+function optimizarImagenesMovil() {
+    const imagenes = document.querySelectorAll('.product-image, .card-img-top');
+    imagenes.forEach(img => {
+        // Agregar atributo para imágenes móviles optimizadas
+        if (img.dataset.mobileSrc) {
+            img.dataset.src = img.dataset.mobileSrc;
+        }
+        
+        // Configurar loading lazy nativo
+        img.loading = 'lazy';
+        img.decoding = 'async';
+    });
+}
+
+// Configurar gestos táctiles
+function configurarGestosTactiles() {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    // Swipe para navegación en modales
+    document.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+    
+    document.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        manejarSwipe();
+    });
+    
+    function manejarSwipe() {
+        const swipeThreshold = 100;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            const modal = document.querySelector('.modal.show');
+            if (modal && modal.id === 'productoModal') {
+                // Swipe en modal de producto para cambiar imagen
+                const carousel = modal.querySelector('.carousel');
+                if (carousel) {
+                    const carouselInstance = bootstrap.Carousel.getInstance(carousel);
+                    if (carouselInstance) {
+                        if (diff > 0) {
+                            carouselInstance.next();
+                        } else {
+                            carouselInstance.prev();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Optimizaciones de rendimiento para móvil
+function optimizarRendimientoMovil() {
+    // Debounce para búsqueda más agresivo en móvil
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        let timeoutId;
+        const originalHandler = searchInput.oninput;
+        
+        searchInput.oninput = function(e) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                if (originalHandler) originalHandler.call(this, e);
+            }, 300); // Delay más largo para móvil
+        };
+    }
+    
+    // Reducir animaciones en dispositivos de gama baja
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) {
+        document.documentElement.style.setProperty('--animation-duration', '0.2s');
+    }
+    
+    // Optimizar scroll en móvil
+    let ticking = false;
+    function updateScrollPosition() {
+        const scrollY = window.scrollY;
+        const bottomNav = document.querySelector('.mobile-bottom-nav');
+        
+        if (bottomNav) {
+            if (scrollY > 100) {
+                bottomNav.style.transform = 'translateY(0)';
+            }
+        }
+        
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateScrollPosition);
+            ticking = true;
+        }
+    });
+}
+
+// Actualizar contadores en navegación móvil
+function actualizarContadoresMovil() {
+    if (!isMobile()) return;
+    
+    const carritoCountDesktop = document.getElementById('carritoCount');
+    const favoritosCountDesktop = document.getElementById('favoritosCount');
+    const carritoCountMovil = document.getElementById('mobileNavCarritoCount');
+    const favoritosCountMovil = document.getElementById('mobileNavFavoritosCount');
+    
+    if (carritoCountDesktop && carritoCountMovil) {
+        const count = carritoCountDesktop.textContent;
+        carritoCountMovil.textContent = count;
+        carritoCountMovil.classList.toggle('d-none', count === '0');
+    }
+    
+    if (favoritosCountDesktop && favoritosCountMovil) {
+        const count = favoritosCountDesktop.textContent;
+        favoritosCountMovil.textContent = count;
+        favoritosCountMovil.classList.toggle('d-none', count === '0');
+    }
+}
+
+// Función original de actualizar contadores (sin sobrescribir)
+function actualizarContadoresBase() {
+    const carritoCount = document.getElementById('carritoCount');
+    const favoritosCount = document.getElementById('favoritosCount');
+    
+    const totalCarrito = AppState.carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    
+    carritoCount.textContent = totalCarrito;
+    favoritosCount.textContent = AppState.favoritos.length;
+    
+    // Ocultar contadores si están en 0
+    carritoCount.style.display = totalCarrito === 0 ? 'none' : 'inline';
+    favoritosCount.style.display = AppState.favoritos.length === 0 ? 'none' : 'inline';
+}
+
+// Función mejorada que incluye funcionalidad móvil
+function actualizarContadores() {
+    // Ejecutar lógica base
+    actualizarContadoresBase();
+    
+    // Agregar funcionalidad móvil
+    actualizarContadoresMovil();
+}
+
+// Hook para aplicar lazy loading después de renderizar catálogo
+function aplicarLazyLoadingPostRender() {
+    if (isMobile()) {
+        setTimeout(() => {
+            configurarLazyLoading();
+        }, 100);
+    }
+}
+
+// Función para manejar cambios de orientación
+function manejarCambioOrientacion() {
+    if (isMobile()) {
+        setTimeout(() => {
+            // Recalcular layout después de cambio de orientación
+            window.dispatchEvent(new Event('resize'));
+        }, 100);
+    }
+}
+
+// Event listeners para móvil
+if (isMobile()) {
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', inicializarMovil);
+    
+    // Manejar cambios de orientación
+    window.addEventListener('orientationchange', manejarCambioOrientacion);
+    
+    // Prevenir zoom en inputs
+    document.addEventListener('touchstart', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+            e.target.style.fontSize = '16px';
+        }
+    });
+    
+    // Optimizar viewport en móvil
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    }
+}
+
+// Función para detectar si es primera visita en móvil
+function esPrimeraVisitaMovil() {
+    if (isMobile() && !localStorage.getItem('unab_mobile_visited')) {
+        localStorage.setItem('unab_mobile_visited', 'true');
+        return true;
+    }
+    return false;
+}
+
+// Mostrar tips de primera visita en móvil
+function mostrarTipsMovil() {
+    if (esPrimeraVisitaMovil()) {
+        setTimeout(() => {
+            mostrarToast('¡Desliza hacia abajo para ver la navegación!', 'info');
+        }, 2000);
+    }
+}
+
 // Exportar funciones para uso global
 window.abrirVistaRapida = abrirVistaRapida;
 window.toggleFavorito = toggleFavorito;
@@ -1294,3 +1630,4 @@ window.eliminarFavorito = eliminarFavorito;
 window.moverFavoritoACarrito = moverFavoritoACarrito;
 window.seleccionarEnvio = seleccionarEnvio;
 window.toggleFiltrosMovil = toggleFiltrosMovil;
+window.enfocarBusquedaMovil = enfocarBusquedaMovil;

@@ -627,3 +627,76 @@ Aplica unicamente a modo oscuro
 
 * ## 14
 
+# 📱 Prompt para Mejorar Versión Móvil del Proyecto
+
+## 🎯 Objetivo
+
+Generar una versión **mejorada del sitio solo para dispositivos móviles**, sin alterar en absoluto la versión de escritorio ya existente en el repositorio [Taller1-DesarrolloWeb](https://github.com/ViktorNR/Taller1-DesarrolloWeb).
+
+## 📝 Instrucciones del Prompt
+
+> **Tarea:** Mejorar la experiencia de usuario cuando el sitio se detecte en un dispositivo móvil.
+>
+> **Requisitos clave:**
+>
+> 1. Detectar móvil usando `@media (max-width: 767px)` en CSS o `window.matchMedia` en JS.
+> 2. Los cambios deben aplicar **exclusivamente** en móvil.
+> 3. Mantener la versión de escritorio **sin modificaciones**.
+> 4. Comentar claramente en el código dónde comienzan y terminan las mejoras para móvil.
+> 5. Entregar el código modular y fácil de mantener.
+
+## 📌 Puntos de Mejora Recomendados
+
+* **Accesibilidad táctil:** Botones más grandes, mayor separación entre elementos.
+* **Navegación optimizada:** Menú hamburguesa fijo (sticky), navegación inferior.
+* **Layout simplificado:** Reordenar secciones largas en 1 sola columna, ocultar o colapsar elementos secundarios.
+* **Imágenes adaptadas:** Cargar versiones más ligeras o comprimidas solo en móvil.
+* **Rendimiento:** Aplicar `lazy-loading` a imágenes no críticas.
+* **Interacción:** Animaciones suaves y feedback visual.
+
+## 📂 Ejemplo de Código
+
+### CSS
+
+```css
+/* ==============================
+   MÓVIL – Mejoras solo ≤ 767px
+   ============================== */
+@media (max-width: 767px) {
+  .btn {
+    padding: 1rem 1.5rem;
+    font-size: 1.2rem;
+  }
+
+  nav.navbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #002B5C;
+  }
+
+  .productos-grid {
+    display: flex;
+    flex-direction: column;
+  }
+}
+```
+
+### JavaScript
+
+```js
+// ==============================
+// MÓVIL – Mejoras solo ≤ 767px
+// ==============================
+if (window.matchMedia("(max-width: 767px)").matches) {
+  document.querySelectorAll('.product-image').forEach(img => {
+    const lowRes = img.dataset.mobileSrc;
+    if (lowRes) img.src = lowRes;
+  });
+}
+```
+
+## ✅ Resultado Esperado
+
+* En **escritorio**: el sitio mantiene su diseño actual.
+* En **móvil**: se aplican mejoras de usabilidad, rendimiento y navegación que optimizan la experiencia sin alterar la lógica del sitio en pantallas grandes.

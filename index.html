@@ -11,70 +11,76 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header UNAB Style -->
+    <!-- Header UNAB Style - Responsivo -->
     <header class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainHeader">
         <div class="container-fluid">
-            
-            <!-- Main Header Section -->
+            <!-- Header Compacto -->
             <div class="main-header">
                 <div class="container">
                     <div class="row align-items-center">
-                        <div class="col-md-8">
+                        <!-- Logo y Título - Responsivo -->
+                        <div class="col-8 col-md-6">
                             <div class="unab-brand">
                                 <div class="unab-logo">
                                     <div class="logo-emblem">
-                                        <img src="iconos/logo_unab.png" alt="Emblema Logo" class="emblem-image">
+                                        <img src="iconos/logo_unab.png" alt="Logo UNAB" class="emblem-image">
                                     </div>
                                     <div class="logo-text">
-                                        <h1>Universidad Andrés Bello</h1>
-                                        <h2>Mini-Marketplace Universitario</h2>
+                                        <h1 class="d-none d-sm-block">Universidad Andrés Bello</h1>
+                                        <h1 class="d-sm-none">UNAB</h1>
+                                        <h2 class="d-none d-md-block">Mini-Marketplace Universitario</h2>
+                                        <h2 class="d-md-none d-none d-sm-block">Marketplace</h2>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de Carrito y Favoritos - Solo Desktop -->
+                        <div class="col-4 col-md-6 d-none d-md-flex justify-content-end">
+                            <div class="header-actions">
+                                <button class="btn btn-favoritos" id="favoritosBtn" title="Favoritos">
+                                    <i class="fas fa-heart"></i>
+                                    <span class="badge" id="favoritosCount">0</span>
+                                </button>
+                                <button class="btn btn-carrito" id="carritoBtn" title="Carrito">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span class="badge" id="carritoCount">0</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Bottom Navigation Bar -->
-            <nav class="navbar navbar-expand-lg" id="mainNav">
+            <!-- Navegación y Búsqueda - Solo Desktop -->
+            <nav class="navbar navbar-expand-lg d-none d-md-block" id="mainNav">
                 <div class="container">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="#catalogo">Catálogo</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#favoritos">Favoritos</a>
-                            </li>
-                        </ul>
-                        
-                        <!-- Búsqueda -->
-                        <form class="d-flex me-3" id="searchForm">
-                            <input class="form-control" type="search" placeholder="Buscar productos..." id="searchInput">
-                            <button class="btn btn-search-submit" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </form>
-                        
-                        <!-- Carrito y Favoritos -->
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-favoritos" id="favoritosBtn" title="Favoritos">
-                                <i class="fas fa-heart"></i>
-                                <span class="badge" id="favoritosCount">0</span>
-                            </button>
-                            <button class="btn btn-carrito" id="carritoBtn" title="Carrito">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span class="badge" id="carritoCount">0</span>
-                            </button>
-                        </div>
+                    <div class="navbar-nav me-auto">
+                        <a class="nav-link active" href="#catalogo">Catálogo</a>
+                        <a class="nav-link" href="#favoritos">Favoritos</a>
                     </div>
+                    
+                    <!-- Búsqueda Desktop -->
+                    <form class="d-flex" id="searchForm">
+                        <input class="form-control" type="search" placeholder="Buscar productos..." id="searchInput">
+                        <button class="btn btn-search-submit" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
                 </div>
             </nav>
+            
+            <!-- Búsqueda Móvil - Solo visible en móvil -->
+            <div class="mobile-search d-md-none">
+                <div class="container">
+                    <form class="d-flex" id="searchFormMobile">
+                        <input class="form-control" type="search" placeholder="Buscar productos..." id="searchInputMobile">
+                        <button class="btn btn-search-submit" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -417,6 +423,42 @@
             </div>
         </div>
     </div>
+
+    <!-- ==============================
+         NAVEGACIÓN MÓVIL INFERIOR - Solo ≤ 767px
+         ============================== -->
+    <nav class="mobile-bottom-nav d-md-none">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <a href="#catalogo" class="mobile-nav-item active" id="mobileNavCatalogo">
+                        <i class="fas fa-home"></i>
+                        <span>Inicio</span>
+                    </a>
+                </div>
+                <div class="col-3">
+                    <a href="#" class="mobile-nav-item" id="mobileNavBuscar" onclick="enfocarBusquedaMovil()">
+                        <i class="fas fa-search"></i>
+                        <span>Buscar</span>
+                    </a>
+                </div>
+                <div class="col-3">
+                    <a href="#" class="mobile-nav-item" id="mobileNavFavoritos" onclick="abrirFavoritos()">
+                        <i class="fas fa-heart"></i>
+                        <span>Favoritos</span>
+                        <span class="mobile-nav-badge d-none" id="mobileNavFavoritosCount">0</span>
+                    </a>
+                </div>
+                <div class="col-3">
+                    <a href="#" class="mobile-nav-item" id="mobileNavCarrito" onclick="abrirCarrito()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Carrito</span>
+                        <span class="mobile-nav-badge d-none" id="mobileNavCarritoCount">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- Footer UNAB Style -->
     <footer class="footer-unab">
