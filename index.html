@@ -35,18 +35,8 @@
                             </div>
                         </div>
                         
-                        <!-- Botones de Carrito y Favoritos - Solo Desktop -->
+                        <!-- Espacio para mantener el layout en desktop -->
                         <div class="col-4 col-md-6 d-none d-md-flex justify-content-end">
-                            <div class="header-actions">
-                                <button class="btn btn-favoritos" id="favoritosBtn" title="Favoritos">
-                                    <i class="fas fa-heart"></i>
-                                    <span class="badge" id="favoritosCount">0</span>
-                                </button>
-                                <button class="btn btn-carrito" id="carritoBtn" title="Carrito">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    <span class="badge" id="carritoCount">0</span>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -61,12 +51,24 @@
                     </div>
                     
                     <!-- Búsqueda Desktop -->
-                    <form class="d-flex" id="searchForm">
+                    <form class="d-flex me-3" id="searchForm">
                         <input class="form-control" type="search" placeholder="Buscar productos..." id="searchInput">
                         <button class="btn btn-search-submit" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
+                    
+                    <!-- Botones de Carrito y Favoritos - Desktop -->
+                    <div class="header-actions">
+                        <button class="btn btn-favoritos" id="favoritosBtn" title="Favoritos">
+                            <i class="fas fa-heart"></i>
+                            <span class="badge" id="favoritosCount">0</span>
+                        </button>
+                        <button class="btn btn-carrito" id="carritoBtn" title="Carrito">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge" id="carritoCount">0</span>
+                        </button>
+                    </div>
                 </div>
             </nav>
             
