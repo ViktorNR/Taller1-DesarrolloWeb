@@ -1,6 +1,6 @@
 // Mini-Marketplace UNAB - Universidad Andrés Bello
 // Aplicación Principal con Identidad Visual Institucional
-// Autor: Asistente IA
+// Autor: Grupo 4
 // Fecha: 2025
 
 // Estado global de la aplicación
