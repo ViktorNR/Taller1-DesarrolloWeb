@@ -1190,20 +1190,24 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const validate = (input) => {
-    // Limpia cualquier mensaje personalizado previo
-    input.setCustomValidity("");
+  input.setCustomValidity(""); // Limpia errores anteriores
 
-    // (Opcional) Ejemplo de mensaje personalizado para teléfono
-
-
-    if (input.checkValidity()) {
-      input.classList.remove("is-invalid");
-      input.classList.add("is-valid");
-    } else {
-      input.classList.remove("is-valid");
-      input.classList.add("is-invalid");
+  // Validación personalizada para RUT
+  if (input.id === "rut") {
+    const rutValido = validarRutChileno(input.value.trim());
+    if (!rutValido) {
+      input.setCustomValidity("RUT inválido");
     }
-  };
+  }
+
+  if (input.checkValidity()) {
+    input.classList.remove("is-invalid");
+    input.classList.add("is-valid");
+  } else {
+    input.classList.remove("is-valid");
+    input.classList.add("is-invalid");
+  }
+};;
 
   inputs.forEach((input) => {
     // Validación mientras escribe
@@ -1234,6 +1238,36 @@ document.addEventListener("DOMContentLoaded", () => {
     form.classList.add("was-validated");
   });
 });
+
+function validarRutChileno(rut) {
+  // Elimina puntos y guión
+  rut = rut.replace(/\./g, "").replace(/-/g, "").toUpperCase();
+
+  // Extrae cuerpo y dígito verificador
+  const cuerpo = rut.slice(0, -1);
+  let dv = rut.slice(-1);
+
+  if (!/^\d+$/.test(cuerpo)) return false;
+
+  let suma = 0;
+  let multiplo = 2;
+
+  // Recorre el RUT de derecha a izquierda
+  for (let i = cuerpo.length - 1; i >= 0; i--) {
+    suma += parseInt(cuerpo[i]) * multiplo;
+    multiplo = multiplo < 7 ? multiplo + 1 : 2;
+  }
+
+  const dvEsperado = 11 - (suma % 11);
+  let dvCalculado = dvEsperado === 11 ? "0" : dvEsperado === 10 ? "K" : dvEsperado.toString();
+
+  return dv === dvCalculado;
+}
+
+
+
+
+
 
 
 
