@@ -263,3 +263,367 @@ Caso-miniAmazon-1.pdf
 Desarrollo_Web_y_Movil-3.pdf
 
 Captura con paleta/tipografía UNAB (branding.png)
+
+
+
+
+
+
+# Nuevos
+
+* ## 1
+
+mejora el modal de vista rapida y la visualizacon de las imagenes.
+no se que hice, pero ahora no pasa la imagen
+necesito que ocupe la totalidad del espacio disponible al lado de la descripcion
+
+* ## 2
+
+pero ahora no aparecenlos botones de cambiar del carrusel
+es decir aparecen por una fraccion de segundo y luego cuando carga la imagen desaparecen.
+no son funcionales tampoco
+
+* ## 3
+
+sigue habiendo problema con el carrusel de las imagenes
+al apretar los botones para cambiar no se cambian las imagenes
+(esto funcionaba en el commit anterior)
+
+* ## 4
+
+no quiero que se vean los botones de la imagen
+
+* ## 5
+
+trata agregando esto
+/* Quitar flechas de los inputs tipo number en Chrome, Safari, Edge */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Quitar flechas en Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+* ## 6
+
+Eres un desarrollador frontend senior especializado en Bootstrap 5, Tailwind CSS y JavaScript vanilla. Tu objetivo es arreglar un problema de layout en un modal de producto: al personalizar los botones de cantidad (- y +) y quitar los spinners del <input type="number">, el carrusel dentro del modal se desajustó. Debes dar la solución con código limpio, responsivo y reutilizable, manteniendo la estética basada en la paleta institucional de la UNAB.
+
+Descripción del Problema
+
+Actualmente, el modal del producto muestra un carrusel de imágenes a la izquierda y la información del producto a la derecha. En la sección Cantidad, al reemplazar el input number por un campo controlado con botones - y +, se rompió el diseño: el modal pierde proporción y el carrusel se desacomoda.
+
+Se requiere una implementación estable, que:
+
+Mantenga el carrusel intacto.
+
+Permita sumar/restar dentro del rango (1–25).
+
+Centre y estilice el input de cantidad.
+
+Sea reutilizable en el modal y en el carrito.
+
+Instrucciones de Implementación
+
+Eliminar spinners nativos del input number
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+Agrupar botones e input con Bootstrap (solución recomendada)
+
+<label for="cantidadProducto" class="form-label fw-bold">Cantidad:</label>
+<div class="input-group w-auto">
+  <button class="btn btn-outline-primary" type="button" onclick="cambiarCantidad(-1)">-</button>
+  <input type="number" class="form-control text-center" id="cantidadProducto" value="1" min="1" max="25" style="max-width:70px;">
+  <button class="btn btn-outline-primary" type="button" onclick="cambiarCantidad(1)">+</button>
+</div>
+
+
+Versión alternativa en Tailwind
+
+<div class="flex items-center space-x-1">
+  <button class="px-3 py-1 bg-blue-900 text-white rounded" onclick="cambiarCantidad(-1)">-</button>
+  <input type="number" id="cantidadProducto" value="1" min="1" max="25"
+         class="w-16 text-center border border-gray-300 rounded" />
+  <button class="px-3 py-1 bg-blue-900 text-white rounded" onclick="cambiarCantidad(1)">+</button>
+</div>
+
+
+Crear función reutilizable en JS
+
+function cambiarCantidad(delta) {
+  const input = document.getElementById("cantidadProducto");
+  let valor = parseInt(input.value) || 1;
+  valor = Math.min(25, Math.max(1, valor + delta));
+  input.value = valor;
+}
+
+
+Reutilización
+
+Usa el mismo bloque en el modal de producto y en el carrito.
+
+Cambia solo el id (cantidadProducto, cantidadCarritoX, etc.) para evitar colisiones.
+
+Si deseas algo más escalable, encapsúlalo en un componente JS que acepte como parámetro el id del input.
+
+Criterios de Éxito
+
+El carrusel no se rompe y mantiene su alineación.
+
+Los botones - y + funcionan dentro del rango (1–25).
+
+El input mantiene tamaño fijo y centrado.
+
+Compatible tanto con Bootstrap como con Tailwind.
+
+Estilizado con los colores institucionales (azul oscuro UNAB en botones primarios, rojo UNAB en CTAs).
+
+* ## 7
+
+los botones de mas y menos me gustaban como eran antes
+quizas probemos con algo
+
+<div class="input-group" style="max-width: 150px;">
+  <!-- Botón Menos -->
+  <button class="btn btn-outline-primary d-flex align-items-center justify-content-center" 
+          type="button" onclick="cambiarCantidad(-1)" 
+          style="background-color: var(--unab-azul); color: var(--unab-blanco); border-color: var(--unab-azul);
+                 border-radius: 50%; width: 40px; height: 40px;">
+    <i class="fas fa-minus"></i>
+  </button>
+
+  <!-- Input Cantidad -->
+  <input type="number" class="form-control text-center fw-bold" 
+         id="cantidadProducto" value="1" min="1" max="25" 
+         style="max-width: 70px; border-color: var(--unab-azul);">
+
+  <!-- Botón Más -->
+  <button class="btn btn-outline-primary d-flex align-items-center justify-content-center" 
+          type="button" onclick="cambiarCantidad(1)" 
+          style="background-color: var(--unab-azul); color: var(--unab-blanco); border-color: var(--unab-azul);
+                 border-radius: 50%; width: 40px; height: 40px;">
+    <i class="fas fa-plus"></i>
+  </button>
+</div>
+
+* ## 8
+
+Rol del Asistente
+Eres un desarrollador frontend senior especializado en Bootstrap 5, Tailwind CSS y JavaScript vanilla. Tu tarea es implementar un modal de “Mis Favoritos” en un mini–marketplace universitario. El modal debe mostrar los productos guardados en localStorage, con diseño responsivo y siguiendo la paleta institucional UNAB.
+
+Descripción del Proyecto
+El sistema ya tiene la lógica para marcar productos como favoritos. Actualmente, cuando no existen favoritos, se muestra un mensaje vacío. Necesitamos que el modal se vuelva dinámico:
+
+Si no hay productos → mostrar estado vacío con ícono y mensaje.
+
+Si hay productos → listar cada favorito como card con imagen, nombre, precio y botones de acción.
+
+Requisitos Técnicos
+
+Frontend: HTML5 + Bootstrap 5 (puede adaptarse a Tailwind).
+
+Persistencia: localStorage (clave favoritos).
+
+Interactividad: JavaScript vanilla.
+
+UI: Consistente con colores UNAB (--unab-azul, --unab-rojo, --unab-blanco).
+
+Acciones del modal:
+
+Ver productos favoritos.
+
+Eliminar un favorito.
+
+Mover producto al carrito.
+
+Instrucciones para Implementación
+
+Estructura del Modal Favoritos
+
+Modal Bootstrap (.modal-lg).
+
+Header azul UNAB con título e ícono de corazón.
+
+Body dinámico (#favoritosContainer).
+
+Estado vacío: ícono corazón gris + mensaje “No tienes favoritos”.
+
+Estado con productos: grid de cards responsivas.
+
+Footer con botón “Cerrar”.
+
+Script JavaScript
+
+Función getFavoritos() para obtener lista desde localStorage.
+
+Función renderFavoritos() que construya dinámicamente el contenido:
+
+Si array vacío → mostrar estado vacío.
+
+Si hay productos → renderizar cards con:
+
+Imagen.
+
+Nombre.
+
+Precio en rojo UNAB.
+
+Botón Agregar al carrito.
+
+Botón Eliminar.
+
+Función eliminarFavorito(id) para quitar productos y actualizar el modal.
+
+Evento show.bs.modal en #modalFavoritos → siempre refrescar con renderFavoritos().
+
+Función toggleFavorito(producto) para añadir o quitar desde el catálogo.
+
+Objeto Producto Estándar
+
+{
+  id: 1,
+  nombre: "Laptop HP Pavilion 15",
+  precio: 450000,
+  imagen: "img/laptop-hp.jpg"
+}
+
+
+Persistencia
+
+Guardar y actualizar favoritos en localStorage como JSON.
+
+Clave: "favoritos".
+
+Criterios de Éxito
+
+Modal muestra correctamente el estado vacío y la lista de favoritos.
+
+Productos persistentes entre recargas gracias a localStorage.
+
+Botones funcionales (eliminar y agregar al carrito).
+
+UI responsiva, con estilo alineado a la identidad UNAB.
+
+Código limpio y modular (posible extraer a favoritos.js).
+
+* ## 9
+
+tenia que usar este boton de favoritos
+
+
+                                <a class="nav-link" href="#favoritos">Favoritos</a>
+                            
+
+no agregar uno nuevo
+
+* ## 10
+
+en el modal de favoritos el boton de Ver detalles deberia ser el mismo que Vista Rapida
+
+<button class="btn btn-outline-secondary btn-sm" onclick="mostrarModalProducto(2)" data-bs-dismiss="modal">
+                                    <i class="fas fa-eye me-2"></i>
+                                    Ver Detalles
+                                </button>
+
+<button class="btn btn-vista-rapida" onclick="abrirVistaRapida(1)">
+                            <i class="fas fa-eye me-1"></i>Vista Rápida
+                        </button>
+
+lo mismo con el de Agregar al carrito
+<button class="btn btn-primary btn-sm" onclick="moverFavoritoACarrito(1)">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    Agregar al Carrito
+                                </button>
+
+<button class="btn btn-agregar-carrito w-100" onclick="agregarAlCarritoDirecto(1)">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Agregar al Carrito
+                        </button>
+
+* ## 11
+
+implementa un modo oscuro para el proyecto
+
+* ## 12
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/data/productos.json. (Reason: CORS request not http).
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/data/categorias.json. (Reason: CORS request not http).
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/data/envios.json. (Reason: CORS request not http).
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/data/promos.json. (Reason: CORS request not http).
+
+Error al cargar data/productos.json: TypeError: NetworkError when attempting to fetch resource.
+    fetchJSON file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:90
+    cargarDatos file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:62
+    inicializarApp file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:39
+    <anonymous> file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:33
+app.js:96:17
+Error al cargar data/categorias.json: TypeError: NetworkError when attempting to fetch resource.
+    fetchJSON file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:90
+    cargarDatos file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:63
+    inicializarApp file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:39
+    <anonymous> file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:33
+app.js:96:17
+Error al cargar data/envios.json: TypeError: NetworkError when attempting to fetch resource.
+    fetchJSON file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:90
+    cargarDatos file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:64
+    inicializarApp file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:39
+    <anonymous> file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:33
+app.js:96:17
+Error al cargar data/promos.json: TypeError: NetworkError when attempting to fetch resource.
+    fetchJSON file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:90
+    cargarDatos file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:65
+    inicializarApp file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:39
+    <anonymous> file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:33
+app.js:96:17
+Error al cargar datos: TypeError: NetworkError when attempting to fetch resource.
+    fetchJSON file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:90
+    cargarDatos file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:62
+    inicializarApp file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:39
+    <anonymous> file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:33
+app.js:83:17
+Error al inicializar la aplicación: TypeError: NetworkError when attempting to fetch resource.
+    fetchJSON file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:90
+    cargarDatos file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:62
+    inicializarApp file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:39
+    <anonymous> file:///C:/Users/salaz/OneDrive/Desktop/universidad/2025/S2/DWM/P1/repo/Taller1-DesarrolloWeb/app.js:33
+
+* ## 13
+
+Sugerencia de paleta Modo Oscuro (basado en tu identidad visual):
+
+
+{
+  --fondo-principal: #121212;
+  --fondo-secundario: #1E1E1E;
+  --card-bg: #21242A;
+  --texto-principal: #F5F5F5;
+  --texto-secundario: #B0B3B8;
+
+  --color-primario: var(--unab-azul); /* #002B5C */
+  --color-secundario: var(--unab-rojo); /* #C8102E */
+
+  --boton-hover: #153D72;
+  --borde-claro: #2E2E2E;
+  --sombra-suave: rgba(0, 0, 0, 0.2);
+}
+
+
+Aplica unicamente a modo oscuro
+
+* ## 14
+
