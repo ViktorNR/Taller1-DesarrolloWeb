@@ -351,6 +351,7 @@ function renderizarCatalogo() {
 function abrirVistaRapida(productoId) {
     const producto = AppState.productos.find(p => p.id === productoId);
     if (!producto) return;
+    if (!producto) return;
     
     const modal = document.getElementById('productoModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -358,13 +359,15 @@ function abrirVistaRapida(productoId) {
     
     modalTitle.textContent = producto.nombre;
     
+    const carruselId = `galeriaProducto-${producto.id}`;
     modalBody.innerHTML = `
         <div class="row">
             <div class="col-md-6">
-                <div id="galeriaProducto" class="carousel slide">
+                <div id="${carruselId}" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
+                
                     <div class="carousel-inner">
                         ${producto.imagenes.map((img, index) => `
-                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                            <div class="carousel-item ${index === 0 ? 'active' : ''}" data-bs-interval="2000">
                                 <img src="${img}" class="d-block w-100 producto-modal-img" alt="${producto.nombre}">
                             </div>
                         `).join('')}
@@ -374,21 +377,26 @@ function abrirVistaRapida(productoId) {
                         <!-- Indicadores del carrusel -->
                         <div class="carousel-indicators">
                             ${producto.imagenes.map((_, index) => `
-                                <button type="button" data-bs-target="#galeriaProducto" data-bs-slide-to="${index}" 
-                                        class="${index === 0 ? 'active' : ''}" aria-label="Slide ${index + 1}"></button>
+                                <button type="button" data-bs-target="#${carruselId}" data-bs-slide-to="${index}" 
+                                        class="${index === 0 ? 'active' : ''}" 
+                                        aria-current="${index === 0 ? 'true' : 'false'}"
+                                        aria-label="Slide ${index + 1}"></button>
                             `).join('')}
                         </div>
-                        
+
                         <!-- Controles de navegación -->
-                        <button class="carousel-control-prev" type="button" data-bs-target="#galeriaProducto" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#${carruselId}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#galeriaProducto" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
+                        <button class="carousel-control-next" type="button" data-bs-target="#${carruselId}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
                         </button>
                     ` : ''}
                 </div>
             </div>
+
             <div class="col-md-6">
                 <div class="producto-modal-info">
                     <h4>${producto.nombre}</h4>
@@ -457,7 +465,7 @@ function abrirVistaRapida(productoId) {
     
     // Limpiar carrusel cuando se cierre el modal
     modal.addEventListener('hidden.bs.modal', function () {
-        const carousel = document.getElementById('galeriaProducto');
+        const carousel = document.getElementById(carruselId);
         if (carousel && carousel._carousel) {
             carousel._carousel.dispose();
             carousel._carousel = null;
@@ -468,7 +476,7 @@ function abrirVistaRapida(productoId) {
     
     // Inicializar el carrusel correctamente
     setTimeout(() => {
-        const carousel = document.getElementById('galeriaProducto');
+        const carousel = document.getElementById(carruselId);
         if (carousel && producto.imagenes.length > 1) {
             // Destruir instancia previa si existe
             if (carousel._carousel) {
