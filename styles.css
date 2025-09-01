@@ -836,6 +836,7 @@ input[type=number]::-webkit-inner-spin-button {
 /* Quitar flechas en Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 /* Estilos específicos para el modal de producto */
@@ -1499,6 +1500,7 @@ input[type=number] {
 .text-truncate-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
