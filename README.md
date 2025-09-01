@@ -37,16 +37,27 @@ El proyecto implementa fielmente la paleta de colores corporativa de la Universi
 
 ```
 /
-├── index.html              # Página principal con header UNAB
-├── styles.css              # Estilos con identidad visual UNAB
-├── app.js                  # Lógica de la aplicación
-├── data/                   # Datos de ejemplo UNAB
-│   ├── productos.json      # Catálogo de productos universitarios
-│   ├── categorias.json     # Categorías UNAB
-│   ├── envios.json         # Opciones de envío UNAB
-│   └── promos.json         # Cupones de descuento UNAB
-├── README.md               # Este archivo
-└── .gitignore              # Archivos a ignorar en Git
+├── index.html                    # Página principal con header UNAB
+├── styles.css                    # Estilos con identidad visual UNAB
+├── app.js                        # Lógica de la aplicación
+├── data/                         # Datos de ejemplo UNAB
+│   ├── productos.json            # Catálogo de productos universitarios
+│   ├── categorias.json           # Categorías UNAB
+│   ├── envios.json               # Opciones de envío UNAB
+│   └── promos.json               # Cupones de descuento UNAB
+├── iconos/                       # Recursos visuales UNAB
+│   ├── logo_unab.png             # Logo UNAB a color
+│   ├── logo_unab_nocolor.png     # Logo UNAB monocromático
+│   └── favicon-16x16.png         # Favicon del sitio
+├── documentacion/                # Documentación del proyecto
+│   ├── Caso-miniAmazon-1.pdf     # Caso de estudio original
+│   └── Desarrollo_Web_y_Movil-3.pdf # Especificaciones técnicas
+├── APACHE_SETUP.md               # Guía de configuración de Apache
+├── CHECKLIST_ACEPTACION.md       # Checklist de aceptación del proyecto
+├── Prompt.md                     # Prompt de desarrollo del proyecto
+├── LICENSE                       # Licencia MIT
+├── README.md                     # Este archivo
+└── .gitignore                    # Archivos a ignorar en Git
 ```
 
 ## 🚀 **Instalación y Ejecución**

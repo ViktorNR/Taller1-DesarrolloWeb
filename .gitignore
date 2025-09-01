@@ -104,3 +104,6 @@ docs/
 *.wav
 *.flac
 *.aac
+
+
+documentacion/*
