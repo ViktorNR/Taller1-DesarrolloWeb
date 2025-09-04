@@ -1,6 +1,10 @@
 # 🎓 Mini-Marketplace UNAB - Universidad Andrés Bello
 
-Un prototipo frontend-only de un marketplace universitario construido con tecnologías web estándar (HTML5, CSS3, JavaScript vanilla) y Bootstrap 5, aplicando la identidad visual institucional de la Universidad Andrés Bello.
+Un marketplace universitario completo construido con tecnologías web estándar (HTML5, CSS3, JavaScript ES6+) y Bootstrap 5, aplicando la identidad visual institucional de la Universidad Andrés Bello. Este proyecto proporciona una experiencia de compra moderna y fluida para productos y servicios universitarios.
+
+## 🌟 **Demostración en Vivo**
+
+🔗 [Ver Demo del Proyecto](https://dwm.salazarcabello.cl)
 
 ## 🎨 **Identidad Visual UNAB**
 
@@ -13,15 +17,27 @@ El proyecto implementa fielmente la paleta de colores corporativa de la Universi
 
 ## 🚀 **Características Principales**
 
-- **Catálogo de productos** con búsqueda, filtros y ordenamiento
-- **Vista rápida** de productos en modal con galería de imágenes
-- **Sistema de carrito** con gestión de cantidades y persistencia
-- **Lista de favoritos** con funcionalidad de mover al carrito
-- **Checkout completo** con validaciones y cupones de descuento
-- **Diseño responsivo** optimizado para móviles y desktop
-- **Persistencia local** usando localStorage
-- **UI moderna** con Bootstrap 5 y Font Awesome
+### 🛍️ **Experiencia de Compra**
+- **Catálogo de productos** con búsqueda en tiempo real y filtros avanzados
+- **Vista rápida** de productos en modal con galería de imágenes y zoom
+- **Sistema de carrito** con gestión de cantidades y persistencia automática
+- **Lista de favoritos** con sincronización entre carrito y wishlist
+- **Checkout completo** con validaciones y sistema de cupones UNAB
+
+### 💻 **Características Técnicas**
+- **Estado global** con gestión eficiente de datos
+- **Persistencia local** usando localStorage con respaldo
+- **Validaciones robustas** en todos los formularios
+- **Manejo de errores** con mensajes amigables
+- **API RESTful** simulada con datos JSON estáticos
+- **Optimización de rendimiento** con lazy loading
+
+### 🎨 **Interfaz y Diseño**
+- **Diseño responsivo** optimizado para todos los dispositivos
+- **UI moderna** con Bootstrap 5 y Font Awesome 6
 - **Identidad visual UNAB** completamente integrada
+- **Animaciones suaves** y transiciones fluidas
+- **Componentes reutilizables** con diseño modular
 
 ## 🛠️ **Stack Técnico**
 
@@ -52,9 +68,16 @@ El proyecto implementa fielmente la paleta de colores corporativa de la Universi
 ├── documentacion/                # Documentación del proyecto
 │   ├── Caso-miniAmazon-1.pdf     # Caso de estudio original
 │   └── Desarrollo_Web_y_Movil-3.pdf # Especificaciones técnicas
+├── Mockups/                      # Diseños UI/UX del proyecto
+│   ├── Carrito.png              # Diseño de la vista del carrito
+│   ├── Catalogo.png             # Diseño de la vista del catálogo
+│   ├── Checkout.png             # Diseño del proceso de pago
+│   ├── Detalle_del_Producto.png # Diseño de la vista detallada
+│   └── Favoritos.png            # Diseño de la lista de favoritos
 ├── APACHE_SETUP.md               # Guía de configuración de Apache
 ├── CHECKLIST_ACEPTACION.md       # Checklist de aceptación del proyecto
-├── Prompt.md                     # Prompt de desarrollo del proyecto
+├── MOBILE_IMPROVEMENTS.md        # Guía de mejoras para móviles
+├── Prompt.md                     # Prompts de desarrollo del proyecto
 ├── LICENSE                       # Licencia MIT
 ├── README.md                     # Este archivo
 └── .gitignore                    # Archivos a ignorar en Git
@@ -132,8 +155,31 @@ Luego acceder a: `http://localhost:8000`
 - **Resumen de compra** dinámico
 - **Confirmación** con número de orden UNAB
 
-## 💾 **Datos de Ejemplo UNAB**
+## 💾 **Gestión de Datos**
 
+### 📊 **Estructura de Datos**
+El proyecto utiliza un sistema robusto de gestión de datos con JSON:
+
+```javascript
+// Estado global de la aplicación
+const AppState = {
+    productos: [],      // Catálogo completo
+    categorias: [],     // Categorías disponibles
+    opcionesEnvio: [],  // Opciones de envío
+    cupones: [],        // Cupones válidos
+    carrito: [],        // Items en carrito
+    favoritos: [],      // Lista de deseos
+    filtros: {          // Estado de filtros
+        busqueda: '',
+        categoria: '',
+        precio: '',
+        rating: '',
+        orden: ''
+    }
+};
+```
+
+### 📁 **Datos de Ejemplo UNAB**
 El proyecto incluye datos de ejemplo institucionales en formato JSON:
 
 - **10 productos** de diferentes categorías UNAB
@@ -196,27 +242,62 @@ Edita `data/categorias.json` para cambiar o agregar categorías UNAB.
 
 Modifica `styles.css` para personalizar colores, fuentes y layout manteniendo la identidad UNAB.
 
-## 🧪 **Pruebas**
+## 🧪 **Pruebas y Calidad**
 
-### **Flujo de Usuario Típico**
+### 🔄 **Flujo de Usuario Principal**
 
-1. **Explorar catálogo** - Usar filtros y búsqueda
-2. **Ver producto** - Hacer clic en "Vista Rápida"
-3. **Agregar al carrito** - Seleccionar cantidad y confirmar
-4. **Gestionar carrito** - Modificar cantidades o eliminar
-5. **Proceso de compra** - Completar checkout con cupón UNAB
-6. **Confirmación** - Ver número de orden institucional
+1. **Exploración del Catálogo**
+   - Búsqueda en tiempo real
+   - Filtros por categoría, precio y rating
+   - Ordenamiento personalizado
 
-### **Casos de Prueba**
+2. **Interacción con Productos**
+   - Vista rápida con galería
+   - Información detallada
+   - Reviews y ratings
 
-- ✅ **Búsqueda y filtros** funcionando correctamente
-- ✅ **Vista rápida** con galería de imágenes
-- ✅ **Carrito** con persistencia y cálculos
-- ✅ **Favoritos** con sincronización
-- ✅ **Checkout** con validaciones
-- ✅ **Cupones UNAB** aplicándose correctamente
-- ✅ **Responsive** en diferentes tamaños de pantalla
-- ✅ **Identidad visual UNAB** completamente implementada
+3. **Gestión del Carrito**
+   - Agregar/quitar productos
+   - Actualizar cantidades
+   - Guardar para después
+   - Persistencia automática
+
+4. **Lista de Favoritos**
+   - Agregar desde catálogo/carrito
+   - Sincronización bidireccional
+   - Notificaciones de cambios
+
+5. **Proceso de Checkout**
+   - Validación de datos
+   - Aplicación de cupones
+   - Cálculo de envíos
+   - Resumen detallado
+   - Confirmación de orden
+
+### ✅ **Casos de Prueba Verificados**
+
+#### 🔍 Búsqueda y Filtros
+- ✅ Búsqueda instantánea
+- ✅ Filtros combinados
+- ✅ Ordenamiento múltiple
+- ✅ Reset de filtros
+
+#### 🛒 Carrito y Favoritos
+- ✅ Persistencia local
+- ✅ Sincronización
+- ✅ Cálculos precisos
+- ✅ Gestión de stock
+
+#### 📱 Responsividad
+- ✅ Desktop (1200px+)
+- ✅ Tablet (768px-1199px)
+- ✅ Móvil (<768px)
+- ✅ Orientación landscape
+
+#### 🎨 UI/UX
+- ✅ Identidad UNAB
+- ✅ Accesibilidad
+- ✅ Animaciones
 
 ## 🐛 **Solución de Problemas**
 
