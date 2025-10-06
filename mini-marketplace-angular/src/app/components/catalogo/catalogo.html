@@ -1,1 +1,31 @@
-<p>catalogo works!</p>
+<div class="container my-5">
+    <h2 class="section-title">Catálogo de Productos</h2>
+  
+    <div *ngIf="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3">Cargando productos...</p>
+    </div>
+  
+    <div class="row" *ngIf="!loading">
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let p of productos">
+        <div class="producto-card h-100 d-flex flex-column">
+          <img [src]="p.thumbnail" class="card-img-top" [alt]="p.title">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title text-truncate-2">{{ p.title }}</h5>
+            <p class="precio">${{ p.price }}</p>
+            <p class="rating"><i class="bi bi-star-fill"></i> {{ p.rating }}</p>
+            <p class="stock"><i class="bi bi-box-seam"></i> Stock: {{ p.stock }}</p>
+            <div class="btn-group mt-auto">
+              <button class="btn btn-agregar-carrito">
+                <i class="bi bi-cart-plus"></i> Agregar
+              </button>
+              <button class="btn btn-vista-rapida">
+                <i class="bi bi-eye"></i> Ver
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
