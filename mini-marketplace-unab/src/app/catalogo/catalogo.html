@@ -1,0 +1,21 @@
+<div class="container mt-4">
+    <h2 class="mb-3">Catálogo de Productos (API)</h2>
+  
+    <div *ngIf="cargando" class="text-center">
+      <p>Cargando productos...</p>
+    </div>
+  
+    <div class="row" *ngIf="!cargando">
+      <div class="col-md-4 mb-4" *ngFor="let p of productos">
+        <div class="card h-100 shadow-sm">
+          <img [src]="p.thumbnail" class="card-img-top" [alt]="p.title">
+          <div class="card-body">
+            <h5 class="card-title">{{ p.title }}</h5>
+            <p class="card-text">{{ p.description }}</p>
+            <p class="fw-bold text-primary">${{ p.price }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
