@@ -1,1 +1,28 @@
-<p>carrito works!</p>
+<div class="container my-5">
+    <h2 class="section-title">🛒 Tu Carrito</h2>
+  
+    <div *ngIf="carrito.length === 0" class="alert alert-info text-center">
+      Tu carrito está vacío.
+    </div>
+  
+    <div class="row" *ngIf="carrito.length > 0">
+      <div class="col-md-4 mb-4" *ngFor="let p of carrito">
+        <div class="card h-100">
+          <img [src]="p.thumbnail" class="card-img-top" [alt]="p.title">
+          <div class="card-body">
+            <h5 class="card-title">{{ p.title }}</h5>
+            <p class="card-text">${{ p.price }}</p>
+            <button class="btn btn-danger btn-sm" (click)="eliminar(p.id)">
+              <i class="bi bi-trash"></i> Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="text-end mt-4" *ngIf="carrito.length > 0">
+      <button class="btn btn-secondary me-2" (click)="vaciar()">Vaciar carrito</button>
+      <button class="btn btn-success">Proceder al pago</button>
+    </div>
+  </div>
+  

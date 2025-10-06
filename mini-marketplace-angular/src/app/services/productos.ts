@@ -24,8 +24,8 @@ export class ProductosService {
   constructor(private http: HttpClient) {}
 
   getProductos(): Observable<Producto[]> {
-    return this.http.get<{products: Producto[]}>(this.apiUrl).pipe(
-      map(data => data.products)
-    );
+    return this.http.get<{ products: Producto[] }>(this.apiUrl)
+      .pipe(map(response => response.products));
   }
+  
 }
