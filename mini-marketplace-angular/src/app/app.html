@@ -1,18 +1,8 @@
-<header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4">
-    <a class="navbar-brand fw-bold text-primary" routerLink="/catalogo">Mini Marketplace UNAB</a>
+<app-header></app-header>
 
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/carrito" routerLinkActive="active">Carrito</a>
-      </li>
-    </ul>
-  </nav>
-</header>
-
-<main class="container my-4">
+<main class="container-fluid py-4">
+  <app-filtros></app-filtros>
   <router-outlet></router-outlet>
 </main>
+
+<app-footer></app-footer>

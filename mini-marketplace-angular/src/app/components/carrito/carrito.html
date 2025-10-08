@@ -1,28 +1,47 @@
 <div class="container my-5">
-    <h2 class="section-title">🛒 Tu Carrito</h2>
-  
-    <div *ngIf="carrito.length === 0" class="alert alert-info text-center">
-      Tu carrito está vacío.
-    </div>
-  
-    <div class="row" *ngIf="carrito.length > 0">
-      <div class="col-md-4 mb-4" *ngFor="let p of carrito">
-        <div class="card h-100">
-          <img [src]="p.thumbnail" class="card-img-top" [alt]="p.title">
-          <div class="card-body">
-            <h5 class="card-title">{{ p.title }}</h5>
-            <p class="card-text">${{ p.price }}</p>
-            <button class="btn btn-danger btn-sm" (click)="eliminar(p.id)">
-              <i class="bi bi-trash"></i> Eliminar
+  <h2 class="section-title">🛒 Tu Carrito</h2>
+
+  <div *ngIf="carrito.length === 0" class="alert alert-info text-center">
+    Tu carrito está vacío.
+  </div>
+
+  <div *ngIf="carrito.length > 0">
+    <div class="carrito-item" *ngFor="let item of carrito">
+      <div class="row align-items-center">
+        <div class="col-md-2">
+          <img [src]="item.imagen" class="carrito-item-img" [alt]="item.nombre">
+        </div>
+        <div class="col-md-4">
+          <div class="carrito-item-info">
+            <h6>{{ item.nombre }}</h6>
+            <div class="carrito-item-precio">${{ formatearPrecio(item.precio) }}</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="carrito-item-cantidad">
+            <button class="btn btn-outline-secondary" (click)="cambiarCantidad(item.id, -1)">-</button>
+            <span class="mx-2">{{ item.cantidad }}</span>
+            <button class="btn btn-outline-secondary" (click)="cambiarCantidad(item.id, 1)">+</button>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="text-end">
+            <div class="fw-bold">${{ formatearPrecio(item.precio * item.cantidad) }}</div>
+            <button class="btn btn-sm btn-outline-danger" (click)="eliminar(item.id)">
+              <i class="fas fa-trash"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-  
-    <div class="text-end mt-4" *ngIf="carrito.length > 0">
+
+    <div class="text-end mt-4">
+      <div class="mb-3">
+        <h4>Total: ${{ formatearPrecio(getTotalPrecio()) }}</h4>
+      </div>
       <button class="btn btn-secondary me-2" (click)="vaciar()">Vaciar carrito</button>
       <button class="btn btn-success">Proceder al pago</button>
     </div>
   </div>
+</div>
   

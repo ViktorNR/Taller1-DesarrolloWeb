@@ -1,11 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Producto } from './productos';
 
+export interface ItemCarrito {
+  id: number;
+  nombre: string;
+  precio: number;
+  imagen: string;
+  cantidad: number;
+  stock: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class CarritoService {
-  private carrito: Producto[] = [];
+  private carrito: ItemCarrito[] = [];
   private storageAvailable = typeof window !== 'undefined' && !!window.localStorage;
 
   constructor() {
@@ -22,22 +31,59 @@ export class CarritoService {
     }
   }
 
-  getCarrito(): Producto[] {
+  getCarrito(): ItemCarrito[] {
     return this.carrito;
   }
 
-  agregarProducto(producto: Producto) {
-    this.carrito.push(producto);
+  agregarProducto(producto: Producto, cantidad: number = 1) {
+    const itemExistente = this.carrito.find(item => item.id === producto.id);
+    
+    if (itemExistente) {
+      itemExistente.cantidad += cantidad;
+    } else {
+      this.carrito.push({
+        id: producto.id,
+        nombre: producto.nombre,
+        precio: producto.precio,
+        imagen: producto.imagenes[0],
+        cantidad: cantidad,
+        stock: producto.stock
+      });
+    }
+    
     this.guardarCarrito();
   }
 
   eliminarProducto(producto: Producto) {
-    this.carrito = this.carrito.filter(p => p.id !== producto.id);
-    this.guardarCarrito();
+    const index = this.carrito.findIndex(p => p.id === producto.id);
+    if (index > -1) {
+      this.carrito.splice(index, 1);
+      this.guardarCarrito();
+    }
+  }
+
+  actualizarCantidad(productoId: number, cantidad: number) {
+    const item = this.carrito.find(item => item.id === productoId);
+    if (item) {
+      if (cantidad <= 0) {
+        this.eliminarProducto({ id: productoId } as Producto);
+      } else if (cantidad <= item.stock) {
+        item.cantidad = cantidad;
+        this.guardarCarrito();
+      }
+    }
   }
 
   vaciarCarrito() {
     this.carrito = [];
     this.guardarCarrito();
+  }
+
+  getTotalItems(): number {
+    return this.carrito.reduce((sum, item) => sum + item.cantidad, 0);
+  }
+
+  getTotalPrecio(): number {
+    return this.carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
   }
 }
