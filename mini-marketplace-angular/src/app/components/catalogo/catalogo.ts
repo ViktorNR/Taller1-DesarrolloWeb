@@ -33,20 +33,24 @@ export class CatalogoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('🚀 CatalogoComponent: Inicializando componente');
     this.productosService.getProductos().subscribe({
       next: (data) => {
+        console.log('✅ CatalogoComponent: Productos recibidos:', data.length, 'productos');
         this.productos = data;
         this.productosFiltrados = data;
         this.loading = false;
+        console.log('📊 CatalogoComponent: Estado actual - loading:', this.loading, 'productosFiltrados:', this.productosFiltrados.length);
       },
       error: (error) => {
-        console.error('Error al obtener los productos', error);
+        console.error('❌ CatalogoComponent: Error al obtener los productos', error);
         this.loading = false;
       }
     });
 
     // Suscribirse a cambios en los filtros
     this.filtrosService.filtros$.subscribe(filtros => {
+      console.log('🔍 CatalogoComponent: Filtros actualizados:', filtros);
       this.filtros = filtros;
       this.aplicarFiltros();
     });

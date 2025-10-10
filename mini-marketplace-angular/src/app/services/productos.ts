@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Producto {
   id: number;
@@ -13,6 +14,28 @@ export interface Producto {
   imagenes: string[];
   categoria: string;
   caracteristicas: string[];
+}
+
+// DummyJSON API response interfaces
+interface DummyProduct {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
+}
+
+interface DummyProductsResponse {
+  products: DummyProduct[];
+  total: number;
+  skip: number;
+  limit: number;
 }
 
 export interface Categoria {
@@ -47,29 +70,79 @@ export interface Cupon {
   providedIn: 'root'
 })
 export class ProductosService {
-  private productosUrl = 'assets/data/productos.json';
-  private categoriasUrl = 'assets/data/categorias.json';
-  private enviosUrl = 'assets/data/envios.json';
-  private promosUrl = 'assets/data/promos.json';
+  private apiUrl = environment.apiUrl;
+  private productosUrl = `${this.apiUrl}/products`;
+  private categoriasUrl = 'assets/data/categorias.json'; // Keep local for now
+  private enviosUrl = 'assets/data/envios.json'; // Keep local for now
+  private promosUrl = 'assets/data/promos.json'; // Keep local for now
 
   constructor(private http: HttpClient) {}
 
+  // Transform DummyJSON product to our Producto interface
+  private transformDummyProduct(dummyProduct: DummyProduct): Producto {
+    return {
+      id: dummyProduct.id,
+      nombre: dummyProduct.title,
+      descripcion: dummyProduct.description,
+      precio: dummyProduct.price,
+      stock: dummyProduct.stock,
+      rating: dummyProduct.rating,
+      imagenes: dummyProduct.images || [dummyProduct.thumbnail],
+      categoria: dummyProduct.category,
+      caracteristicas: [
+        `Marca: ${dummyProduct.brand}`,
+        `Descuento: ${dummyProduct.discountPercentage}%`,
+        `Categoría: ${dummyProduct.category}`
+      ]
+    };
+  }
+
   getProductos(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.productosUrl)
+    console.log('🔍 ProductosService: Iniciando carga de productos desde:', this.productosUrl);
+    return this.http.get<DummyProductsResponse>(this.productosUrl)
       .pipe(
+        map(response => {
+          console.log('✅ ProductosService: Respuesta recibida:', response);
+          const productos = response.products.map(product => this.transformDummyProduct(product));
+          console.log('🔄 ProductosService: Productos transformados:', productos.length, 'productos');
+          return productos;
+        }),
         catchError(error => {
-          console.error('Error al cargar productos:', error);
+          console.error('❌ ProductosService: Error al cargar productos:', error);
           return of([]);
         })
       );
   }
 
-  getCategorias(): Observable<Categoria[]> {
-    return this.http.get<Categoria[]>(this.categoriasUrl)
+  getProductoPorId(id: number): Observable<Producto | null> {
+    return this.http.get<DummyProduct>(`${this.productosUrl}/${id}`)
       .pipe(
+        map(product => this.transformDummyProduct(product)),
+        catchError(error => {
+          console.error('Error al cargar producto:', error);
+          return of(null);
+        })
+      );
+  }
+
+  getCategorias(): Observable<Categoria[]> {
+    // Get categories from DummyJSON API
+    return this.http.get<string[]>(`${this.apiUrl}/products/categories`)
+      .pipe(
+        map(categories => categories.map((category, index) => ({
+          id: index + 1,
+          nombre: category,
+          descripcion: `Productos de la categoría ${category}`,
+          icono: 'fas fa-tag',
+          color: '#007bff'
+        }))),
         catchError(error => {
           console.error('Error al cargar categorías:', error);
-          return of([]);
+          // Fallback to local categories
+          return this.http.get<Categoria[]>(this.categoriasUrl)
+            .pipe(
+              catchError(() => of([]))
+            );
         })
       );
   }
@@ -95,18 +168,38 @@ export class ProductosService {
   }
 
   buscarProductos(termino: string): Observable<Producto[]> {
-    return this.getProductos().pipe(
-      map(productos => 
-        productos.filter(producto => 
-          producto.nombre.toLowerCase().includes(termino.toLowerCase()) ||
-          producto.descripcion.toLowerCase().includes(termino.toLowerCase()) ||
-          producto.categoria.toLowerCase().includes(termino.toLowerCase())
-        )
-      )
-    );
+    if (!termino.trim()) {
+      return this.getProductos();
+    }
+    
+    return this.http.get<DummyProductsResponse>(`${this.productosUrl}/search?q=${encodeURIComponent(termino)}`)
+      .pipe(
+        map(response => response.products.map(product => this.transformDummyProduct(product))),
+        catchError(error => {
+          console.error('Error al buscar productos:', error);
+          return of([]);
+        })
+      );
+  }
+
+  getProductosPorCategoria(categoria: string): Observable<Producto[]> {
+    return this.http.get<DummyProductsResponse>(`${this.productosUrl}/category/${encodeURIComponent(categoria)}`)
+      .pipe(
+        map(response => response.products.map(product => this.transformDummyProduct(product))),
+        catchError(error => {
+          console.error('Error al cargar productos por categoría:', error);
+          return of([]);
+        })
+      );
   }
 
   filtrarProductos(filtros: any): Observable<Producto[]> {
+    // If we have a category filter, use the API endpoint for better performance
+    if (filtros.categoria && !filtros.busqueda && !filtros.precio && !filtros.rating && !filtros.orden) {
+      return this.getProductosPorCategoria(filtros.categoria);
+    }
+
+    // Otherwise, get all products and filter client-side
     return this.getProductos().pipe(
       map(productos => {
         let productosFiltrados = [...productos];

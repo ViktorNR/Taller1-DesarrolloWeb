@@ -1,6 +1,15 @@
 <div class="container my-4">
   <h2 class="section-title">Catálogo de Productos</h2>
 
+  <!-- Debug info -->
+  <div class="alert alert-info" *ngIf="true">
+    <strong>Debug Info:</strong><br>
+    Loading: {{ loading }}<br>
+    Productos: {{ productos.length }}<br>
+    Productos Filtrados: {{ productosFiltrados.length }}<br>
+    Filtros: {{ filtros | json }}
+  </div>
+
   <!-- Estado de carga -->
   <div *ngIf="loading" class="text-center my-5">
     <div class="spinner-border text-primary" role="status">
@@ -48,7 +57,7 @@
   </div>
 
   <!-- Estado vacío -->
-  <div *ngIf="!loading && productosFiltrados.length === 0" class="estado-vacio d-none">
+  <div *ngIf="!loading && productosFiltrados.length === 0" class="estado-vacio">
     <i class="fas fa-search"></i>
     <h4>No se encontraron productos</h4>
     <p>Intenta ajustar los filtros de búsqueda</p>

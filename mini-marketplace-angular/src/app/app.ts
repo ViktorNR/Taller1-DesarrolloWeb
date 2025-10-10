@@ -17,4 +17,8 @@ import { FooterComponent } from './components/footer/footer';
 })
 export class App {
   protected readonly title = signal('Mini Marketplace UNAB');
+  
+  constructor() {
+    console.log('🚀 App Component: Initialized');
+  }
 }
