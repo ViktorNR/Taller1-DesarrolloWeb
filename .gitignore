@@ -1,109 +1,50 @@
-# Mini-Marketplace UNAB - Archivos a ignorar
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# Dependencias
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
 
-# Archivos de build
-dist/
-build/
-*.min.js
-*.min.css
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
 
-# Archivos de entorno
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Logs
-logs
-*.log
-
-# Archivos temporales
-*.tmp
-*.temp
-.DS_Store
-Thumbs.db
-
-# Archivos de IDE
-.vscode/
+# IDEs and editors
 .idea/
-*.swp
-*.swo
-*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# Archivos de sistema
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# System files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# Archivos de XAMPP/WAMP
-htdocs/
-www/
-xampp/
-wamp/
-
-# Archivos de respaldo
-*.bak
-*.backup
-*.old
-
-# Archivos de caché
-.cache/
-*.cache
-
-# Archivos de configuración local
-config.local.js
-settings.local.json
-
-# Archivos de prueba
-test/
-tests/
-*.test.js
-*.spec.js
-
-# Archivos de documentación generados
-docs/
-*.pdf
-*.doc
-*.docx
-
-# Archivos de base de datos
-*.db
-*.sqlite
-*.sql
-
-# Archivos de imagen grandes
-*.psd
-*.ai
-*.sketch
-*.fig
-
-# Archivos comprimidos
-*.zip
-*.rar
-*.7z
-*.tar.gz
-
-# Archivos de video
-*.mp4
-*.avi
-*.mov
-*.wmv
-
-# Archivos de audio
-*.mp3
-*.wav
-*.flac
-*.aac
-
-
-documentacion/*
+Old/*
+mini-marketplace-angular/*
+.github/*
+.cursor/*
+.claude/*
+.vscode/*
