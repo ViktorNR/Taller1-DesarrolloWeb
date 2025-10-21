@@ -11,8 +11,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './detalle-producto.css'
 })
 export class DetalleProductoModalComponent implements OnChanges {
-  @Input() productoId: number | null = null;
   @Input() isOpen = false;
+  @Input() productoId: number | null = null;
   @Output() closeModal = new EventEmitter<void>();
   @Output() agregarCarrito = new EventEmitter<Producto>();
 

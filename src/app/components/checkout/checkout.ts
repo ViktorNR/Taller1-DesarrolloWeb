@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarritoService, ItemCarrito } from '../../services/carrito';
 import { CheckoutService, CheckoutState } from '../../services/checkout';
@@ -7,11 +9,20 @@ import { ProductosService, OpcionEnvio, Cupon } from '../../services/productos';
 
 @Component({
   selector: 'app-checkout',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css'
 })
 export class CheckoutComponent implements OnInit {
+  @Input() isOpen = false;
+  @Input() productos: ItemCarrito[] = [];
+  @Input() total = 0;
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() confirmar = new EventEmitter<CheckoutState>();
+
+  
+
   carrito: ItemCarrito[] = [];
   opcionesEnvio: OpcionEnvio[] = [];
   cupones: Cupon[] = [];
@@ -120,5 +131,15 @@ export class CheckoutComponent implements OnInit {
     // Aquí se implementaría la lógica de confirmación de compra
     console.log('Compra confirmada', this.checkoutState);
     alert('¡Compra confirmada! Gracias por tu compra.');
+  }
+
+  cerrar() {
+    this.closeModal.emit();
+  }
+
+  onBackdropClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.cerrar();
+    }
   }
 }

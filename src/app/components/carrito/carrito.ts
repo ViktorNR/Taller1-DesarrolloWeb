@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CarritoService, ItemCarrito } from '../../services/carrito';
+import { CheckoutComponent } from '../checkout/checkout';
 
 @Component({
   selector: 'app-carrito',
-  imports: [CommonModule],
+  imports: [CommonModule, CheckoutComponent],
   templateUrl: './carrito.html',
   styleUrl: './carrito.css'
 })
 export class CarritoComponent implements OnInit {
+  modalAbierto = false;
   carrito: ItemCarrito[] = [];
 
   constructor(private carritoService: CarritoService) {}
@@ -42,5 +44,13 @@ export class CarritoComponent implements OnInit {
 
   getTotalPrecio(): number {
     return this.carritoService.getTotalPrecio();
+  }
+
+  abrirCheckout() {
+    this.modalAbierto = true;
+  }
+
+  cerrarModal() {
+    this.modalAbierto = false;
   }
 }

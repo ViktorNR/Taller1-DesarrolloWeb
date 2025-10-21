@@ -1,3 +1,10 @@
+<div class="modal-backdrop" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <!-- Botón cerrar -->
+    <button class="btn-close" (click)="cerrar()" aria-label="Cerrar">
+      <i class="fas fa-times"></i>
+    </button>
+
 <div class="container my-5">
   <h2 class="section-title">🛒 Finalizar Compra</h2>
 
@@ -172,6 +179,8 @@
           <i class="fas fa-credit-card me-2"></i>
           Confirmar Compra
         </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
