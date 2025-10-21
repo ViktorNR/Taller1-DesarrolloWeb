@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FavoritosService } from '../../services/favoritos';
 import { ProductosService, Producto } from '../../services/productos';
 import { CarritoService } from '../../services/carrito';
+import { NotificacionService } from '../../services/notificacion';
 import { FavoritoEliminadoModalComponent } from './favorito-eliminado-modal';
 
 @Component({
@@ -23,7 +24,8 @@ export class FavoritosComponent implements OnInit {
   constructor(
     private favoritosService: FavoritosService,
     private productosService: ProductosService,
-    private carritoService: CarritoService
+    private carritoService: CarritoService,
+    private notif: NotificacionService
   ) {}
 
   ngOnInit() {
@@ -61,6 +63,10 @@ export class FavoritosComponent implements OnInit {
 
   agregarAlCarrito(producto: Producto) {
     this.carritoService.agregarProducto(producto);
+    try {
+      const nombre = producto.nombre ?? 'producto';
+      this.notif.mostrar(`Agregado 1 × ${nombre} al carrito`, 'success');
+    } catch (e) {}
   }
 
   formatearPrecio(precio: number): string {

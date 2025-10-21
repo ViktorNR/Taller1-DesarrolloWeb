@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductosService, Producto } from '../../services/productos';
 import { CarritoService } from '../../services/carrito';
+import { NotificacionService } from '../../services/notificacion';
 import { FavoritosService } from '../../services/favoritos';
 import { FiltrosService, FiltrosState } from '../../services/filtros';
 import { DetalleProductoModalComponent } from '../detalle-producto/detalle-producto';
@@ -41,7 +42,8 @@ export class CatalogoComponent implements OnInit {
     private productosService: ProductosService,
     private carritoService: CarritoService,
     private favoritosService: FavoritosService,
-    private filtrosService: FiltrosService
+    private filtrosService: FiltrosService,
+    private notif: NotificacionService
   ) {}
 
   ngOnInit() {
@@ -100,6 +102,9 @@ export class CatalogoComponent implements OnInit {
 
   agregarAlCarrito(producto: Producto) {
     this.carritoService.agregarProducto(producto);
+    // Mostrar un toast de confirmación
+    const nombre = producto.nombre ?? 'producto';
+    this.notif.mostrar(`Agregado 1 × ${nombre} al carrito`, 'success');
   }
 
   toggleFavorito(producto: Producto) {
@@ -171,5 +176,7 @@ export class CatalogoComponent implements OnInit {
     // Si el modal envía una propiedad `cantidadSeleccionada`, la usamos, si no, por defecto 1
     const cantidad = (producto as any).cantidadSeleccionada ?? 1;
     this.carritoService.agregarProducto(producto, cantidad);
+    const nombre = producto.nombre ?? 'producto';
+    this.notif.mostrar(`Agregado ${cantidad} × ${nombre} al carrito`, 'success');
   }
 }

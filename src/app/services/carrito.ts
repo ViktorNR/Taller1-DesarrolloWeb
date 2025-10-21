@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Producto } from './productos';
 
 export interface ItemCarrito {
@@ -16,6 +17,8 @@ export interface ItemCarrito {
 export class CarritoService {
   private carrito: ItemCarrito[] = [];
   private storageAvailable = typeof window !== 'undefined' && !!window.localStorage;
+  private totalItemsSubject = new BehaviorSubject<number>(0);
+  public totalItems$ = this.totalItemsSubject.asObservable();
 
   constructor() {
     // Cargar desde localStorage solo si está disponible (evita error SSR)
@@ -23,12 +26,16 @@ export class CarritoService {
       const data = localStorage.getItem('carrito');
       this.carrito = data ? JSON.parse(data) : [];
     }
+    // Inicializar contador reactivo
+    this.totalItemsSubject.next(this.getTotalItems());
   }
 
   private guardarCarrito() {
     if (this.storageAvailable) {
       localStorage.setItem('carrito', JSON.stringify(this.carrito));
     }
+    // Emitir nuevo total de items
+    this.totalItemsSubject.next(this.getTotalItems());
   }
 
   getCarrito(): ItemCarrito[] {

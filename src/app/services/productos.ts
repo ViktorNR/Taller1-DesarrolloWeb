@@ -80,6 +80,19 @@ export class ProductosService {
 
   // Transform DummyJSON product to our Producto interface
   private transformDummyProduct(dummyProduct: DummyProduct): Producto {
+    // Normalizar categoría para que siempre sea una cadena
+    const rawCat: any = (dummyProduct as any).category;
+    let categoriaStr: string;
+    if (rawCat == null) {
+      categoriaStr = '';
+    } else if (typeof rawCat === 'string') {
+      categoriaStr = rawCat;
+    } else if (typeof rawCat === 'object') {
+      categoriaStr = rawCat.nombre || rawCat.name || rawCat.title || JSON.stringify(rawCat);
+    } else {
+      categoriaStr = String(rawCat);
+    }
+
     return {
       id: dummyProduct.id,
       nombre: dummyProduct.title,
@@ -88,11 +101,11 @@ export class ProductosService {
       stock: dummyProduct.stock,
       rating: dummyProduct.rating,
       imagenes: dummyProduct.images || [dummyProduct.thumbnail],
-      categoria: dummyProduct.category,
+      categoria: categoriaStr,
       caracteristicas: [
         `Marca: ${dummyProduct.brand}`,
         `Descuento: ${dummyProduct.discountPercentage}%`,
-        `Categoría: ${dummyProduct.category}`
+        `Categoría: ${categoriaStr}`
       ]
     };
   }
@@ -129,13 +142,27 @@ export class ProductosService {
     // Get categories from DummyJSON API
     return this.http.get<string[]>(`${this.apiUrl}/products/categories`)
       .pipe(
-        map(categories => categories.map((category, index) => ({
-          id: index + 1,
-          nombre: category,
-          descripcion: `Productos de la categoría ${category}`,
-          icono: 'fas fa-tag',
-          color: '#007bff'
-        }))),
+        map(categories => categories.map((category: any, index: number) => {
+          // category puede venir como string o como objeto; normalizamos a string
+          let nombreStr: string;
+          if (category == null) {
+            nombreStr = '';
+          } else if (typeof category === 'string') {
+            nombreStr = category;
+          } else if (typeof category === 'object') {
+            nombreStr = category.nombre || category.name || category.title || JSON.stringify(category);
+          } else {
+            nombreStr = String(category);
+          }
+
+          return {
+            id: index + 1,
+            nombre: nombreStr,
+            descripcion: `Productos de la categoría ${nombreStr}`,
+            icono: 'fas fa-tag',
+            color: '#007bff'
+          };
+        })),
         catchError(error => {
           console.error('Error al cargar categorías:', error);
           // Fallback to local categories
@@ -194,12 +221,7 @@ export class ProductosService {
   }
 
   filtrarProductos(filtros: any): Observable<Producto[]> {
-    // If we have a category filter, use the API endpoint for better performance
-    if (filtros.categoria && !filtros.busqueda && !filtros.precio && !filtros.rating && !filtros.orden) {
-      return this.getProductosPorCategoria(filtros.categoria);
-    }
-
-    // Otherwise, get all products and filter client-side
+    // Always get all products and filter client-side to keep behavior consistent
     return this.getProductos().pipe(
       map(productos => {
         let productosFiltrados = [...productos];
@@ -210,13 +232,17 @@ export class ProductosService {
           productosFiltrados = productosFiltrados.filter(p => 
             p.nombre.toLowerCase().includes(busqueda) ||
             p.descripcion.toLowerCase().includes(busqueda) ||
-            p.categoria.toLowerCase().includes(busqueda)
+            (p.categoria && p.categoria.toString().toLowerCase().includes(busqueda))
           );
         }
 
         // Filtro por categoría
         if (filtros.categoria) {
-          productosFiltrados = productosFiltrados.filter(p => p.categoria === filtros.categoria);
+          const filtroCat = filtros.categoria.toString().toLowerCase().trim();
+          productosFiltrados = productosFiltrados.filter(p => {
+            const pc = (p.categoria == null) ? '' : p.categoria.toString().toLowerCase().trim();
+            return pc === filtroCat;
+          });
         }
 
         // Filtro por precio

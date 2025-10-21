@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Producto } from './productos';
 
 @Injectable({
@@ -7,6 +8,8 @@ import { Producto } from './productos';
 export class FavoritosService {
   private favoritos: number[] = [];
   private storageAvailable = typeof window !== 'undefined' && !!window.localStorage;
+  private totalFavoritosSubject = new BehaviorSubject<number>(0);
+  public totalFavoritos$ = this.totalFavoritosSubject.asObservable();
 
   constructor() {
     // Cargar desde localStorage solo si está disponible (evita error SSR)
@@ -14,6 +17,8 @@ export class FavoritosService {
       const data = localStorage.getItem('favoritos');
       this.favoritos = data ? JSON.parse(data) : [];
     }
+    // Inicializar contador reactivo
+    this.totalFavoritosSubject.next(this.getTotalFavoritos());
   }
 
   private guardarFavoritos() {
@@ -36,10 +41,12 @@ export class FavoritosService {
     if (index === -1) {
       this.favoritos.push(productoId);
       this.guardarFavoritos();
+      this.totalFavoritosSubject.next(this.getTotalFavoritos());
       return true; // Agregado
     } else {
       this.favoritos.splice(index, 1);
       this.guardarFavoritos();
+      this.totalFavoritosSubject.next(this.getTotalFavoritos());
       return false; // Removido
     }
   }
@@ -48,6 +55,7 @@ export class FavoritosService {
     if (!this.esFavorito(productoId)) {
       this.favoritos.push(productoId);
       this.guardarFavoritos();
+      this.totalFavoritosSubject.next(this.getTotalFavoritos());
     }
   }
 
@@ -56,12 +64,14 @@ export class FavoritosService {
     if (index > -1) {
       this.favoritos.splice(index, 1);
       this.guardarFavoritos();
+      this.totalFavoritosSubject.next(this.getTotalFavoritos());
     }
   }
 
   vaciarFavoritos() {
     this.favoritos = [];
     this.guardarFavoritos();
+    this.totalFavoritosSubject.next(this.getTotalFavoritos());
   }
 
   getTotalFavoritos(): number {

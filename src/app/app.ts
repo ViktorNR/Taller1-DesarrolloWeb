@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header';
 import { FiltrosComponent } from './components/filtros/filtros';
 import { FooterComponent } from './components/footer/footer';
+import { ToastComponent } from './components/toast/toast';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,8 @@ import { FooterComponent } from './components/footer/footer';
     RouterOutlet,
     HeaderComponent,
     FiltrosComponent,
-    FooterComponent
+    FooterComponent,
+    ToastComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'

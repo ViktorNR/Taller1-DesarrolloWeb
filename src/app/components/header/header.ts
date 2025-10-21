@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CarritoService } from '../../services/carrito';
 import { FavoritosService } from '../../services/favoritos';
 import { FiltrosService } from '../../services/filtros';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -12,9 +14,10 @@ import { FiltrosService } from '../../services/filtros';
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   totalCarrito = 0;
   totalFavoritos = 0;
+  private subs: Subscription[] = [];
   busqueda = '';
 
   constructor(
@@ -25,11 +28,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.actualizarContadores();
-    
-    // Suscribirse a cambios en el carrito
-    this.carritoService.getCarrito();
-    this.totalCarrito = this.carritoService.getTotalItems();
-    this.totalFavoritos = this.favoritosService.getTotalFavoritos();
+
+    // Suscribirse a cambios reactivos
+    this.subs.push(this.carritoService.totalItems$.subscribe(n => this.totalCarrito = n));
+    this.subs.push(this.favoritosService.totalFavoritos$.subscribe(n => this.totalFavoritos = n));
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   actualizarContadores() {
