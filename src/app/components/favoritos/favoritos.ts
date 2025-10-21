@@ -4,16 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { FavoritosService } from '../../services/favoritos';
 import { ProductosService, Producto } from '../../services/productos';
 import { CarritoService } from '../../services/carrito';
+import { FavoritoEliminadoModalComponent } from './favorito-eliminado-modal';
 
 @Component({
   selector: 'app-favoritos',
-  imports: [CommonModule, FormsModule],
-  templateUrl: './favoritos.html',
+  imports: [CommonModule, FormsModule, FavoritoEliminadoModalComponent],
+  templateUrl: './favoritos.template.html',
   styleUrl: './favoritos.css'
 })
 export class FavoritosComponent implements OnInit {
   favoritos: Producto[] = [];
   loading = true;
+
+  // Modal de eliminado
+  modalEliminadoAbierto = false;
+  productoEliminadoSeleccionado: Producto | null = null;
 
   constructor(
     private favoritosService: FavoritosService,
@@ -40,7 +45,17 @@ export class FavoritosComponent implements OnInit {
   }
 
   removerFavorito(producto: Producto) {
+    // Removemos el favorito y mostramos el modal de eliminado para permitir undo
     this.favoritosService.removerFavorito(producto.id);
+    this.productoEliminadoSeleccionado = producto;
+    this.modalEliminadoAbierto = true;
+    this.cargarFavoritos();
+  }
+
+  rehacerFavorito(productoId: number) {
+    this.favoritosService.agregarFavorito(productoId);
+    this.modalEliminadoAbierto = false;
+    this.productoEliminadoSeleccionado = null;
     this.cargarFavoritos();
   }
 
