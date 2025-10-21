@@ -5,11 +5,12 @@ import { ProductosService, Producto } from '../../services/productos';
 import { CarritoService } from '../../services/carrito';
 import { FavoritosService } from '../../services/favoritos';
 import { FiltrosService, FiltrosState } from '../../services/filtros';
+import { DetalleProductoModalComponent } from '../detalle-producto/detalle-producto';
 import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-catalogo',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DetalleProductoModalComponent],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css'
 })
@@ -24,6 +25,9 @@ export class CatalogoComponent implements OnInit {
     rating: '',
     orden: ''
   };
+
+  modalAbierto = false;
+  productoSeleccionadoId: number | null = null;
 
   constructor(
     private productosService: ProductosService,
@@ -126,9 +130,20 @@ export class CatalogoComponent implements OnInit {
 
   abrirVistaRapida(productoId: number) {
     // Por ahora solo mostramos un alert, en una implementación completa se abriría un modal
-    const producto = this.productos.find(p => p.id === productoId);
-    if (producto) {
-      alert(`Vista rápida de: ${producto.nombre}\nPrecio: $${this.formatearPrecio(producto.precio)}`);
-    }
+    // const producto = this.productos.find(p => p.id === productoId);
+    // if (producto) {
+    //   alert(`Vista rápida de: ${producto.nombre}\nPrecio: $${this.formatearPrecio(producto.precio)}`);
+    // }
+    this.productoSeleccionadoId = productoId;
+    this.modalAbierto = true;
+  }
+
+  cerrarModal() {
+    this.modalAbierto = false;
+    this.productoSeleccionadoId = null;
+  }
+
+  agregarAlCarritoDesdeModal(producto: Producto) {
+    this.carritoService.agregarProducto(producto);
   }
 }

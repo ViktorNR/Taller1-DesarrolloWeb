@@ -1,31 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { ProductosService, Producto } from '../../services/productos';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-detalle-producto',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './detalle-producto.html',
   styleUrl: './detalle-producto.css'
 })
-export class DetalleProducto implements OnInit {
+export class DetalleProductoModalComponent implements OnChanges {
+  @Input() productoId: number | null = null;
+  @Input() isOpen = false;
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() agregarCarrito = new EventEmitter<Producto>();
+
   producto: Producto | null = null;
-  loading = true;
+  loading = false;
   error = false;
+  imagenActual = 0;
+  cantidad = 1;
 
-  constructor(
-    private route: ActivatedRoute,
-    private productosService: ProductosService
-  ) {}
+  constructor(private productosService: ProductosService) {}
 
-  ngOnInit() {
-    this.route.params.subscribe(params => {
-      const id = +params['id'];
-      if (id) {
-        this.cargarProducto(id);
-      }
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['productoId'] && this.productoId && this.isOpen) {
+      this.cargarProducto(this.productoId);
+    }
+    
+    if (changes['isOpen'] && !this.isOpen) {
+      this.resetModal();
+    }
   }
 
   cargarProducto(id: number) {
@@ -36,6 +42,8 @@ export class DetalleProducto implements OnInit {
       next: (producto) => {
         this.producto = producto;
         this.loading = false;
+        this.imagenActual = 0;
+        this.cantidad = 1;
       },
       error: (error) => {
         console.error('Error al cargar producto:', error);
@@ -43,6 +51,35 @@ export class DetalleProducto implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  cerrar() {
+    this.closeModal.emit();
+  }
+
+  cambiarImagen(index: number) {
+    this.imagenActual = index;
+  }
+
+  incrementarCantidad() {
+    if (this.producto && this.cantidad < this.producto.stock) {
+      this.cantidad++;
+    }
+  }
+
+  decrementarCantidad() {
+    if (this.cantidad > 1) {
+      this.cantidad--;
+    }
+  }
+
+  agregarAlCarrito() {
+    if (this.producto) {
+      // Emitir el producto con la cantidad seleccionada
+      const productoConCantidad = { ...this.producto, cantidadSeleccionada: this.cantidad };
+      this.agregarCarrito.emit(productoConCantidad);
+      this.cerrar();
+    }
   }
 
   formatearPrecio(precio: number): string {
@@ -69,5 +106,18 @@ export class DetalleProducto implements OnInit {
     }
     
     return html;
+  }
+
+  private resetModal() {
+    this.producto = null;
+    this.imagenActual = 0;
+    this.cantidad = 1;
+    this.error = false;
+  }
+
+  onBackdropClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.cerrar();
+    }
   }
 }
