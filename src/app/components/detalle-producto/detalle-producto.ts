@@ -62,6 +62,7 @@ export class DetalleProductoModalComponent implements OnChanges {
   }
 
   incrementarCantidad() {
+    // Validamos que no se exceda el stock
     if (this.producto && this.cantidad < this.producto.stock) {
       this.cantidad++;
     }

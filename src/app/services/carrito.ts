@@ -39,8 +39,15 @@ export class CarritoService {
     const itemExistente = this.carrito.find(item => item.id === producto.id);
     
     if (itemExistente) {
-      itemExistente.cantidad += cantidad;
+      if (itemExistente.cantidad + cantidad <= itemExistente.stock) {
+        itemExistente.cantidad += cantidad;
+      } else {
+        console.warn(`No hay suficiente stock para añadir ${cantidad} unidades de ${producto.nombre}.`);
+        return false;
+      }
+
     } else {
+      if (cantidad < producto.stock) {
       this.carrito.push({
         id: producto.id,
         nombre: producto.nombre,
@@ -49,9 +56,14 @@ export class CarritoService {
         cantidad: cantidad,
         stock: producto.stock
       });
+      } else {
+        console.warn(`No hay suficiente stock para añadir ${cantidad} unidades de ${producto.nombre}.`);
+        return false;
+      }
     }
     
     this.guardarCarrito();
+    return true;
   }
 
   eliminarProducto(producto: Producto) {

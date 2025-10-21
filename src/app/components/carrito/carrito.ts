@@ -24,9 +24,20 @@ export class CarritoComponent implements OnInit {
     this.carrito = this.carritoService.getCarrito();
   }
 
+  mostrarModalVaciado = false;
+
   vaciar() {
+    this.mostrarModalVaciado = true;
+  }
+
+  confirmarVaciado() {
     this.carritoService.vaciarCarrito();
     this.carrito = [];
+    this.mostrarModalVaciado = false;
+  }
+
+  cancelarVaciado() {
+    this.mostrarModalVaciado = false;
   }
 
   cambiarCantidad(id: number, delta: number) {
