@@ -1,0 +1,56 @@
+<!-- Filtros y Ordenamiento -->
+<section class="mb-4" id="filtros">
+  <!-- Botón para abrir/cerrar filtros en móvil -->
+  <div class="d-md-none mb-3">
+    <button class="btn btn-filtros-movil w-100" type="button" (click)="toggleFiltros()">
+      <i class="fas fa-filter me-2"></i>
+      <span>{{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}</span>
+      <i class="fas" [class.fa-chevron-down]="!mostrarFiltros" [class.fa-chevron-up]="mostrarFiltros" class="ms-auto"></i>
+    </button>
+  </div>
+  
+  <!-- Contenedor de filtros colapsible -->
+  <div id="filtrosContenido" class="filtros-contenido" [class.d-none]="!mostrarFiltros" [class.d-md-block]="true" [class.d-block]="mostrarFiltros">
+    <div class="row g-3">
+      <div class="col-md-3 col-12">
+        <select class="form-select" [(ngModel)]="filtros.categoria" (ngModelChange)="onCategoriaChange($event)">
+          <option value="">Todas las categorías</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.nombre">
+            {{ categoria.nombre }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-2 col-12">
+        <select class="form-select" [(ngModel)]="filtros.precio" (ngModelChange)="onPrecioChange($event)">
+          <option value="">Rango de precio</option>
+          <option value="0-10000">$0 - $10.000</option>
+          <option value="10000-25000">$10.000 - $25.000</option>
+          <option value="25000-50000">$25.000 - $50.000</option>
+          <option value="50000+">$50.000+</option>
+        </select>
+      </div>
+      <div class="col-md-2 col-12">
+        <select class="form-select" [(ngModel)]="filtros.rating" (ngModelChange)="onRatingChange($event)">
+          <option value="">Rating mínimo</option>
+          <option value="4">4+ estrellas</option>
+          <option value="3">3+ estrellas</option>
+          <option value="2">2+ estrellas</option>
+        </select>
+      </div>
+      <div class="col-md-2 col-12">
+        <select class="form-select" [(ngModel)]="filtros.orden" (ngModelChange)="onOrdenChange($event)">
+          <option value="">Ordenar por</option>
+          <option value="precio-asc">Precio: menor a mayor</option>
+          <option value="precio-desc">Precio: mayor a menor</option>
+          <option value="rating-desc">Mejor rating</option>
+          <option value="nombre-asc">Nombre A-Z</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-12">
+        <button class="btn btn-limpiar w-100" (click)="limpiarFiltros()">
+          <i class="fas fa-times me-2"></i>Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
