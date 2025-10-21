@@ -6,20 +6,13 @@ import { CarritoService } from '../../services/carrito';
 import { FavoritosService } from '../../services/favoritos';
 import { FiltrosService, FiltrosState } from '../../services/filtros';
 import { DetalleProductoModalComponent } from '../detalle-producto/detalle-producto';
-<<<<<<< HEAD
-=======
 import { FavoritoModalComponent } from '../favoritos/favorito-modal';
 import { FavoritoEliminadoModalComponent } from '../favoritos/favorito-eliminado-modal';
->>>>>>> 9d1b42b (Versión local con mis cambios realizados)
 import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-catalogo',
-<<<<<<< HEAD
-  imports: [CommonModule, FormsModule, DetalleProductoModalComponent],
-=======
   imports: [CommonModule, FormsModule, DetalleProductoModalComponent, FavoritoModalComponent, FavoritoEliminadoModalComponent],
->>>>>>> 9d1b42b (Versión local con mis cambios realizados)
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css'
 })
@@ -38,16 +31,12 @@ export class CatalogoComponent implements OnInit {
   modalAbierto = false;
   productoSeleccionadoId: number | null = null;
 
-<<<<<<< HEAD
-=======
   // Modal de favorito
   modalFavoritoAbierto = false;
   productoFavoritoSeleccionado: Producto | null = null;
   // Modal de eliminado
   modalEliminadoAbierto = false;
   productoEliminadoSeleccionado: Producto | null = null;
-
->>>>>>> 9d1b42b (Versión local con mis cambios realizados)
   constructor(
     private productosService: ProductosService,
     private carritoService: CarritoService,
@@ -114,9 +103,6 @@ export class CatalogoComponent implements OnInit {
   }
 
   toggleFavorito(producto: Producto) {
-<<<<<<< HEAD
-    this.favoritosService.toggleFavorito(producto.id);
-=======
     const agregado = this.favoritosService.toggleFavorito(producto.id);
     if (agregado) {
       // Si fue agregado, mostramos el modal de agregado
@@ -134,7 +120,6 @@ export class CatalogoComponent implements OnInit {
     this.favoritosService.agregarFavorito(productoId);
     this.modalEliminadoAbierto = false;
     this.productoEliminadoSeleccionado = null;
->>>>>>> 9d1b42b (Versión local con mis cambios realizados)
   }
 
   esFavorito(productoId: number): boolean {

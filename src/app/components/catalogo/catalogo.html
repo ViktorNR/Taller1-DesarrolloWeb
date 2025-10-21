@@ -65,26 +65,22 @@
 </div>
 
 
-  <app-detalle-producto
-     [productoId]="productoSeleccionadoId"
-     [isOpen]="modalAbierto"
-     (closeModal)="cerrarModal()"
-     (agregarCarrito)="agregarAlCarritoDesdeModal($event)">
-<<<<<<< HEAD
-   </app-detalle-producto>
-=======
-   </app-detalle-producto>
+<app-detalle-producto
+   [productoId]="productoSeleccionadoId"
+   [isOpen]="modalAbierto"
+   (closeModal)="cerrarModal()"
+   (agregarCarrito)="agregarAlCarritoDesdeModal($event)">
+</app-detalle-producto>
 
-  <app-favorito-modal
-    [producto]="productoFavoritoSeleccionado"
-    [isOpen]="modalFavoritoAbierto"
-    (close)="modalFavoritoAbierto = false; productoFavoritoSeleccionado = null">
-  </app-favorito-modal>
+<app-favorito-modal
+  [producto]="productoFavoritoSeleccionado"
+  [isOpen]="modalFavoritoAbierto"
+  (close)="modalFavoritoAbierto = false; productoFavoritoSeleccionado = null">
+</app-favorito-modal>
 
-  <app-favorito-eliminado-modal
-    [producto]="productoEliminadoSeleccionado"
-    [isOpen]="modalEliminadoAbierto"
-    (close)="modalEliminadoAbierto = false; productoEliminadoSeleccionado = null"
-    (undo)="rehacerFavorito($event)">
-  </app-favorito-eliminado-modal>
->>>>>>> 9d1b42b (Versión local con mis cambios realizados)
+<app-favorito-eliminado-modal
+  [producto]="productoEliminadoSeleccionado"
+  [isOpen]="modalEliminadoAbierto"
+  (close)="modalEliminadoAbierto = false; productoEliminadoSeleccionado = null"
+  (undo)="rehacerFavorito($event)">
+</app-favorito-eliminado-modal>
