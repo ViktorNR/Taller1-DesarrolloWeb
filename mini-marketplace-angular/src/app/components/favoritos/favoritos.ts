@@ -4,16 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { FavoritosService } from '../../services/favoritos';
 import { ProductosService, Producto } from '../../services/productos';
 import { CarritoService } from '../../services/carrito';
+import { ModalFavoritosComponent } from '../modal-favoritos/modal-favoritos';
 
 @Component({
   selector: 'app-favoritos',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalFavoritosComponent],
   templateUrl: './favoritos.html',
   styleUrl: './favoritos.css'
 })
 export class FavoritosComponent implements OnInit {
   favoritos: Producto[] = [];
   loading = true;
+  
+  // Modal de favoritos
+  modalFavoritosAbierto = false;
+  productoModalFavoritos: Producto | null = null;
+  accionFavorito: 'agregar' | 'remover' = 'remover';
 
   constructor(
     private favoritosService: FavoritosService,
@@ -41,7 +47,23 @@ export class FavoritosComponent implements OnInit {
 
   removerFavorito(producto: Producto) {
     this.favoritosService.removerFavorito(producto.id);
-    this.cargarFavoritos();
+    
+    // Mostrar modal antes de recargar
+    this.productoModalFavoritos = producto;
+    this.accionFavorito = 'remover';
+    this.modalFavoritosAbierto = true;
+    
+    // Recargar la lista después de un pequeño delay
+    setTimeout(() => {
+      this.cargarFavoritos();
+    }, 500);
+  }
+  
+  cerrarModalFavoritos() {
+    this.modalFavoritosAbierto = false;
+    setTimeout(() => {
+      this.productoModalFavoritos = null;
+    }, 300); // Esperar a que termine la animación
   }
 
   agregarAlCarrito(producto: Producto) {

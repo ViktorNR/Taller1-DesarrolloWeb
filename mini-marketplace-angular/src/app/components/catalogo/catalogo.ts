@@ -5,11 +5,12 @@ import { ProductosService, Producto } from '../../services/productos';
 import { CarritoService } from '../../services/carrito';
 import { FavoritosService } from '../../services/favoritos';
 import { FiltrosService, FiltrosState } from '../../services/filtros';
+import { ModalFavoritosComponent } from '../modal-favoritos/modal-favoritos';
 import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-catalogo',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalFavoritosComponent],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css'
 })
@@ -24,6 +25,11 @@ export class CatalogoComponent implements OnInit {
     rating: '',
     orden: ''
   };
+  
+  // Modal de favoritos
+  modalFavoritosAbierto = false;
+  productoModalFavoritos: Producto | null = null;
+  accionFavorito: 'agregar' | 'remover' = 'agregar';
 
   constructor(
     private productosService: ProductosService,
@@ -91,7 +97,19 @@ export class CatalogoComponent implements OnInit {
   }
 
   toggleFavorito(producto: Producto) {
-    this.favoritosService.toggleFavorito(producto.id);
+    const agregado = this.favoritosService.toggleFavorito(producto.id);
+    
+    // Mostrar modal con el producto y la acción realizada
+    this.productoModalFavoritos = producto;
+    this.accionFavorito = agregado ? 'agregar' : 'remover';
+    this.modalFavoritosAbierto = true;
+  }
+  
+  cerrarModalFavoritos() {
+    this.modalFavoritosAbierto = false;
+    setTimeout(() => {
+      this.productoModalFavoritos = null;
+    }, 300); // Esperar a que termine la animación
   }
 
   esFavorito(productoId: number): boolean {

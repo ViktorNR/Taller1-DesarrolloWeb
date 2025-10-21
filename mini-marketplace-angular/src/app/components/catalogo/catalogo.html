@@ -63,3 +63,11 @@
     <p>Intenta ajustar los filtros de búsqueda</p>
   </div>
 </div>
+
+<!-- Modal de Favoritos -->
+<app-modal-favoritos
+  [producto]="productoModalFavoritos"
+  [isOpen]="modalFavoritosAbierto"
+  [accion]="accionFavorito"
+  (cerrar)="cerrarModalFavoritos()">
+</app-modal-favoritos>
