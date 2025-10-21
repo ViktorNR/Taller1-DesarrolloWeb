@@ -167,7 +167,9 @@ export class CatalogoComponent implements OnInit {
     this.productoSeleccionadoId = null;
   }
 
-  agregarAlCarritoDesdeModal(producto: Producto) {
-    this.carritoService.agregarProducto(producto);
+  agregarAlCarritoDesdeModal(producto: Producto & { cantidadSeleccionada?: number }) {
+    // Si el modal envía una propiedad `cantidadSeleccionada`, la usamos, si no, por defecto 1
+    const cantidad = (producto as any).cantidadSeleccionada ?? 1;
+    this.carritoService.agregarProducto(producto, cantidad);
   }
 }
