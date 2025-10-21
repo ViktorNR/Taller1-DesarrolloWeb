@@ -15,31 +15,67 @@
       <div class="mb-5">
         <h4 class="checkout-section-title">Datos Personales</h4>
         <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Nombre Completo</label>
-            <input type="text" class="form-control" 
-                   [(ngModel)]="checkoutState.datosPersonales.nombre"
-                   (ngModelChange)="actualizarDatosPersonales('nombre', $event)">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" 
-                   [(ngModel)]="checkoutState.datosPersonales.email"
-                   (ngModelChange)="actualizarDatosPersonales('email', $event)">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">RUT</label>
-            <input type="text" class="form-control" 
-                   [(ngModel)]="checkoutState.datosPersonales.rut"
-                   (ngModelChange)="actualizarDatosPersonales('rut', $event)"
-                   placeholder="12.345.678-9">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Teléfono</label>
-            <input type="tel" class="form-control" 
-                   [(ngModel)]="checkoutState.datosPersonales.telefono"
-                   (ngModelChange)="actualizarDatosPersonales('telefono', $event)">
-          </div>
+         <div class="col-md-6 mb-3">
+  <label class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+  <input type="text" 
+         class="form-control" 
+         #nombre="ngModel"
+         [(ngModel)]="checkoutState.datosPersonales.nombre"
+         (ngModelChange)="actualizarDatosPersonales('nombre', $event)"
+         required
+         minlength="3"
+         [class.is-invalid]="nombre.invalid && nombre.touched">
+  <div class="invalid-feedback" *ngIf="nombre.invalid && nombre.touched">
+    <div *ngIf="nombre.errors?.['required']">El nombre es requerido</div>
+    <div *ngIf="nombre.errors?.['minlength']">El nombre debe tener al menos 3 caracteres</div>
+  </div>
+</div>
+
+<div class="col-md-6 mb-3">
+  <label class="form-label">RUT <span class="text-danger">*</span></label>
+  <input type="text" 
+         class="form-control" 
+         #rut="ngModel"
+         [(ngModel)]="checkoutState.datosPersonales.rut"
+         (ngModelChange)="actualizarDatosPersonales('rut', $event)"
+         (blur)="validarCampo('rut')"
+         placeholder="12.345.678-9"
+         required
+         [class.is-invalid]="erroresValidacion['rut']">
+  <div class="invalid-feedback" *ngIf="erroresValidacion['rut']">
+    {{ erroresValidacion['rut'] }}
+  </div>
+</div>
+
+<div class="col-md-6 mb-3">
+  <label class="form-label">Email <span class="text-danger">*</span></label>
+  <input type="email" 
+         class="form-control" 
+         #email="ngModel"
+         [(ngModel)]="checkoutState.datosPersonales.email"
+         (ngModelChange)="actualizarDatosPersonales('email', $event)"
+         (blur)="validarCampo('email')"
+         required
+         [class.is-invalid]="erroresValidacion['email']">
+  <div class="invalid-feedback" *ngIf="erroresValidacion['email']">
+    {{ erroresValidacion['email'] }}
+  </div>
+</div>
+
+<div class="col-md-6 mb-3">
+  <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+  <input type="tel" 
+         class="form-control" 
+         #telefono="ngModel"
+         [(ngModel)]="checkoutState.datosPersonales.telefono"
+         (ngModelChange)="actualizarDatosPersonales('telefono', $event)"
+         (blur)="validarCampo('telefono')"
+         required
+         [class.is-invalid]="erroresValidacion['telefono']">
+  <div class="invalid-feedback" *ngIf="erroresValidacion['telefono']">
+    {{ erroresValidacion['telefono'] }}
+  </div>
+</div>
         </div>
       </div>
 
@@ -173,12 +209,12 @@
         </div>
 
         <!-- Botón de Confirmación -->
-        <button class="btn btn-confirmar w-100 mt-4" 
-                (click)="confirmarCompra()"
-                [disabled]="!checkoutState.datosPersonales.nombre || !checkoutState.direccion.direccion">
-          <i class="fas fa-credit-card me-2"></i>
-          Confirmar Compra
-        </button>
+      <button class="btn btn-confirmar w-100 mt-4" 
+              (click)="confirmarCompra()"
+              [disabled]="!formularioValido()">
+        <i class="fas fa-credit-card me-2"></i>
+        Confirmar Compra
+      </button>
           </div>
         </div>
       </div>

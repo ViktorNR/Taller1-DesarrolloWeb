@@ -15,6 +15,45 @@ import { ProductosService, OpcionEnvio, Cupon } from '../../services/productos';
   styleUrl: './checkout.css'
 })
 export class CheckoutComponent implements OnInit {
+
+  erroresValidacion: { [key: string]: string } = {};
+
+    validarCampo(campo: string): void {
+    const datosPersonales = this.checkoutState.datosPersonales as any;
+    const valor = datosPersonales[campo];
+    
+    // Clear previous error
+    delete this.erroresValidacion[campo];
+    
+    switch(campo) {
+      case 'nombre':
+        if (!valor || valor.trim().length < 3) {
+          this.erroresValidacion[campo] = 'El nombre debe tener al menos 3 caracteres';
+        }
+        break;
+        
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!valor || !emailRegex.test(valor)) {
+          this.erroresValidacion[campo] = 'El email no es válido';
+        }
+        break;
+        
+      case 'rut':
+        if (!this.validarRUT(valor)) {
+          this.erroresValidacion[campo] = 'El RUT no es válido';
+        }
+        break;
+        
+      case 'telefono':
+        const telRegex = /^(\+?56)?[2-9]\d{8}$/;
+        if (!valor || !telRegex.test(valor.replace(/\s/g, ''))) {
+          this.erroresValidacion[campo] = 'El teléfono no es válido (ej: +56912345678)';
+        }
+        break;
+    }
+  }
+
   @Input() isOpen = false;
   @Input() productos: ItemCarrito[] = [];
   @Input() total = 0;
@@ -142,4 +181,55 @@ export class CheckoutComponent implements OnInit {
       this.cerrar();
     }
   }
+
+  
+formularioValido(): boolean {
+  const datos = this.checkoutState.datosPersonales;
+  const dir = this.checkoutState.direccion;
+  
+  // Validar campos requeridos
+  if (!datos.nombre?.trim() || datos.nombre.length < 3) return false;
+  if (!datos.email?.trim() || !this.validarEmail(datos.email)) return false;
+  if (!datos.rut?.trim() || !this.validarRUT(datos.rut)) return false;
+  if (!datos.telefono?.trim() || !this.validarTelefono(datos.telefono)) return false;
+  if (!dir.direccion?.trim()) return false;
+  
+  return true;
+}
+
+private validarEmail(email: string): boolean {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
+private validarTelefono(telefono: string): boolean {
+  const regex = /^(\+?56)?[2-9]\d{8}$/;
+  return regex.test(telefono.replace(/\s/g, ''));
+}
+
+private validarRUT(rut: string): boolean {
+  if (!rut) return false;
+  
+  const cleanRut = rut.replace(/\./g, '').replace(/-/g, '').trim();
+  if (cleanRut.length < 2) return false;
+  
+  const body = cleanRut.slice(0, -1);
+  const dv = cleanRut.slice(-1).toUpperCase();
+  
+  // Validate body is numeric
+  if (!/^\d+$/.test(body)) return false;
+  
+  let sum = 0;
+  let multiplier = 2;
+  
+  for (let i = body.length - 1; i >= 0; i--) {
+    sum += parseInt(body.charAt(i)) * multiplier;
+    multiplier = multiplier === 7 ? 2 : multiplier + 1;
+  }
+  
+  const expectedDv = 11 - (sum % 11);
+  const calculatedDv = expectedDv === 11 ? '0' : expectedDv === 10 ? 'K' : expectedDv.toString();
+  
+  return dv === calculatedDv;
+}
 }
