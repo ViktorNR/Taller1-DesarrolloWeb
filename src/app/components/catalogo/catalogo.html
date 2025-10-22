@@ -1,14 +1,6 @@
 <div class="container my-4">
   <h2 class="section-title">Catálogo de Productos</h2>
 
-  <!-- Debug info -->
-  <div class="alert alert-info" *ngIf="true">
-    <strong>Debug Info:</strong><br>
-    Loading: {{ loading }}<br>
-    Productos: {{ productos.length }}<br>
-    Productos Filtrados: {{ productosFiltrados.length }}<br>
-    Filtros: {{ filtros | json }}
-  </div>
 
   <!-- Estado de carga -->
   <div *ngIf="loading" class="text-center my-5">

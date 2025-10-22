@@ -3,7 +3,7 @@
     "id": 1,
     "nombre": "Envío Estándar UNAB",
     "descripcion": "Entrega en 3-5 días hábiles a campus UNAB",
-    "precio": 5000,
+    "precio": 5,
     "tiempo": "3-5 días hábiles",
     "icono": "fas fa-truck"
   },
@@ -11,7 +11,7 @@
     "id": 2,
     "nombre": "Envío Express UNAB",
     "descripcion": "Entrega en 1-2 días hábiles prioritario",
-    "precio": 12000,
+    "precio": 12,
     "tiempo": "1-2 días hábiles",
     "icono": "fas fa-shipping-fast"
   },
@@ -19,7 +19,7 @@
     "id": 3,
     "nombre": "Envío Premium UNAB",
     "descripcion": "Entrega el mismo día en campus Santiago",
-    "precio": 25000,
+    "precio": 25,
     "tiempo": "Mismo día",
     "icono": "fas fa-rocket"
   },
