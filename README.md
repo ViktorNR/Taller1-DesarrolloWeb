@@ -21,6 +21,8 @@ Un mini-mercado desarrollado con Angular 20 que integra la API de DummyJSON para
 - **RxJS** - Programación reactiva
 - **Font Awesome** - Iconografía
 - **Bootstrap Icons** - Iconos adicionales
+- **dotenv** - Manejo de variables de entorno
+- **Node.js Scripts** - Automatización de configuración
 
 ## 🏗️ Arquitectura Técnica
 
@@ -93,58 +95,101 @@ cd Taller1-DesarrolloWeb
 # Instalar dependencias
 npm install
 
+# Configurar variables de entorno
+cp .env.example .env
+
 # Iniciar servidor de desarrollo
 npm start
 ```
 
-### Configuración de Entorno
-La aplicación utiliza `environment.ts` para la configuración de APIs:
+### 🔧 Configuración de Variables de Entorno
 
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'https://dummyjson.com'
-};
+La aplicación utiliza un sistema de variables de entorno para manejar configuraciones sensibles y específicas del entorno.
+
+#### Archivo `.env` (Local - NO se sube a Git)
+```env
+# API Configuration
+URL_API=https://dummyjson.com
+
+# Environment
+NODE_ENV=development
 ```
+
+#### Archivo `.env.example` (Plantilla - SÍ se sube a Git)
+```env
+# API Configuration
+URL_API=https://dummyjson.com
+
+# Environment
+NODE_ENV=development
+```
+
+#### Carga Automática de Variables
+- Las variables se cargan automáticamente antes de `start` y `build`
+- Los archivos de environment se generan automáticamente basados en `.env`
+- Para cambios en `.env`, no necesitas reiniciar el servidor de desarrollo
+
+#### Comandos de Variables de Entorno
+```bash
+# Cargar variables manualmente
+npm run env:load
+
+# Desarrollo (carga variables automáticamente)
+npm start
+
+# Construcción para producción
+npm run build:prod
+```
+
+> 📖 **Documentación completa**: Ver `ENV_SETUP.md` para instrucciones detalladas sobre el manejo de variables de entorno.
 
 ## 🚀 Comandos Disponibles
 
 | Comando | Descripción |
 |----------|-------------|
-| `npm start` | Inicia servidor de desarrollo en http://localhost:4200 |
-| `npm run build` | Compila la aplicación para producción |
+| `npm start` | Inicia servidor de desarrollo en http://localhost:4200 (carga variables automáticamente) |
+| `npm run build` | Compila la aplicación para desarrollo (carga variables automáticamente) |
+| `npm run build:prod` | Compila la aplicación para producción (carga variables automáticamente) |
+| `npm run env:load` | Carga variables de entorno manualmente |
 | `npm test` | Ejecuta las pruebas unitarias |
 | `npm run watch` | Compila en modo watch para desarrollo |
 
 ## 📁 Estructura del Proyecto
 
 ```
-src/
-├── app/
-│   ├── components/
-│   │   ├── catalogo/          # Catálogo de productos
-│   │   ├── carrito/           # Carrito de compras
-│   │   ├── favoritos/         # Productos favoritos
-│   │   ├── checkout/          # Proceso de compra
-│   │   ├── header/            # Navegación principal
-│   │   ├── footer/            # Pie de página
-│   │   ├── detalle-producto/  # Modal de detalle
-│   │   ├── filtros/           # Componente de filtros
-│   │   └── toast/             # Notificaciones
-│   ├── services/
-│   │   ├── productos.ts        # Gestión de productos
-│   │   ├── carrito.ts         # Lógica del carrito
-│   │   ├── favoritos.ts       # Gestión de favoritos
-│   │   ├── checkout.ts        # Proceso de checkout
-│   │   ├── filtros.ts         # Estado de filtros
-│   │   └── notificacion.ts    # Sistema de notificaciones
-│   └── assets/data/
-│       ├── envios.json        # Opciones de envío
-│       └── promos.json        # Cupones de descuento
-├── environments/
-│   ├── environment.ts         # Configuración desarrollo
-│   └── environment.prod.ts    # Configuración producción
-└── styles.css                # Estilos globales
+├── .env                      # Variables de entorno locales (NO en Git)
+├── .env.example              # Plantilla de variables de entorno (SÍ en Git)
+├── scripts/
+│   └── load-env.js           # Script de carga de variables de entorno
+├── src/
+│   ├── app/
+│   │   ├── components/
+│   │   │   ├── catalogo/          # Catálogo de productos
+│   │   │   ├── carrito/           # Carrito de compras
+│   │   │   ├── favoritos/         # Productos favoritos
+│   │   │   ├── checkout/          # Proceso de compra
+│   │   │   ├── header/            # Navegación principal
+│   │   │   ├── footer/            # Pie de página
+│   │   │   ├── detalle-producto/  # Modal de detalle
+│   │   │   ├── filtros/           # Componente de filtros
+│   │   │   └── toast/             # Notificaciones
+│   │   ├── services/
+│   │   │   ├── productos.ts        # Gestión de productos
+│   │   │   ├── carrito.ts         # Lógica del carrito
+│   │   │   ├── favoritos.ts       # Gestión de favoritos
+│   │   │   ├── checkout.ts        # Proceso de checkout
+│   │   │   ├── filtros.ts         # Estado de filtros
+│   │   │   └── notificacion.ts    # Sistema de notificaciones
+│   │   └── assets/data/
+│   │       ├── envios.json        # Opciones de envío
+│   │       └── promos.json        # Cupones de descuento
+│   ├── environments/
+│   │   ├── environment.ts         # Configuración desarrollo (generado automáticamente)
+│   │   ├── environment.development.ts # Configuración desarrollo (generado automáticamente)
+│   │   └── environment.prod.ts    # Configuración producción (generado automáticamente)
+│   └── styles.css                # Estilos globales
+├── ENV_SETUP.md              # Documentación de variables de entorno
+└── README.md                 # Este archivo
 ```
 
 ## ✨ Funcionalidades Implementadas

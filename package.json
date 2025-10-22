@@ -3,11 +3,16 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prestart": "node scripts/load-env.js",
     "start": "ng serve",
+    "prebuild": "node scripts/load-env.js",
     "build": "ng build",
+    "prebuild:prod": "node scripts/load-env.js",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:mini-marketplace-angular": "node dist/mini-marketplace-angular/server/server.mjs"
+    "serve:ssr:mini-marketplace-angular": "node dist/mini-marketplace-angular/server/server.mjs",
+    "env:load": "node scripts/load-env.js"
   },
   "prettier": {
     "printWidth": 100,
@@ -46,6 +51,7 @@
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
+    "dotenv": "^17.2.3",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
