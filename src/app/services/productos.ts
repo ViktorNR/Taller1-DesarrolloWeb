@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+import { ApiService, DummyProduct, DummyProductsResponse } from './api.service';
 
 export interface Producto {
   id: number;
@@ -16,27 +16,6 @@ export interface Producto {
   caracteristicas: string[];
 }
 
-// DummyJSON API response interfaces
-interface DummyProduct {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  brand: string;
-  category: string;
-  thumbnail: string;
-  images: string[];
-}
-
-interface DummyProductsResponse {
-  products: DummyProduct[];
-  total: number;
-  skip: number;
-  limit: number;
-}
 
 export interface Categoria {
   id: number;
@@ -70,13 +49,14 @@ export interface Cupon {
   providedIn: 'root'
 })
 export class ProductosService {
-  private apiUrl = environment.apiUrl;
-  private productosUrl = `${this.apiUrl}/products`;
   private categoriasUrl = 'assets/data/categorias.json'; // Keep local for now
   private enviosUrl = 'assets/data/envios.json'; // Keep local for now
   private promosUrl = 'assets/data/promos.json'; // Keep local for now
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private apiService: ApiService,
+    private http: HttpClient
+  ) {}
 
   // Transform DummyJSON product to our Producto interface
   private transformDummyProduct(dummyProduct: DummyProduct): Producto {
@@ -111,8 +91,8 @@ export class ProductosService {
   }
 
   getProductos(): Observable<Producto[]> {
-    console.log('🔍 ProductosService: Iniciando carga de productos desde:', this.productosUrl);
-    return this.http.get<DummyProductsResponse>(this.productosUrl)
+    console.log('🔍 ProductosService: Iniciando carga de productos');
+    return this.apiService.getProducts()
       .pipe(
         map(response => {
           console.log('✅ ProductosService: Respuesta recibida:', response);
@@ -128,9 +108,9 @@ export class ProductosService {
   }
 
   getProductoPorId(id: number): Observable<Producto | null> {
-    return this.http.get<DummyProduct>(`${this.productosUrl}/${id}`)
+    return this.apiService.getProductById(id)
       .pipe(
-        map(product => this.transformDummyProduct(product)),
+        map(product => product ? this.transformDummyProduct(product) : null),
         catchError(error => {
           console.error('Error al cargar producto:', error);
           return of(null);
@@ -140,7 +120,7 @@ export class ProductosService {
 
   getCategorias(): Observable<Categoria[]> {
     // Get categories from DummyJSON API
-    return this.http.get<string[]>(`${this.apiUrl}/products/categories`)
+    return this.apiService.getCategories()
       .pipe(
         map(categories => categories.map((category: any, index: number) => {
           // category puede venir como string o como objeto; normalizamos a string
@@ -199,7 +179,7 @@ export class ProductosService {
       return this.getProductos();
     }
     
-    return this.http.get<DummyProductsResponse>(`${this.productosUrl}/search?q=${encodeURIComponent(termino)}`)
+    return this.apiService.searchProducts(termino)
       .pipe(
         map(response => response.products.map(product => this.transformDummyProduct(product))),
         catchError(error => {
@@ -210,7 +190,7 @@ export class ProductosService {
   }
 
   getProductosPorCategoria(categoria: string): Observable<Producto[]> {
-    return this.http.get<DummyProductsResponse>(`${this.productosUrl}/category/${encodeURIComponent(categoria)}`)
+    return this.apiService.getProductsByCategory(categoria)
       .pipe(
         map(response => response.products.map(product => this.transformDummyProduct(product))),
         catchError(error => {
