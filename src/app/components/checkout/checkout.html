@@ -221,3 +221,28 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center py-5">
+        <div class="success-icon mb-4">
+          <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+        </div>
+        <h3 class="mb-3">¡Compra Realizada con Éxito!</h3>
+        <p class="text-muted mb-4">
+          Tu pedido ha sido procesado correctamente.<br>
+          Recibirás un email de confirmación en breve.
+        </p>
+        <div class="order-details bg-light p-3 rounded mb-4" *ngIf="ordenCompra">
+          <p class="mb-2"><strong>Número de Orden:</strong> #{{ ordenCompra.numero }}</p>
+          <p class="mb-0"><strong>Total:</strong> ${{ ordenCompra.total | number:'1.0-0' }}</p>
+        </div>
+        <button type="button" class="btn btn-confirmar" (click)="cerrarModalExito()">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
