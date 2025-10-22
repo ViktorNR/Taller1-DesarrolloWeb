@@ -7,6 +7,7 @@ import { CarritoService, ItemCarrito } from '../../services/carrito';
 import { CheckoutService, CheckoutState } from '../../services/checkout';
 import { ProductosService, OpcionEnvio, Cupon } from '../../services/productos';
 
+
 @Component({
   selector: 'app-checkout',
   standalone: true,
@@ -15,6 +16,86 @@ import { ProductosService, OpcionEnvio, Cupon } from '../../services/productos';
   styleUrl: './checkout.css'
 })
 export class CheckoutComponent implements OnInit {
+
+  ordenCompra: any = null;
+
+    confirmarCompra() {
+    if (!this.formularioValido()) {
+      // Show validation errors
+      return;
+    }
+
+    // Process the purchase
+    // ... your purchase logic here
+    
+    // Set order data
+    this.ordenCompra = {
+      numero: this.generarNumeroOrden(),
+      total: this.calcularTotal(),
+      fecha: new Date()
+    };
+
+    // Hide checkout modal and show success modal
+    this.mostrarModalExito();
+  }
+
+    mostrarModalExito() {
+    // Hide checkout modal
+    const checkoutModal = document.getElementById('checkoutModal');
+    const bsCheckoutModal = (window as any).bootstrap.Modal.getInstance(checkoutModal);
+    if (bsCheckoutModal) {
+      bsCheckoutModal.hide();
+    }
+
+    // Show success modal after a brief delay
+    setTimeout(() => {
+      const successModal = new (window as any).bootstrap.Modal(
+        document.getElementById('successModal')
+      );
+      successModal.show();
+    }, 300);
+  }
+
+  cerrarModalExito() {
+    const successModal = document.getElementById('successModal');
+    const bsSuccessModal = (window as any).bootstrap.Modal.getInstance(successModal);
+    if (bsSuccessModal) {
+      bsSuccessModal.hide();
+    }
+    window.location.reload();
+    this.resetearFormulario();
+  }
+
+  generarNumeroOrden(): string {
+    return Math.random().toString(36).substr(2, 9).toUpperCase();
+  }
+
+  calcularTotal(): number {
+    // Your calculation logic
+    return this.getTotalConEnvio();
+  }
+
+  resetearFormulario() {
+    this.carritoService.vaciarCarrito();
+    this.cerrar();
+    this.checkoutState = {
+      opcionEnvio: null,
+      cuponAplicado: null,
+      datosPersonales: {
+        nombre: '',
+        email: '',
+        rut: '',
+        telefono: ''
+      },
+      direccion: {
+        direccion: '',
+        comuna: '',
+        ciudad: '',
+        codigoPostal: ''
+      }
+    };
+  }
+  
 
   erroresValidacion: { [key: string]: string } = {};
 
@@ -166,11 +247,11 @@ export class CheckoutComponent implements OnInit {
     return this.checkoutService.validarRutChileno(rut);
   }
 
-  confirmarCompra() {
-    // Aquí se implementaría la lógica de confirmación de compra
-    console.log('Compra confirmada', this.checkoutState);
-    alert('¡Compra confirmada! Gracias por tu compra.');
-  }
+  // confirmarCompra() {
+  //   // Aquí se implementaría la lógica de confirmación de compra
+  //   console.log('Compra confirmada', this.checkoutState);
+  //   alert('¡Compra confirmada! Gracias por tu compra.');
+  // }
 
   cerrar() {
     this.closeModal.emit();
