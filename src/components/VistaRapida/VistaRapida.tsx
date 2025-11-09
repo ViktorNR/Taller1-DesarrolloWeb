@@ -91,7 +91,7 @@ export default function VistaRapida({ producto, open, onClose }: { producto?: Pr
                   <button 
                     className={styles['btn-agregar']}
                     onClick={() => { 
-                      addToCart(producto); 
+                      addToCart(producto, cantidad); 
                       showToast('Producto agregado al carrito', 'success'); 
                       onClose(); 
                     }} 

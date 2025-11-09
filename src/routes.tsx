@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Catalogo from './pages/Catalogo';
-import Carrito from './pages/Carrito';
+import Carrito from './pages/Carrito/Carrito';
 import Favoritos from './pages/Favoritos';
 import Checkout from './pages/Checkout';
 import DetalleProducto from './pages/DetalleProducto';

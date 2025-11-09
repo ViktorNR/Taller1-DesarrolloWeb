@@ -47,7 +47,7 @@ export default function ProductCard({ producto, onOpenVista }:{ producto: Produc
         </div>
 
         <div className="mt-2">
-          <button className="btn btn-agregar-carrito w-100" onClick={() => { addToCart(producto); showToast('Producto agregado al carrito', 'success'); }} disabled={(producto.stock ?? 0) === 0}>
+          <button className="btn btn-agregar-carrito w-100" onClick={() => { addToCart(producto, 1); showToast('Producto agregado al carrito', 'success'); }} disabled={(producto.stock ?? 0) === 0}>
             <i className="fas fa-shopping-cart me-2" />{(producto.stock ?? 0) === 0 ? 'Sin Stock' : 'Agregar al Carrito'}
           </button>
         </div>

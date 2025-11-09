@@ -36,7 +36,7 @@ export default function DetalleProducto() {
               <button className="btn">+</button>
             </div>
             <div className="btn-group d-flex">
-              <button className="btn btn-agregar-carrito" onClick={() => { addToCart(p); showToast('Producto agregado al carrito', 'success'); }}>Agregar al carrito</button>
+              <button className="btn btn-agregar-carrito" onClick={() => { addToCart(p, 1); showToast('Producto agregado al carrito', 'success'); }}>Agregar al carrito</button>
             </div>
           </div>
         </div>
