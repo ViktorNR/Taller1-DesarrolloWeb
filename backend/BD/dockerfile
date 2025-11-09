@@ -1,0 +1,21 @@
+FROM postgres:18-bookworm
+
+# Instalar extensiones adicionales para JSONB y otras funcionalidades
+# postgresql-contrib incluye las extensiones necesarias para JSONB
+RUN apt-get update && apt-get install -y \
+    postgresql-contrib \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear directorio para scripts de inicialización
+RUN mkdir -p /docker-entrypoint-initdb.d
+
+# Copiar script de inicialización de base de datos
+COPY init-db.sql /docker-entrypoint-initdb.d/
+
+# Variables de entorno por defecto (se pueden sobrescribir en docker-compose)
+ENV POSTGRES_DB=app_db
+ENV POSTGRES_USER=app_user
+ENV POSTGRES_PASSWORD=change_this_password
+
+# Exponer puerto
+EXPOSE 5432
