@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Catalogo from './pages/Catalogo';
 import Carrito from './pages/Carrito/Carrito';
 import Favoritos from './pages/Favoritos';
-import Checkout from './pages/Checkout';
+import Checkout from './pages/Checkout/CheckoutModal';
 import DetalleProducto from './pages/DetalleProducto';
 import Header from './components/Header';
 import Footer from './components/Footer';

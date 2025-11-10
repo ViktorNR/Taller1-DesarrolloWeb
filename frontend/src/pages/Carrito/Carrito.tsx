@@ -1,10 +1,26 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
+import CheckoutModal from '../Checkout/CheckoutModal';
 import styles from '/src/pages/Carrito/Carrito.module.css';
 
 export default function Carrito() {
   const { cart, removeFromCart, updateQuantity, emptyCart } = useStore();
   const [showModal, setShowModal] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+
+  const handleConfirmPurchase = (formData: any) => {
+      console.log("Purchase confirmed!", formData, cart);
+      // Here you would:
+      // 1. Send the `formData` and `cart` to your backend API
+      // 2. On success, empty the cart (emptyCart())
+      // 3. Close the modal (setShowCheckout(false))
+      // 4. Maybe redirect to a "Thank You" page
+      
+      // For now, just close modal and empty cart
+      emptyCart();
+      setShowCheckout(false);
+    };
+
 
   // Helper function to format the price
   const formatPrice = (price: number) => {
@@ -100,9 +116,20 @@ export default function Carrito() {
             </div>
           </div>
         )}
+
+
         
-        <button className="btn btn-success">Proceder al pago</button>
+        
+        <button className="btn btn-success" onClick={() => setShowCheckout(true)}>Proceder al pago</button>
       </div>
+
+      {/* --- 4. Conditionally render the new component --- */}
+      {showCheckout && (
+        <CheckoutModal 
+          onClose={() => setShowCheckout(false)}
+        />
+      )}
+
     </div>
   );
 }

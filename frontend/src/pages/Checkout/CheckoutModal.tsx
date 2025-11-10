@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from '../context/StoreContext';
+import { useStore } from '../../context/StoreContext';
+import styles from '../Checkout/CheckoutModal.module.css';
+
+type CheckoutModalProps = {
+  onClose: () => void;
+};
 
 type DatosPersonales = {
   nombre: string;
@@ -24,7 +29,9 @@ type OpcionEnvio = {
   icono?: string;
 };
 
-export default function Checkout() {
+
+
+export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const { cart, removeFromCart } = useStore();
   const [datos, setDatos] = useState<DatosPersonales>({ nombre: '', rut: '', email: '', telefono: '' });
   const [direccion, setDireccion] = useState<Direccion>({});
@@ -61,6 +68,7 @@ export default function Checkout() {
     return subtotal + envio - descuento;
   }
 
+
   function confirmarCompra() {
     const orden = { numero: Math.floor(Math.random() * 900000) + 100000, total: getTotalConEnvio() };
     setSuccessOrder(orden);
@@ -68,8 +76,15 @@ export default function Checkout() {
     cart.forEach(item => removeFromCart(item.id));
   }
 
+  const handleSuccessAndClose = () => {
+    setSuccessOrder(null);
+    onClose();
+  }
+
   return (
-    <div className="container my-5">
+    <div className={styles['modal-backdrop']} onClick={onClose}>
+      <div className={styles['modal-container']} onClick={e => e.stopPropagation()}>
+        <div className={styles['container']}>
       <h2 className="section-title">🛒 Finalizar Compra</h2>
 
       <div className="row">
@@ -198,8 +213,8 @@ export default function Checkout() {
 
       {/* Success modal replacement */}
       {successOrder && (
-        <div className="modal-backdrop" onClick={() => setSuccessOrder(null)}>
-          <div className="modal-container" onClick={e => e.stopPropagation()}>
+        <div className={styles['modal-backdrop']} onClick={() => setSuccessOrder(null)}>
+          <div className={styles['modal-container']} onClick={e => e.stopPropagation()}>
             <div className="text-center py-4">
               <div className="success-icon mb-4"><i className="fas fa-check-circle text-success" style={{ fontSize: '5rem' }} /></div>
               <h3 className="mb-3">¡Compra Realizada con Éxito!</h3>
@@ -213,6 +228,8 @@ export default function Checkout() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }
