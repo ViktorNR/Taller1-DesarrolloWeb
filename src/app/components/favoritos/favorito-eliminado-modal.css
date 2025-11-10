@@ -1,9 +1,0 @@
-.favorito-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 1050; padding: 1rem }
-.favorito-modal { width: 520px; max-width: 100%; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; position: relative }
-.favorito-modal-close { position: absolute; right: 1rem; top: 1rem; background: transparent; border: none; font-size: 1.6rem }
-.favorito-modal-header { padding: 1.5rem 1.5rem 0 }
-.heart-large { font-size: 2.4rem; color: #d9534f }
-.favorito-modal-body { padding: 1rem 1.5rem 1.5rem }
-.favorito-producto { display:flex; gap:1rem; align-items:center; padding:0.75rem; background:#f7fbfc; border-radius:8px }
-.favorito-producto img { width:64px; height:64px; object-fit:cover; border-radius:6px }
-.favorito-actions { margin-top:1rem }
