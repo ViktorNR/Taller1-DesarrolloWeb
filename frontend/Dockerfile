@@ -1,5 +1,4 @@
-# Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -7,33 +6,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar dependencias
-RUN npm ci
+RUN npm install
 
 # Copiar código fuente
 COPY . .
 
-# Compilar la aplicación
-RUN npm run build
+# Exponer puertos (dev server + SSR server)
+EXPOSE 5173 5174
 
-# Stage 2: Runtime
-FROM node:20-alpine AS runtime
-
-WORKDIR /app
-
-# Copiar archivos de dependencias para runtime
-COPY package*.json ./
-
-# Instalar solo dependencias de producción
-RUN npm ci --only=production
-
-# Copiar archivos compilados desde el builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/server ./server
-
-# Exponer puerto
-EXPOSE 5174
-
-# Comando para iniciar el servidor SSR en producción
-CMD ["npm", "run", "ssr:start"]
-
+# Ejecutar ambos servidores en paralelo
+CMD ["sh", "-c", "npm run dev & npm run ssr:dev"]

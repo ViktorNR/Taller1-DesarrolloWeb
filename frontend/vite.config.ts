@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   root: '.',
   server: {
-    port: 5173
+    port: 5175
   },
   resolve: {
     alias: {
