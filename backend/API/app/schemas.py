@@ -39,11 +39,8 @@ class UsuarioResponse(UsuarioBase):
 # ==================== DOCUMENTO SCHEMAS ====================
 
 class DocumentoBase(BaseModel):
-    titulo: str = Field(..., min_length=1, max_length=255)
-    tipo: Optional[str] = None
     estado: Optional[str] = "borrador"
-    contenido: Optional[Dict[str, Any]] = Field(default_factory=dict)
-    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    monto_total: float = Field(0, ge=0)
 
 class DocumentoCreate(DocumentoBase):
     pass
@@ -53,7 +50,6 @@ class DocumentoResponse(DocumentoBase):
     usuario_id: UUID
     fecha_creacion: datetime
     fecha_actualizacion: datetime
-    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, alias="metadata_json")
     
     class Config:
         from_attributes = True
@@ -62,10 +58,9 @@ class DocumentoResponse(DocumentoBase):
 # ==================== DETALLE DOCUMENTO SCHEMAS ====================
 
 class DetalleDocumentoBase(BaseModel):
-    clave: str = Field(..., min_length=1, max_length=255)
-    valor: Optional[str] = None
-    datos_json: Optional[Dict[str, Any]] = Field(default_factory=dict)
-    orden: Optional[int] = 0
+    producto: str = Field(..., min_length=1, max_length=255)
+    precio: float = Field(..., gt=0)
+    cantidad: Optional[int] = Field(1, ge=1)
 
 class DetalleDocumentoCreate(DetalleDocumentoBase):
     pass

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Integer, Text, ForeignKey
+from sqlalchemy import Column, String, Boolean, DateTime, Integer, Text, ForeignKey, Float
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -29,11 +29,8 @@ class Documento(Base):
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     usuario_id = Column(UUID(as_uuid=True), ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
-    titulo = Column(String(255), nullable=False)
-    tipo = Column(String(100))
     estado = Column(String(50), default="borrador")
-    contenido = Column(JSONB, default={})
-    metadata_json = Column("metadata", JSONB, default={})
+    monto_total = Column(Float, default=0)
     fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
     fecha_actualizacion = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
@@ -46,10 +43,9 @@ class DetalleDocumento(Base):
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     documento_id = Column(UUID(as_uuid=True), ForeignKey("documentos.id", ondelete="CASCADE"), nullable=False)
-    clave = Column(String(255), nullable=False)
-    valor = Column(Text)
-    datos_json = Column(JSONB, default={})
-    orden = Column(Integer, default=0)
+    producto = Column(String(255), nullable=False)
+    precio = Column(Float, nullable=False)
+    cantidad = Column(Integer, default=1)
     fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
     fecha_actualizacion = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     

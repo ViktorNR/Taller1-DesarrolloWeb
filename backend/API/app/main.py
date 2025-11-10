@@ -130,11 +130,9 @@ def create_documento(
     """Crear nuevo documento"""
     db_documento = Documento(
         usuario_id=current_user.id,
-        titulo=documento.titulo,
-        tipo=documento.tipo,
         estado=documento.estado or "borrador",
-        contenido=documento.contenido or {},
-        metadata_json=documento.metadata or {}
+        # monto_total se calcula a partir de los detalles; iniciar en 0
+        monto_total=0.0,
     )
     
     db.add(db_documento)
@@ -166,9 +164,14 @@ def get_documento(
         Documento.id == documento_id,
         Documento.usuario_id == current_user.id
     ).first()
-    
+
     if not documento:
         raise HTTPException(status_code=404, detail="Documento no encontrado")
+
+    # Recalcular monto_total al leer (no persistimos automáticamente aquí)
+    detalles = db.query(DetalleDocumento).filter(DetalleDocumento.documento_id == documento_id).all()
+    total = sum((d.precio or 0) * (d.cantidad or 0) for d in detalles)
+    documento.monto_total = float(total)
     return documento
 
 @app.put("/documentos/{documento_id}", response_model=DocumentoResponse)
@@ -187,11 +190,11 @@ def update_documento(
     if not db_documento:
         raise HTTPException(status_code=404, detail="Documento no encontrado")
     
-    db_documento.titulo = documento.titulo
-    db_documento.tipo = documento.tipo
     db_documento.estado = documento.estado
-    db_documento.contenido = documento.contenido
-    db_documento.metadata_json = documento.metadata
+    # Recalcular monto_total desde los detalles actuales
+    detalles = db.query(DetalleDocumento).filter(DetalleDocumento.documento_id == documento_id).all()
+    total = sum((d.precio or 0) * (d.cantidad or 0) for d in detalles)
+    db_documento.monto_total = float(total)
     
     db.commit()
     db.refresh(db_documento)
@@ -236,15 +239,25 @@ def create_detalle(
     
     db_detalle = DetalleDocumento(
         documento_id=documento_id,
-        clave=detalle.clave,
-        valor=detalle.valor,
-        datos_json=detalle.datos_json or {},
-        orden=detalle.orden or 0
+        producto=detalle.producto,
+        precio=detalle.precio,
+        cantidad=detalle.cantidad or 1,
     )
     
     db.add(db_detalle)
     db.commit()
     db.refresh(db_detalle)
+
+    # Recalcular y persistir monto_total del documento
+    detalles = db.query(DetalleDocumento).filter(DetalleDocumento.documento_id == documento_id).all()
+    total = sum((d.precio or 0) * (d.cantidad or 0) for d in detalles)
+    documento_obj = db.query(Documento).filter(Documento.id == documento_id).first()
+    if documento_obj:
+        documento_obj.monto_total = float(total)
+        db.add(documento_obj)
+        db.commit()
+        db.refresh(documento_obj)
+
     return db_detalle
 
 @app.get("/documentos/{documento_id}/detalles", response_model=List[DetalleDocumentoResponse])

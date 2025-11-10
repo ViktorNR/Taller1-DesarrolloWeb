@@ -21,11 +21,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
 CREATE TABLE IF NOT EXISTS documentos (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-    titulo VARCHAR(255) NOT NULL,
-    tipo VARCHAR(100),
     estado VARCHAR(50) DEFAULT 'borrador',
-    contenido JSONB DEFAULT '{}',
-    metadata JSONB DEFAULT '{}',
+    monto_total FLOAT DEFAULT 0,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -34,10 +31,9 @@ CREATE TABLE IF NOT EXISTS documentos (
 CREATE TABLE IF NOT EXISTS detalle_documentos (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     documento_id UUID NOT NULL REFERENCES documentos(id) ON DELETE CASCADE,
-    clave VARCHAR(255) NOT NULL,
-    valor TEXT,
-    datos_json JSONB DEFAULT '{}',
-    orden INTEGER DEFAULT 0,
+    producto VARCHAR(255) NOT NULL,
+    precio NUMERIC(12,2) NOT NULL,
+    cantidad INTEGER DEFAULT 1,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -51,9 +47,6 @@ CREATE INDEX IF NOT EXISTS idx_detalle_documento ON detalle_documentos(documento
 
 -- Índices GIN para búsquedas en JSONB (muy importante para NoSQL)
 CREATE INDEX IF NOT EXISTS idx_usuarios_metadata ON usuarios USING GIN (metadata);
-CREATE INDEX IF NOT EXISTS idx_documentos_contenido ON documentos USING GIN (contenido);
-CREATE INDEX IF NOT EXISTS idx_documentos_metadata ON documentos USING GIN (metadata);
-CREATE INDEX IF NOT EXISTS idx_detalle_datos_json ON detalle_documentos USING GIN (datos_json);
 
 -- Función para actualizar fecha_actualizacion automáticamente
 CREATE OR REPLACE FUNCTION actualizar_fecha_actualizacion()
@@ -79,6 +72,30 @@ CREATE TRIGGER trigger_detalle_actualizacion
     BEFORE UPDATE ON detalle_documentos
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_actualizacion();
+
+-- Función para calcular monto_total automáticamente
+CREATE OR REPLACE FUNCTION actualizar_monto_total()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    UPDATE documentos
+    SET monto_total = COALESCE((SELECT SUM(precio * cantidad) FROM detalle_documentos WHERE documento_id = OLD.documento_id), 0)
+    WHERE id = OLD.documento_id;
+    RETURN OLD;
+  ELSE
+    UPDATE documentos
+    SET monto_total = COALESCE((SELECT SUM(precio * cantidad) FROM detalle_documentos WHERE documento_id = NEW.documento_id), 0)
+    WHERE id = NEW.documento_id;
+    RETURN NEW;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_detalle_monto ON detalle_documentos;
+CREATE TRIGGER trigger_detalle_monto
+    AFTER INSERT OR UPDATE OR DELETE ON detalle_documentos
+    FOR EACH ROW
+    EXECUTE FUNCTION actualizar_monto_total();
 
 -- Usuario de prueba (password: admin123)
 -- Hash generado con bcrypt
