@@ -1,0 +1,218 @@
+import React, { useEffect, useState } from 'react';
+import { useStore } from '../context/StoreContext';
+
+type DatosPersonales = {
+  nombre: string;
+  rut: string;
+  email: string;
+  telefono: string;
+};
+
+type Direccion = {
+  direccion?: string;
+  codigoPostal?: string;
+  comuna?: string;
+  ciudad?: string;
+};
+
+type OpcionEnvio = {
+  id: string | number;
+  nombre: string;
+  descripcion?: string;
+  tiempo?: string;
+  precio: number;
+  icono?: string;
+};
+
+export default function Checkout() {
+  const { cart, removeFromCart } = useStore();
+  const [datos, setDatos] = useState<DatosPersonales>({ nombre: '', rut: '', email: '', telefono: '' });
+  const [direccion, setDireccion] = useState<Direccion>({});
+  const [opcionesEnvio, setOpcionesEnvio] = useState<OpcionEnvio[]>([]);
+  const [opcionSeleccionada, setOpcionSeleccionada] = useState<OpcionEnvio | null>(null);
+  const [codigoCupon, setCodigoCupon] = useState('');
+  const [cuponAplicado, setCuponAplicado] = useState<any>(null);
+  const [successOrder, setSuccessOrder] = useState<any | null>(null);
+
+  useEffect(() => {
+    fetch('/data/envios.json').then(r => r.json()).then((d: any[]) => setOpcionesEnvio(d)).catch(() => setOpcionesEnvio([]));
+  }, []);
+
+  const subtotal = cart.reduce((s, p) => s + (p.precio ?? 0) * 1, 0);
+
+  function formatearPrecio(v: number) { return v.toLocaleString(); }
+
+  function aplicarCupon() {
+    // simple local logic: search promos.json
+    fetch('/data/promos.json').then(r => r.json()).then((promos: any[]) => {
+      const found = promos.find(px => px.codigo === codigoCupon.trim());
+      if (found) {
+        setCuponAplicado(found);
+      } else {
+        setCuponAplicado(null);
+        alert('Cupón inválido');
+      }
+    }).catch(() => alert('Error validando cupón'));
+  }
+
+  function getTotalConEnvio() {
+    const envio = opcionSeleccionada?.precio ?? 0;
+    const descuento = cuponAplicado?.descuento ?? 0;
+    return subtotal + envio - descuento;
+  }
+
+  function confirmarCompra() {
+    const orden = { numero: Math.floor(Math.random() * 900000) + 100000, total: getTotalConEnvio() };
+    setSuccessOrder(orden);
+    // clear cart (simple)
+    cart.forEach(item => removeFromCart(item.id));
+  }
+
+  return (
+    <div className="container my-5">
+      <h2 className="section-title">🛒 Finalizar Compra</h2>
+
+      <div className="row">
+        <div className="col-lg-8">
+          <div className="mb-5">
+            <h4 className="checkout-section-title">Datos Personales</h4>
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Nombre Completo <span className="text-danger">*</span></label>
+                <input className={`form-control`} value={datos.nombre} onChange={e => setDatos(d => ({ ...d, nombre: e.target.value }))} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">RUT <span className="text-danger">*</span></label>
+                <input className={`form-control`} value={datos.rut} onChange={e => setDatos(d => ({ ...d, rut: e.target.value }))} placeholder="12.345.678-9" />
+              </div>
+
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Email <span className="text-danger">*</span></label>
+                <input type="email" className={`form-control`} value={datos.email} onChange={e => setDatos(d => ({ ...d, email: e.target.value }))} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Teléfono <span className="text-danger">*</span></label>
+                <input className={`form-control`} value={datos.telefono} onChange={e => setDatos(d => ({ ...d, telefono: e.target.value }))} />
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-5">
+            <h4 className="checkout-section-title">Dirección de Envío</h4>
+            <div className="row">
+              <div className="col-md-8 mb-3">
+                <label className="form-label">Dirección</label>
+                <input className="form-control" value={direccion.direccion ?? ''} onChange={e => setDireccion(d => ({ ...d, direccion: e.target.value }))} />
+              </div>
+              <div className="col-md-4 mb-3">
+                <label className="form-label">Código Postal</label>
+                <input className="form-control" value={direccion.codigoPostal ?? ''} onChange={e => setDireccion(d => ({ ...d, codigoPostal: e.target.value }))} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Comuna</label>
+                <input className="form-control" value={direccion.comuna ?? ''} onChange={e => setDireccion(d => ({ ...d, comuna: e.target.value }))} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Ciudad</label>
+                <input className="form-control" value={direccion.ciudad ?? ''} onChange={e => setDireccion(d => ({ ...d, ciudad: e.target.value }))} />
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-5">
+            <h4 className="checkout-section-title">Opciones de Envío</h4>
+            <div className="row">
+              {opcionesEnvio.map(opcion => (
+                <div className="col-md-6 mb-3" key={opcion.id}>
+                  <div className={`opcion-envio ${opcionSeleccionada?.id === opcion.id ? 'seleccionada' : ''}`} onClick={() => setOpcionSeleccionada(opcion)} style={{ cursor: 'pointer' }}>
+                    <div className="d-flex align-items-center">
+                      <i className={`${opcion.icono} me-3`} />
+                      <div>
+                        <h6>{opcion.nombre}</h6>
+                        <p className="mb-1">{opcion.descripcion}</p>
+                        <small className="text-muted">{opcion.tiempo}</small>
+                      </div>
+                      <div className="ms-auto"><strong>${formatearPrecio(opcion.precio)}</strong></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-5">
+            <h4 className="checkout-section-title">Cupón de Descuento</h4>
+            <div className="row">
+              <div className="col-md-8"><input className="form-control" value={codigoCupon} onChange={e => setCodigoCupon(e.target.value)} placeholder="Ingresa tu código de cupón" /></div>
+              <div className="col-md-4"><button className="btn btn-aplicar-cupon w-100" onClick={aplicarCupon}>Aplicar Cupón</button></div>
+            </div>
+            {cuponAplicado && (
+              <div className="mt-3 alert alert-success d-flex justify-content-between align-items-center">
+                <span><i className="fas fa-check-circle me-2" />Cupón aplicado: {cuponAplicado.descripcion}</span>
+                <button className="btn btn-sm btn-outline-danger" onClick={() => setCuponAplicado(null)}><i className="fas fa-times" /></button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="col-lg-4">
+          <div className="resumen-card">
+            <h5 className="mb-3">Resumen de Compra</h5>
+            {cart.map(item => (
+              <div className="resumen-item d-flex justify-content-between" key={item.id}>
+                <div>
+                  <h6>{item.nombre}</h6>
+                  <small className="text-muted">Cantidad: 1</small>
+                </div>
+                <div className="text-end"><strong>${formatearPrecio((item.precio ?? 0) * 1)}</strong></div>
+              </div>
+            ))}
+
+            <div className="resumen-item d-flex justify-content-between">
+              <span>Subtotal</span>
+              <span>${formatearPrecio(subtotal)}</span>
+            </div>
+            {opcionSeleccionada && (
+              <div className="resumen-item d-flex justify-content-between">
+                <span>Envío ({opcionSeleccionada.nombre})</span>
+                <span>${formatearPrecio(opcionSeleccionada.precio)}</span>
+              </div>
+            )}
+            {cuponAplicado && (
+              <div className="resumen-item d-flex justify-content-between text-success">
+                <span>Descuento</span>
+                <span>- ${formatearPrecio(cuponAplicado.descuento)}</span>
+              </div>
+            )}
+            <div className="resumen-item d-flex justify-content-between">
+              <strong>Total</strong>
+              <strong>${formatearPrecio(getTotalConEnvio())}</strong>
+            </div>
+
+            <button className="btn btn-confirmar w-100 mt-4" onClick={confirmarCompra} disabled={!datos.nombre || !datos.email || cart.length === 0}> 
+              <i className="fas fa-credit-card me-2" />Confirmar Compra
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Success modal replacement */}
+      {successOrder && (
+        <div className="modal-backdrop" onClick={() => setSuccessOrder(null)}>
+          <div className="modal-container" onClick={e => e.stopPropagation()}>
+            <div className="text-center py-4">
+              <div className="success-icon mb-4"><i className="fas fa-check-circle text-success" style={{ fontSize: '5rem' }} /></div>
+              <h3 className="mb-3">¡Compra Realizada con Éxito!</h3>
+              <p className="text-muted mb-4">Tu pedido ha sido procesado correctamente.<br/>Recibirás un email de confirmación en breve.</p>
+              <div className="order-details bg-light p-3 rounded mb-4">
+                <p className="mb-2"><strong>Número de Orden:</strong> #{successOrder.numero}</p>
+                <p className="mb-0"><strong>Total:</strong> ${formatearPrecio(successOrder.total)}</p>
+              </div>
+              <button className="btn btn-confirmar" onClick={() => setSuccessOrder(null)}>Entendido</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
