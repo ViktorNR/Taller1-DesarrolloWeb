@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     password_hash VARCHAR(255) NOT NULL,
     nombre VARCHAR(100),
     apellido VARCHAR(100),
+    rut VARCHAR(12) UNIQUE,
+    telefono VARCHAR(20),
     activo BOOLEAN DEFAULT true,
     rol VARCHAR(50) DEFAULT 'user',
     metadata JSONB DEFAULT '{}',
@@ -41,6 +43,7 @@ CREATE TABLE IF NOT EXISTS detalle_documentos (
 -- Índices para mejor rendimiento
 CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
 CREATE INDEX IF NOT EXISTS idx_usuarios_username ON usuarios(username);
+CREATE INDEX IF NOT EXISTS idx_usuarios_rut ON usuarios(rut);
 CREATE INDEX IF NOT EXISTS idx_documentos_usuario ON documentos(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_documentos_estado ON documentos(estado);
 CREATE INDEX IF NOT EXISTS idx_detalle_documento ON detalle_documentos(documento_id);

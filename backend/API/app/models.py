@@ -15,6 +15,8 @@ class Usuario(Base):
     password_hash = Column(String(255), nullable=False)
     nombre = Column(String(100))
     apellido = Column(String(100))
+    rut = Column(String(12), unique=True, nullable=True, index=True)
+    telefono = Column(String(20), nullable=True)
     activo = Column(Boolean, default=True)
     rol = Column(String(50), default="user")
     metadata_json = Column("metadata", JSONB, default={})
@@ -31,6 +33,8 @@ class Documento(Base):
     usuario_id = Column(UUID(as_uuid=True), ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
     estado = Column(String(50), default="borrador")
     monto_total = Column(Float, default=0)
+    ruta_documento = Column(String(255), nullable=True)
+    metadata_json = Column("metadata", JSONB, default={})
     fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
     fecha_actualizacion = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
