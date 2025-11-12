@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import stylesCss from './CheckoutModal.module.css';
 import { createDocumento, createDetalleDocumento, type DocumentoResponse } from '../../api/api';
 const styles: { [key: string]: string } = {};
 
@@ -169,9 +170,12 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   }
 
   return (
-    <div className={styles['modal-backdrop']} onClick={onClose}>
-      <div className={styles['modal-container']} onClick={e => e.stopPropagation()}>
-        <div className={styles['container']}>
+    <div className={stylesCss['modal-backdrop']} onClick={onClose}>
+      <div className={stylesCss['modal-container']} onClick={e => e.stopPropagation()}>
+        <button className={stylesCss['btn-close']} onClick={onClose} aria-label="Cerrar">
+                  <i className="fas fa-times"></i>
+                </button>
+        <div className={stylesCss['container']}>
       <h2 className="section-title">🛒 Finalizar Compra</h2>
 
       {!user && (
