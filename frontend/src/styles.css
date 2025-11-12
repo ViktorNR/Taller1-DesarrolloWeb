@@ -556,6 +556,26 @@ body {
 	border-bottom: none;
 }
 
+/* Make links inside warning alerts use institutional dark-blue (used on auth buttons) */
+.alert-warning a {
+	color: var(--unab-azul);
+	font-weight: 600;
+	text-decoration: underline;
+}
+
+/* Rounded input style used in auth forms */
+.rounded-input {
+	border-radius: 8px;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--unab-gris);
+	transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.rounded-input:focus {
+	outline: none;
+	box-shadow: 0 0 0 0.15rem rgba(0,43,92,0.12);
+	border-color: var(--unab-azul);
+}
+
 .modal-header .btn-close {
 	filter: invert(1);
 }
@@ -1545,6 +1565,36 @@ input[type=number] {
 .btn:disabled {
 	opacity: 0.6;
 	cursor: not-allowed;
+}
+
+/* Sobrescribir estilos primarios para usar los colores institucionales UNAB */
+.btn-primary {
+	background: var(--unab-azul) !important;
+	color: var(--unab-blanco) !important;
+	border: 2px solid var(--unab-azul) !important;
+	padding: 8px 16px;
+	border-radius: 8px;
+	font-weight: 600;
+}
+
+.btn-primary:hover {
+	background: var(--unab-azul-oscuro) !important;
+	border-color: var(--unab-azul-oscuro) !important;
+}
+
+.btn-primary:focus {
+	box-shadow: 0 0 0 0.25rem rgba(0, 43, 92, 0.25) !important;
+}
+
+.btn-outline-primary {
+	background: var(--unab-blanco) !important;
+	color: var(--unab-azul) !important;
+	border: 2px solid var(--unab-azul) !important;
+}
+
+.btn-outline-primary:hover {
+	background: var(--unab-azul) !important;
+	color: var(--unab-blanco) !important;
 }
 
 .btn-loading {

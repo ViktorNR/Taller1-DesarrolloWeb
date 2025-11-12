@@ -19,7 +19,10 @@ export default function Catalogo() {
   const { showToast } = useUI();
 
   useEffect(() => {
-    getProducts().then(p => { setProductos(p); setFiltered(p); }).catch(() => { setProductos([]); setFiltered([]); }).finally(()=> setLoading(false));
+    getProducts()
+      .then(p => { setProductos(p); setFiltered(p); console.debug('[Catalogo] products loaded', p.length); })
+      .catch((err) => { console.error('[Catalogo] error loading products', err); setProductos([]); setFiltered([]); })
+      .finally(()=> setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -51,31 +54,42 @@ export default function Catalogo() {
 
   const onOpenVista = (p: any) => { setVistaProduct(p); setVistaOpen(true); };
 
+  // debug: log filtered/product counts
+  useEffect(() => {
+    console.debug('[Catalogo] productos', productos.length, 'filtered', filtered.length, 'filtros', filtros);
+  }, [productos, filtered, filtros]);
   return (
     <div className="container">
       <h2 className="section-title">Catálogo</h2>
 
   <Filtros />
-
-      {loading ? (
+      {loading && productos.length === 0 ? (
         <div className="text-center my-5">
           <div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div>
         </div>
-      ) : filtered.length > 0 ? (
-        <div className="row" id="productosGrid">
-          {filtered.map(prod => (
-            <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={prod.id}>
-              <ProductCard producto={prod} onOpenVista={onOpenVista} />
+      ) : (() => {
+        // If filters removed all items, fall back to showing the local product list so users see items
+        const displayList = (filtered && filtered.length > 0) ? filtered : productos;
+        if (displayList.length === 0) {
+          return (
+            <div className="estado-vacio text-center py-5">
+              <i className="fas fa-search fa-2x text-muted" />
+              <h4>No se encontraron productos</h4>
+              <p>Intenta ajustar los filtros de búsqueda</p>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="estado-vacio text-center py-5">
-          <i className="fas fa-search fa-2x text-muted" />
-          <h4>No se encontraron productos</h4>
-          <p>Intenta ajustar los filtros de búsqueda</p>
-        </div>
-      )}
+          );
+        }
+
+        return (
+          <div className="row" id="productosGrid">
+            {displayList.map(prod => (
+              <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={prod.id}>
+                <ProductCard producto={prod} onOpenVista={onOpenVista} />
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
       <VistaRapida producto={vistaProduct} open={vistaOpen} onClose={() => setVistaOpen(false)} />
     </div>

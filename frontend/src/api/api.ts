@@ -4,6 +4,9 @@ import type { Product } from '../context/StoreContext';
 const REMOTE_BASE = 'https://dummyjson.com';
 const remoteClient = axios.create({ baseURL: REMOTE_BASE });
 
+const BACKEND_BASE = ((import.meta as any).env?.VITE_API_BASE as string) ?? 'http://localhost:8000';
+const backendClient = axios.create({ baseURL: BACKEND_BASE });
+
 async function loadLocalList(): Promise<Product[]> {
   const res = await axios.get('/data/productos.json');
   return res.data as Product[];
@@ -49,4 +52,45 @@ export async function getProductById(id: number): Promise<Product | null> {
   } catch (e) {
     return foundLocal ?? null;
   }
+}
+
+// ==================== AUTH / USER API ====================
+
+export interface RegisterPayload {
+  email: string;
+  username: string;
+  nombre?: string;
+  apellido?: string;
+  password: string;
+}
+
+export async function registerUser(payload: RegisterPayload) {
+  const res = await backendClient.post('/register', payload);
+  return res.data;
+}
+
+export async function loginUser(username: string, password: string) {
+  // OAuth2 password flow expects form-urlencoded data at /token
+  const body = new URLSearchParams();
+  body.append('username', username);
+  body.append('password', password);
+
+  const res = await backendClient.post('/token', body.toString(), {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  });
+
+  return res.data as { access_token: string; token_type: string };
+}
+
+export function setAuthToken(token?: string | null) {
+  if (token) {
+    backendClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete backendClient.defaults.headers.common['Authorization'];
+  }
+}
+
+export async function getCurrentUser() {
+  const res = await backendClient.get('/users/me');
+  return res.data;
 }

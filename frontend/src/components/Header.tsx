@@ -2,10 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { useFilters } from '../context/FiltersContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
   const { cart, favorites } = useStore();
   const { filtros, actualizarFiltros } = useFilters();
+  const { user, logout } = useAuth();
 
   return (
     <>
@@ -53,6 +55,18 @@ export default function Header() {
                 <Link to="/favoritos" className="nav-link">Favoritos</Link>
               </div>
 
+              {/* Auth link positioned between Favoritos and the search bar */}
+              <div className="navbar-nav mx-3">
+                {user ? (
+                  <>
+                    <span className="nav-link">{user.username}</span>
+                    <a className="nav-link" href="#" onClick={(e) => { e.preventDefault(); logout(); }}>Cerrar sesión</a>
+                  </>
+                ) : (
+                  <Link to="/auth" className="nav-link">Iniciar Sesión/Registrarse</Link>
+                )}
+              </div>
+
               <form className="d-flex me-3" onSubmit={e => e.preventDefault()}>
                 <input
                   className="form-control"
@@ -66,6 +80,8 @@ export default function Header() {
                   <i className="fas fa-search" />
                 </button>
               </form>
+
+              
             </div>
           </nav>
 

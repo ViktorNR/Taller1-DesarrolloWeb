@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import styles from '../Checkout/CheckoutModal.module.css';
+import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
+const styles: { [key: string]: string } = {};
 
 type CheckoutModalProps = {
   onClose: () => void;
@@ -33,6 +35,7 @@ type OpcionEnvio = {
 
 export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const { cart, removeFromCart } = useStore();
+  const { user } = useAuth();
   const [datos, setDatos] = useState<DatosPersonales>({ nombre: '', rut: '', email: '', telefono: '' });
   const [direccion, setDireccion] = useState<Direccion>({});
   const [opcionesEnvio, setOpcionesEnvio] = useState<OpcionEnvio[]>([]);
@@ -86,6 +89,12 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
       <div className={styles['modal-container']} onClick={e => e.stopPropagation()}>
         <div className={styles['container']}>
       <h2 className="section-title">🛒 Finalizar Compra</h2>
+
+      {!user && (
+        <div className="alert alert-warning">
+          Debes <Link to="/auth">iniciar sesión</Link> para poder completar la compra. La opción de pago está deshabilitada hasta que ingreses.
+        </div>
+      )}
 
       <div className="row">
         <div className="col-lg-8">
@@ -204,7 +213,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
               <strong>${formatearPrecio(getTotalConEnvio())}</strong>
             </div>
 
-            <button className="btn btn-confirmar w-100 mt-4" onClick={confirmarCompra} disabled={!datos.nombre || !datos.email || cart.length === 0}> 
+            <button className="btn btn-confirmar w-100 mt-4" onClick={confirmarCompra} disabled={!user || !datos.nombre || !datos.email || cart.length === 0}> 
               <i className="fas fa-credit-card me-2" />Confirmar Compra
             </button>
           </div>

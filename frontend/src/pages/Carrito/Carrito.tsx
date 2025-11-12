@@ -1,64 +1,73 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import CheckoutModal from '../Checkout/CheckoutModal';
-import styles from '/src/pages/Carrito/Carrito.module.css';
+import { useAuth } from '../../context/AuthContext';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 export default function Carrito() {
   const { cart, removeFromCart, updateQuantity, emptyCart } = useStore();
   const [showModal, setShowModal] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+
+  // If navigated back from /auth with openCheckout state, open the checkout modal
+  React.useEffect(() => {
+    const s: any = (location && (location.state as any)) || {};
+    if (s.openCheckout) {
+      setShowCheckout(true);
+      // replace history state so we don't re-open on refresh
+      navigate(location.pathname, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleConfirmPurchase = (formData: any) => {
       console.log("Purchase confirmed!", formData, cart);
-      // Here you would:
-      // 1. Send the `formData` and `cart` to your backend API
-      // 2. On success, empty the cart (emptyCart())
-      // 3. Close the modal (setShowCheckout(false))
-      // 4. Maybe redirect to a "Thank You" page
-      
-      // For now, just close modal and empty cart
       emptyCart();
       setShowCheckout(false);
     };
 
 
-  // Helper function to format the price
+  // Función auxiliar para formatear el precio
   const formatPrice = (price: number) => {
     return price.toLocaleString();
   };
 
-  // Calculate total price
+  // Calculo del precio total
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + (item.precio * item.cantidad), 0);
   };
 
-  //Handle quantity change
+  // Manejo del cambio de cantidad
   const changeQuantity = (itemId: number, change: number) => {
     updateQuantity(itemId, change);
   };
 
-  // Confirm empty cart
+  // Confirmar vaciado del carrito
   const confirmEmptyCart = () => {
     emptyCart();
-    setShowModal(false); // Close the modal after confirming
+    setShowModal(false); 
   };
 
-  // Cancel empty cart
-  const cancelEmptyCart = () => {
-    setShowModal(false); // Just close the modal
-  };
-
-  // Render empty cart message if cart is empty
-  if (cart.length === 0) {
-    return (
-      <div className="container my-5">
-        <h2 className="section-title">🛒 Tu Carrito</h2>
-        <div className="alert alert-info text-center">
-          Tu carrito está vacío.
+  // Cancelar vaciado del carrito
+  // Cancelar vaciado del carrito
+    const cancelEmptyCart = () => {
+      setShowModal(false); 
+    };
+  
+    // Si el carrito está vacío, mostrar mensaje
+    if (cart.length === 0) {
+      return (
+        <div className="container my-5">
+          <h2 className="section-title">🛒 Tu Carrito</h2>
+          <div className="alert alert-info text-center">
+            Tu carrito está vacío.
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
   return (
     <div className="container my-5">
@@ -101,12 +110,12 @@ export default function Carrito() {
         <div className="mb-3">
           <h4>Total: ${formatPrice(getTotalPrice())}</h4>
         </div>
-        <button className="btn btn-secondary me-2" onClick={() => setShowModal(true)}>Vaciar carrito</button>
+  <button className="btn btn-secondary me-2" onClick={() => setShowModal(true)}>Vaciar carrito</button>
         
         {/* Modal for emptying cart confirmation */}
         {showModal && (
-          <div className={styles['modal-backdrop']}>
-            <div className={styles['modal-confirm']}>
+          <div className="modal-backdrop">
+            <div className="modal-confirm">
               <h5>¿Estás seguro de que deseas vaciar el carrito?</h5>
               <p>Esta acción no puede deshacerse</p>
               <div className="mt-3 text-end">
@@ -120,7 +129,16 @@ export default function Carrito() {
 
         
         
-        <button className="btn btn-success" onClick={() => setShowCheckout(true)}>Proceder al pago</button>
+        <button
+          className="btn btn-success"
+          onClick={() => {
+            if (user) setShowCheckout(true);
+            else navigate('/auth', { state: { from: location.pathname, openCheckout: true } });
+          }}
+          title={user ? 'Proceder al pago' : 'Debes iniciar sesión'}
+        >
+          Proceder al pago
+        </button>
       </div>
 
       {/* --- 4. Conditionally render the new component --- */}

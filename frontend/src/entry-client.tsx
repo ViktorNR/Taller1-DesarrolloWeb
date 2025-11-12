@@ -5,6 +5,7 @@ import AppRoutes from './routes';
 import { StoreProvider } from './context/StoreContext';
 import { UIProvider } from './context/UIContext';
 import { FiltersProvider } from './context/FiltersContext';
+import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import './styles.css';
 
@@ -25,11 +26,13 @@ hydrateRoot(
       <UIProvider>
       <StoreProvider>
         <FiltersProvider>
-          <BrowserRouter>
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </BrowserRouter>
+          <AuthProvider>
+            <BrowserRouter>
+              <ErrorBoundary>
+                <AppRoutes />
+              </ErrorBoundary>
+            </BrowserRouter>
+          </AuthProvider>
         </FiltersProvider>
       </StoreProvider>
     </UIProvider>
