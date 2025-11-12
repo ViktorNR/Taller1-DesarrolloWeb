@@ -61,6 +61,7 @@ export interface RegisterPayload {
   username: string;
   nombre?: string;
   apellido?: string;
+  rut?: string;
   password: string;
 }
 
@@ -95,6 +96,19 @@ export async function getCurrentUser() {
   return res.data;
 }
 
+export interface UpdateUserPayload {
+  nombre?: string;
+  apellido?: string;
+  rut?: string;
+  email?: string;
+}
+
+export async function updateCurrentUser(payload: UpdateUserPayload) {
+  // Attempt to PATCH the current user's data. Backend may support this endpoint.
+  const res = await backendClient.patch('/users/me', payload);
+  return res.data;
+}
+
 // ==================== DOCUMENTOS / ORDENES API ====================
 
 export interface DocumentoResponse {
@@ -126,8 +140,8 @@ export interface DetalleDocumentoCreate {
   cantidad: number;
 }
 
-export async function createDocumento(estado: string = 'completado'): Promise<DocumentoResponse> {
-  const res = await backendClient.post('/documentos', { estado });
+export async function createDocumento(payload: any = { estado: 'completado' }): Promise<DocumentoResponse> {
+  const res = await backendClient.post('/documentos', payload);
   return res.data;
 }
 

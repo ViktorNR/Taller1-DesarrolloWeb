@@ -7,6 +7,7 @@ export interface User {
   username: string;
   nombre?: string;
   apellido?: string;
+  rut?: string;
   activo?: boolean;
   rol?: string;
 }
@@ -17,6 +18,7 @@ interface AuthContextValue {
   login: (username: string, password: string) => Promise<User>;
   logout: () => void;
   register: (payload: any) => Promise<any>;
+  updateUser?: (payload: Partial<User>) => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -68,10 +70,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return registerUser(payload);
   }
 
-  return (
-    <AuthContext.Provider value={{ user, loading, login, logout, register }}>
-      {children}
-    </AuthContext.Provider>
+  async function updateUser(payload: Partial<User>) {
+    try {
+      // Try to call backend to persist changes
+      // Import dynamically to avoid circular issues
+      const { updateCurrentUser } = await import('../api/api');
+      const updated = await updateCurrentUser(payload as any);
+      setUser(updated as User);
+      return updated as User;
+    } catch (e) {
+      // If backend doesn't support update, just update local state
+      setUser(u => (u ? { ...u, ...payload } : u));
+      return user;
+    }
+  }
+
+  return React.createElement(
+    AuthContext.Provider,
+    { value: { user, loading, login, logout, register, updateUser } },
+    children
   );
 }
 

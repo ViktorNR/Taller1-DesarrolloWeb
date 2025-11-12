@@ -52,6 +52,19 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     fetch('/data/envios.json').then(r => r.json()).then((d: any[]) => setOpcionesEnvio(d)).catch(() => setOpcionesEnvio([]));
   }, []);
 
+  // Prefill datos personales from authenticated user when available
+  useEffect(() => {
+    if (user) {
+      const nombreCompleto = [user.nombre, user.apellido].filter(Boolean).join(' ').trim();
+      setDatos(d => ({
+        ...d,
+        nombre: nombreCompleto || d.nombre,
+        email: (user.email ?? d.email),
+        rut: (user as any).rut ?? d.rut
+      }));
+    }
+  }, [user]);
+
   const subtotal = cart.reduce((s, p) => s + (p.precio ?? 0) * (p.cantidad ?? 1), 0);
 
   function formatearPrecio(v: number) { return v.toLocaleString(); }
@@ -131,8 +144,16 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     setError(null);
 
     try {
-      // Crear documento (orden) con estado "completado"
-      const documento: DocumentoResponse = await createDocumento('completado');
+      // Crear documento (orden) con estado "completado" y adjuntar direccion/envio/cupon/datos personales
+      const documentoPayload = {
+        estado: 'completado',
+        direccion: direccion,
+        envio: opcionSeleccionada,
+        cupon: cuponAplicado,
+        datosPersonales: datos,
+        monto_total: getTotalConEnvio()
+      };
+      const documento: DocumentoResponse = await createDocumento(documentoPayload);
       
       // Crear detalles para cada item del carrito
       const detallesPromises = cart.map(item =>

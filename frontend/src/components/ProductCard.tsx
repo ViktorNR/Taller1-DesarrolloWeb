@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Product } from '../context/StoreContext';
 import { useStore } from '../context/StoreContext';
 import { useUI } from '../context/UIContext';
@@ -14,11 +14,33 @@ function Stars({ rating }: { rating?: number }) {
   return <span>{stars}</span>;
 }
 
+import FavoritoModal from './Favoritos/FavoritoModal';
+import CarritoModal from './Carrito/CarritoModal';
+
 export default function ProductCard({ producto, onOpenVista }:{ producto: Product; onOpenVista: (p: Product) => void }){
   const { addToCart, addToFavorites, removeFromFavorites, favorites } = useStore();
   const { showToast } = useUI();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTipo, setModalTipo] = useState<'agregado'|'removido'>('agregado');
+  const [cartModalOpen, setCartModalOpen] = useState(false);
+  const [cartModalTipo, setCartModalTipo] = useState<'agregado'|'removido'>('agregado');
 
   const favorito = favorites.some(f => f.id === producto.id);
+
+  const handleToggleFavorito = () => {
+    if (favorito) {
+      // remove then show removed modal
+      removeFromFavorites(producto.id);
+      showToast('Quitado de favoritos', 'info');
+      setModalTipo('removido');
+      setModalOpen(true);
+    } else {
+      addToFavorites(producto);
+      showToast('Agregado a favoritos', 'info');
+      setModalTipo('agregado');
+      setModalOpen(true);
+    }
+  };
 
   return (
     <div className="card producto-card h-100">
@@ -38,20 +60,25 @@ export default function ProductCard({ producto, onOpenVista }:{ producto: Produc
           <button className="btn btn-vista-rapida flex-grow-1" onClick={() => onOpenVista(producto)}>
             <i className="fas fa-eye me-1" />Vista Rápida
           </button>
-          <button className={`btn btn-favorito ${favorito ? 'activo' : ''}`} onClick={() => { 
-            if (favorito) removeFromFavorites(producto.id); else addToFavorites(producto);
-            showToast(favorito ? 'Quitado de favoritos' : 'Agregado a favoritos', 'info');
-          }}>
+          <button className={`btn btn-favorito ${favorito ? 'activo' : ''}`} onClick={handleToggleFavorito}>
             <i className="fas fa-heart" />
           </button>
         </div>
 
         <div className="mt-2">
-          <button className="btn btn-agregar-carrito w-100" onClick={() => { addToCart(producto, 1); showToast('Producto agregado al carrito', 'success'); }} disabled={(producto.stock ?? 0) === 0}>
+          <button className="btn btn-agregar-carrito w-100" onClick={() => {
+            // open modal after adding
+            addToCart(producto, 1);
+            showToast('Producto agregado al carrito', 'success');
+            setCartModalTipo('agregado');
+            setCartModalOpen(true);
+          }} disabled={(producto.stock ?? 0) === 0}>
             <i className="fas fa-shopping-cart me-2" />{(producto.stock ?? 0) === 0 ? 'Sin Stock' : 'Agregar al Carrito'}
           </button>
         </div>
       </div>
+      <FavoritoModal open={modalOpen} producto={producto} tipo={modalTipo} onClose={() => setModalOpen(false)} />
+      <CarritoModal open={cartModalOpen} producto={producto} tipo={cartModalTipo} cantidad={1} onClose={() => setCartModalOpen(false)} />
     </div>
   );
 }

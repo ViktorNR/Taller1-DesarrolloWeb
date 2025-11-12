@@ -7,6 +7,7 @@ export default function Register({ onRegistered }: { onRegistered?: (creds: { us
   const [username, setUsername] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
+  const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,7 @@ export default function Register({ onRegistered }: { onRegistered?: (creds: { us
 
     setLoading(true);
     try {
-      const payload = { email, username, nombre, apellido, password };
+      const payload = { email, username, nombre, apellido, rut, password };
       await registerUser(payload);
       // Si se proporciona callback, enviar credenciales para permitir auto-login
       if (onRegistered) {
@@ -60,6 +61,11 @@ export default function Register({ onRegistered }: { onRegistered?: (creds: { us
             <label>Apellido</label>
             <input className="form-control rounded-input" value={apellido} onChange={e => setApellido(e.target.value)} style={{ width: '100%' }} />
           </div>
+        </div>
+
+        <div style={{ marginBottom: 8 }}>
+          <label>RUT</label>
+          <input className="form-control rounded-input" value={rut} onChange={e => setRut(e.target.value)} placeholder="12.345.678-9" style={{ width: '100%' }} />
         </div>
 
         <div style={{ marginBottom: 8 }}>

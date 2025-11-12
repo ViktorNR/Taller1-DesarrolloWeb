@@ -1118,16 +1118,23 @@ input[type=number] {
 }
 
 .favorito-remove-btn {
-	width: 30px;
-	height: 30px;
+	/* Rellenar todo el botón con rojo y permitir que el texto quede dentro */
 	background-color: var(--unab-rojo) !important;
+	color: var(--unab-blanco) !important;
 	border: none !important;
-	transition: all 0.3s ease;
+	padding: 10px 16px;
+	border-radius: 8px;
+	font-weight: 500;
+	font-size: 0.9rem;
+	transition: all 0.18s ease;
+	display: inline-block;
+	line-height: 1;
 }
 
 .favorito-remove-btn:hover {
 	background-color: var(--unab-rojo-oscuro) !important;
-	transform: scale(1.1);
+	color: var(--unab-blanco) !important;
+	transform: translateY(-2px);
 }
 
 /* Estado vacío en favoritos */

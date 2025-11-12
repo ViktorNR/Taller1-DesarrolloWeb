@@ -4,9 +4,14 @@ import CheckoutModal from '../Checkout/CheckoutModal';
 import styles from '/src/pages/Carrito/Carrito.module.css';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import CarritoModal from '../../components/Carrito/CarritoModal';
 
 export default function Carrito() {
   const { cart, removeFromCart, updateQuantity, emptyCart } = useStore();
+  const { addToCart } = useStore();
+  const [cartModalOpen, setCartModalOpen] = useState(false);
+  const [cartModalProducto, setCartModalProducto] = useState<any>(null);
+  const [cartModalCantidad, setCartModalCantidad] = useState<number>(1);
   const [showModal, setShowModal] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const navigate = useNavigate();
@@ -46,6 +51,15 @@ export default function Carrito() {
     updateQuantity(itemId, change);
   };
 
+  const handleRemoveClick = (item: any) => {
+    // remove then show removed modal with undo
+    // capture quantity to allow undo
+    setCartModalCantidad(item.cantidad ?? 1);
+    removeFromCart(item.id);
+    setCartModalProducto(item);
+    setCartModalOpen(true);
+  };
+
   // Confirmar vaciado del carrito
   const confirmEmptyCart = () => {
     emptyCart();
@@ -58,54 +72,47 @@ export default function Carrito() {
       setShowModal(false); 
     };
   
-    // Si el carrito está vacío, mostrar mensaje
-    if (cart.length === 0) {
-      return (
-        <div className="container my-5">
-          <h2 className="section-title">🛒 Tu Carrito</h2>
-          <div className="alert alert-info text-center">
-            Tu carrito está vacío.
-          </div>
-        </div>
-      );
-    }
-
+    // Render normal page; show empty message when cart is empty but still render modals
   return (
     <div className="container my-5">
       <h2 className="section-title">🛒 Tu Carrito</h2>
 
-      <div>
-        {cart.map(item => (
-          <div className="carrito-item" key={item.id}>
-            <div className="row align-items-center">
-              <div className="col-md-2">
-                <img src={item.imagen} className="carrito-item-img" alt={item.nombre} />
-              </div>
-              <div className="col-md-4">
-                <div className="carrito-item-info">
-                  <h6>{item.nombre}</h6>
-                  <div className="carrito-item-precio">${formatPrice(item.precio)}</div>
+      {cart.length === 0 ? (
+        <div className="alert alert-info text-center">Tu carrito está vacío.</div>
+      ) : (
+        <div>
+          {cart.map(item => (
+            <div className="carrito-item" key={item.id}>
+              <div className="row align-items-center">
+                <div className="col-md-2">
+                  <img src={item.imagen} className="carrito-item-img" alt={item.nombre} />
                 </div>
-              </div>
-              <div className="col-md-3">
-                <div className="carrito-item-cantidad">
-                  <button className="btn btn-outline-secondary" onClick={() => changeQuantity(item.id, -1)}>-</button>
-                  <span className="mx-2">{item.cantidad}</span>
-                  <button className="btn btn-outline-secondary" onClick={() => changeQuantity(item.id, 1)}>+</button>
+                <div className="col-md-4">
+                  <div className="carrito-item-info">
+                    <h6>{item.nombre}</h6>
+                    <div className="carrito-item-precio">${formatPrice(item.precio)}</div>
+                  </div>
                 </div>
-              </div>
-              <div className="col-md-2">
-                <div className="text-end">
-                  <div className="fw-bold">${formatPrice(item.precio * item.cantidad)}</div>
-                  <button className="btn btn-sm btn-outline-danger" onClick={() => removeFromCart(item.id)}>
-                    <i className="fas fa-trash"></i>
-                  </button>
+                <div className="col-md-3">
+                  <div className="carrito-item-cantidad">
+                    <button className="btn btn-outline-secondary" onClick={() => changeQuantity(item.id, -1)}>-</button>
+                    <span className="mx-2">{item.cantidad}</span>
+                    <button className="btn btn-outline-secondary" onClick={() => changeQuantity(item.id, 1)}>+</button>
+                  </div>
+                </div>
+                <div className="col-md-2">
+                  <div className="text-end">
+                    <div className="fw-bold">${formatPrice(item.precio * item.cantidad)}</div>
+                    <button className="btn btn-sm btn-outline-danger" onClick={() => handleRemoveClick(item)}>
+                      <i className="fas fa-trash"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="text-end mt-4">
         <div className="mb-3">
@@ -147,6 +154,15 @@ export default function Carrito() {
         <CheckoutModal 
           onClose={() => setShowCheckout(false)}
         />
+      )}
+
+      {/* Cart removed/added modal */}
+      {cartModalOpen && (
+        // lazy-load component via dynamic import would be nicer, but direct import is fine
+        <React.Suspense fallback={null}>
+          {/* @ts-ignore */}
+          <CarritoModal open={cartModalOpen} producto={cartModalProducto} tipo="removido" cantidad={cartModalCantidad} onClose={() => setCartModalOpen(false)} />
+        </React.Suspense>
       )}
 
     </div>
