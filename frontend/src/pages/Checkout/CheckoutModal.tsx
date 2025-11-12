@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import stylesCss from './CheckoutModal.module.css';
 import { createDocumento, createDetalleDocumento, type DocumentoResponse } from '../../api/api';
 const styles: { [key: string]: string } = {};
 
@@ -75,6 +76,51 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   }
 
 
+// Validar email
+  function isEmailValido(email: string): boolean {
+    return email.includes('@') && email.includes('.');
+  }
+
+  // Validar teléfono chileno (+56 9 12345678)
+  function isTelefonoValido(telefono: string): boolean {
+    const regex = /^\+56\s?9\s?\d{8}$/;
+    return regex.test(telefono.replace(/\s+/g, ' '));
+  }
+
+  // Validar RUT chileno
+  function isRutValido(rut: string): boolean {
+    // Eliminar puntos y guión
+    const rutLimpio = rut.replace(/\./g, '').replace(/-/g, '');
+    if (rutLimpio.length < 2) return false;
+
+    const cuerpo = rutLimpio.slice(0, -1);
+    const dv = rutLimpio.slice(-1).toUpperCase();
+
+    // Calcular dígito verificador
+    let suma = 0;
+    let multiplicador = 2;
+
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+      suma += parseInt(cuerpo[i]) * multiplicador;
+      multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+    }
+
+    const dvCalculado = 11 - (suma % 11);
+    const dvEsperado = dvCalculado === 11 ? '0' : dvCalculado === 10 ? 'K' : dvCalculado.toString();
+
+    return dv === dvEsperado;
+  }
+
+  // Validar que todos los datos personales requeridos estén completos
+  function isDatosPersonalesCompletos(): boolean {
+    return !!(
+      datos.nombre.trim() &&
+      isRutValido(datos.rut) &&
+      isEmailValido(datos.email) &&
+      isTelefonoValido(datos.telefono)
+    );
+  }
+
   async function confirmarCompra() {
     if (!user || cart.length === 0) {
       setError('Debes estar autenticado y tener items en el carrito');
@@ -124,9 +170,12 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   }
 
   return (
-    <div className={styles['modal-backdrop']} onClick={onClose}>
-      <div className={styles['modal-container']} onClick={e => e.stopPropagation()}>
-        <div className={styles['container']}>
+    <div className={stylesCss['modal-backdrop']} onClick={onClose}>
+      <div className={stylesCss['modal-container']} onClick={e => e.stopPropagation()}>
+        <button className={stylesCss['btn-close']} onClick={onClose} aria-label="Cerrar">
+                  <i className="fas fa-times"></i>
+                </button>
+        <div className={stylesCss['container']}>
       <h2 className="section-title">🛒 Finalizar Compra</h2>
 
       {!user && (
@@ -268,7 +317,13 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
             <button 
               className="btn btn-confirmar w-100 mt-4" 
               onClick={confirmarCompra} 
-              disabled={!user || !datos.nombre || !datos.email || cart.length === 0 || isProcessing}
+              disabled={
+                    !user ||
+                    !isDatosPersonalesCompletos() ||
+                    !opcionSeleccionada ||
+                    cart.length === 0 ||
+                    isProcessing
+                    }
             > 
               {isProcessing ? (
                 <>

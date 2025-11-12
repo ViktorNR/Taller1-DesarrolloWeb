@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import CheckoutModal from '../Checkout/CheckoutModal';
+import styles from '/src/pages/Carrito/Carrito.module.css';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -114,8 +115,8 @@ export default function Carrito() {
         
         {/* Modal for emptying cart confirmation */}
         {showModal && (
-          <div className="modal-backdrop">
-            <div className="modal-confirm">
+          <div className={styles["modal-backdrop"]} >
+            <div className={styles["modal-confirm"]}>
               <h5>¿Estás seguro de que deseas vaciar el carrito?</h5>
               <p>Esta acción no puede deshacerse</p>
               <div className="mt-3 text-end">
