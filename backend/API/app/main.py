@@ -10,14 +10,15 @@ import json
 import os
 
 from .database import engine, get_db, Base
-from .models import Usuario, Documento, DetalleDocumento
+from .models import Usuario, Documento, DetalleDocumento, DireccionDespacho
 from .schemas import (
     UsuarioCreate, UsuarioResponse, UsuarioUpdate,
     DocumentoCreate, DocumentoResponse,
     DetalleDocumentoCreate, DetalleDocumentoResponse,
     CompraResponse,
     CheckoutRequest,
-    Token
+    Token,
+    DireccionDespachoCreate, DireccionDespachoUpdate, DireccionDespachoResponse
 )
 from .validators import validar_rut_chileno, validar_telefono_chileno, validar_complejidad_password
 from .services.documento_service import generar_pdf_documento
@@ -253,6 +254,161 @@ def get_mis_compras(
     
     return compras
 
+# ==================== DIRECCIONES DESPACHO ENDPOINTS ====================
+
+@app.post("/usuarios/me/direcciones", response_model=DireccionDespachoResponse, status_code=status.HTTP_201_CREATED)
+def create_direccion_despacho(
+    direccion: DireccionDespachoCreate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    """Crear nueva dirección de despacho para el usuario actual"""
+    # Si se marca como principal, desmarcar las demás
+    if direccion.es_principal:
+        db.query(DireccionDespacho).filter(
+            DireccionDespacho.usuario_id == current_user.id,
+            DireccionDespacho.es_principal == True
+        ).update({"es_principal": False})
+    
+    db_direccion = DireccionDespacho(
+        usuario_id=current_user.id,
+        direccion=direccion.direccion,
+        comuna=direccion.comuna,
+        ciudad=direccion.ciudad,
+        codigo_postal=direccion.codigo_postal,
+        es_principal=direccion.es_principal or False,
+        activa=direccion.activa if direccion.activa is not None else True,
+        metadata_json=direccion.metadata or {}
+    )
+    
+    db.add(db_direccion)
+    db.commit()
+    db.refresh(db_direccion)
+    return db_direccion
+
+@app.get("/usuarios/me/direcciones", response_model=List[DireccionDespachoResponse])
+def get_direcciones_despacho(
+    activa: Optional[bool] = None,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    """Listar direcciones de despacho del usuario actual"""
+    query = db.query(DireccionDespacho).filter(
+        DireccionDespacho.usuario_id == current_user.id
+    )
+    
+    # Filtrar por estado activa si se proporciona
+    if activa is not None:
+        query = query.filter(DireccionDespacho.activa == activa)
+    
+    # Ordenar: principal primero, luego por fecha de creación
+    direcciones = query.order_by(
+        DireccionDespacho.es_principal.desc(),
+        DireccionDespacho.fecha_creacion.desc()
+    ).all()
+    
+    return direcciones
+
+@app.get("/usuarios/me/direcciones/{direccion_id}", response_model=DireccionDespachoResponse)
+def get_direccion_despacho(
+    direccion_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    """Obtener dirección de despacho por ID"""
+    direccion = db.query(DireccionDespacho).filter(
+        DireccionDespacho.id == direccion_id,
+        DireccionDespacho.usuario_id == current_user.id
+    ).first()
+    
+    if not direccion:
+        raise HTTPException(status_code=404, detail="Dirección no encontrada")
+    
+    return direccion
+
+@app.put("/usuarios/me/direcciones/{direccion_id}", response_model=DireccionDespachoResponse)
+def update_direccion_despacho(
+    direccion_id: UUID,
+    direccion_update: DireccionDespachoUpdate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    """Actualizar dirección de despacho"""
+    db_direccion = db.query(DireccionDespacho).filter(
+        DireccionDespacho.id == direccion_id,
+        DireccionDespacho.usuario_id == current_user.id
+    ).first()
+    
+    if not db_direccion:
+        raise HTTPException(status_code=404, detail="Dirección no encontrada")
+    
+    # Si se marca como principal, desmarcar las demás
+    if direccion_update.es_principal is True:
+        db.query(DireccionDespacho).filter(
+            DireccionDespacho.usuario_id == current_user.id,
+            DireccionDespacho.es_principal == True,
+            DireccionDespacho.id != direccion_id
+        ).update({"es_principal": False})
+    
+    # Actualizar campos
+    update_data = direccion_update.model_dump(exclude_unset=True)
+    if "metadata" in update_data:
+        update_data["metadata_json"] = update_data.pop("metadata")
+    
+    for field, value in update_data.items():
+        setattr(db_direccion, field, value)
+    
+    db.commit()
+    db.refresh(db_direccion)
+    return db_direccion
+
+@app.delete("/usuarios/me/direcciones/{direccion_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_direccion_despacho(
+    direccion_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    """Eliminar dirección de despacho"""
+    db_direccion = db.query(DireccionDespacho).filter(
+        DireccionDespacho.id == direccion_id,
+        DireccionDespacho.usuario_id == current_user.id
+    ).first()
+    
+    if not db_direccion:
+        raise HTTPException(status_code=404, detail="Dirección no encontrada")
+    
+    db.delete(db_direccion)
+    db.commit()
+    return None
+
+@app.put("/usuarios/me/direcciones/{direccion_id}/principal", response_model=DireccionDespachoResponse)
+def marcar_direccion_principal(
+    direccion_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    """Marcar dirección como principal"""
+    db_direccion = db.query(DireccionDespacho).filter(
+        DireccionDespacho.id == direccion_id,
+        DireccionDespacho.usuario_id == current_user.id
+    ).first()
+    
+    if not db_direccion:
+        raise HTTPException(status_code=404, detail="Dirección no encontrada")
+    
+    # Desmarcar todas las demás direcciones como principales
+    db.query(DireccionDespacho).filter(
+        DireccionDespacho.usuario_id == current_user.id,
+        DireccionDespacho.es_principal == True,
+        DireccionDespacho.id != direccion_id
+    ).update({"es_principal": False})
+    
+    # Marcar esta dirección como principal
+    db_direccion.es_principal = True
+    db.commit()
+    db.refresh(db_direccion)
+    return db_direccion
+
 # ==================== USUARIOS ENDPOINTS ====================
 
 @app.get("/usuarios", response_model=List[UsuarioResponse])
@@ -436,7 +592,7 @@ def get_detalles(
     
     detalles = db.query(DetalleDocumento).filter(
         DetalleDocumento.documento_id == documento_id
-    ).order_by(DetalleDocumento.orden).all()
+    ).order_by(DetalleDocumento.fecha_creacion).all()
     
     return detalles
 

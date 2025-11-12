@@ -19,6 +19,20 @@ CREATE TABLE IF NOT EXISTS usuarios (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS direcciones_despacho (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    direccion VARCHAR(255) NOT NULL,
+    comuna VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100) NOT NULL,
+    codigo_postal VARCHAR(10),
+    es_principal BOOLEAN DEFAULT false,
+    activa BOOLEAN DEFAULT true,
+    metadata JSONB DEFAULT '{}',
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
 -- Tabla de documentos
 CREATE TABLE IF NOT EXISTS documentos (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -40,16 +54,20 @@ CREATE TABLE IF NOT EXISTS detalle_documentos (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Índices para mejor rendimiento
-CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
-CREATE INDEX IF NOT EXISTS idx_usuarios_username ON usuarios(username);
-CREATE INDEX IF NOT EXISTS idx_usuarios_rut ON usuarios(rut);
-CREATE INDEX IF NOT EXISTS idx_documentos_usuario ON documentos(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_documentos_estado ON documentos(estado);
-CREATE INDEX IF NOT EXISTS idx_detalle_documento ON detalle_documentos(documento_id);
+-- Indices para mejor rendimiento
 
--- Índices GIN para búsquedas en JSONB (muy importante para NoSQL)
-CREATE INDEX IF NOT EXISTS idx_usuarios_metadata ON usuarios USING GIN (metadata);
+CREATE INDEX idx_usuarios_rut ON usuarios(rut);
+CREATE INDEX idx_usuarios_username ON usuarios(username);
+CREATE INDEX idx_usuarios_email ON usuarios(email);
+CREATE INDEX idx_documentos_usuario ON documentos(usuario_id);
+CREATE INDEX idx_documentos_estado ON documentos(estado);
+CREATE INDEX idx_detalle_documento ON detalle_documentos(documento_id);
+CREATE INDEX idx_direcciones_usuario ON direcciones_despacho(usuario_id);
+CREATE INDEX idx_direcciones_principal ON direcciones_despacho(usuario_id, es_principal) WHERE es_principal = true;
+CREATE INDEX idx_direcciones_activa ON direcciones_despacho(activa);
+CREATE INDEX idx_direcciones_comuna ON direcciones_despacho(comuna);
+CREATE INDEX idx_direcciones_ciudad ON direcciones_despacho(ciudad);
+CREATE INDEX idx_direcciones_metadata ON direcciones_despacho USING GIN (metadata);
 
 -- Función para actualizar fecha_actualizacion automáticamente
 CREATE OR REPLACE FUNCTION actualizar_fecha_actualizacion()
@@ -109,6 +127,11 @@ VALUES (
     '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYqHGvqAGeu',
     'Admin',
     'Sistema',
+    '20067969-5',
+    '+56972134846',
+    true,
     'admin',
-    '{"permisos": ["read", "write", "delete"], "tema": "dark"}'
+    '{"permisos": ["read", "write", "delete"], "tema": "dark"}',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
 ) ON CONFLICT (email) DO NOTHING;

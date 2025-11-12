@@ -25,6 +25,7 @@ class Usuario(Base):
     
     # Relaciones
     documentos = relationship("Documento", back_populates="usuario", cascade="all, delete-orphan")
+    direcciones_despacho = relationship("DireccionDespacho", back_populates="usuario", cascade="all, delete-orphan")
 
 class Documento(Base):
     __tablename__ = "documentos"
@@ -55,3 +56,21 @@ class DetalleDocumento(Base):
     
     # Relaciones
     documento = relationship("Documento", back_populates="detalles")
+
+class DireccionDespacho(Base):
+    __tablename__ = "direcciones_despacho"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    usuario_id = Column(UUID(as_uuid=True), ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
+    direccion = Column(String(255), nullable=False)
+    comuna = Column(String(100), nullable=False)
+    ciudad = Column(String(100), nullable=False)
+    codigo_postal = Column(String(10), nullable=True)
+    es_principal = Column(Boolean, default=False)
+    activa = Column(Boolean, default=True)
+    metadata_json = Column("metadata", JSONB, default={})
+    fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
+    fecha_actualizacion = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+    # Relaciones
+    usuario = relationship("Usuario", back_populates="direcciones_despacho")

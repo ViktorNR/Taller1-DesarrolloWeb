@@ -46,6 +46,41 @@ class UsuarioResponse(UsuarioBase):
         from_attributes = True
         populate_by_name = True
 
+# ==================== DIRECCION DESPACHO SCHEMAS ====================
+
+class DireccionDespachoBase(BaseModel):
+    direccion: str = Field(..., min_length=1, max_length=255)
+    comuna: str = Field(..., min_length=1, max_length=100)
+    ciudad: str = Field(..., min_length=1, max_length=100)
+    codigo_postal: Optional[str] = Field(None, max_length=10)
+    es_principal: Optional[bool] = False
+    activa: Optional[bool] = True
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
+
+class DireccionDespachoCreate(DireccionDespachoBase):
+    pass
+
+class DireccionDespachoUpdate(BaseModel):
+    """Schema para actualización de dirección. Solo campos editables."""
+    direccion: Optional[str] = Field(None, min_length=1, max_length=255)
+    comuna: Optional[str] = Field(None, min_length=1, max_length=100)
+    ciudad: Optional[str] = Field(None, min_length=1, max_length=100)
+    codigo_postal: Optional[str] = Field(None, max_length=10)
+    es_principal: Optional[bool] = None
+    activa: Optional[bool] = None
+    metadata: Optional[Dict[str, Any]] = None
+
+class DireccionDespachoResponse(DireccionDespachoBase):
+    id: UUID
+    usuario_id: UUID
+    fecha_creacion: datetime
+    fecha_actualizacion: datetime
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, alias="metadata_json")
+    
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+
 # ==================== DOCUMENTO SCHEMAS ====================
 
 class DocumentoBase(BaseModel):
