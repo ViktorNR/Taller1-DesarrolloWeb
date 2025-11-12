@@ -94,3 +94,63 @@ export async function getCurrentUser() {
   const res = await backendClient.get('/users/me');
   return res.data;
 }
+
+// ==================== DOCUMENTOS / ORDENES API ====================
+
+export interface DocumentoResponse {
+  id: string;
+  usuario_id: string;
+  estado: string;
+  monto_total: number;
+  fecha_creacion: string;
+  fecha_actualizacion: string;
+}
+
+export interface DocumentoCreate {
+  estado?: string;
+}
+
+export interface DetalleDocumentoResponse {
+  id: string;
+  documento_id: string;
+  producto: string;
+  precio: number;
+  cantidad: number;
+  fecha_creacion: string;
+  fecha_actualizacion: string;
+}
+
+export interface DetalleDocumentoCreate {
+  producto: string;
+  precio: number;
+  cantidad: number;
+}
+
+export async function createDocumento(estado: string = 'completado'): Promise<DocumentoResponse> {
+  const res = await backendClient.post('/documentos', { estado });
+  return res.data;
+}
+
+export async function createDetalleDocumento(
+  documentoId: string,
+  producto: string,
+  precio: number,
+  cantidad: number
+): Promise<DetalleDocumentoResponse> {
+  const res = await backendClient.post(`/documentos/${documentoId}/detalles`, {
+    producto,
+    precio,
+    cantidad
+  });
+  return res.data;
+}
+
+export async function getDocumentos(): Promise<DocumentoResponse[]> {
+  const res = await backendClient.get('/documentos');
+  return res.data;
+}
+
+export async function getDetalleDocumento(documentoId: string): Promise<DetalleDocumentoResponse[]> {
+  const res = await backendClient.get(`/documentos/${documentoId}/detalles`);
+  return res.data;
+}

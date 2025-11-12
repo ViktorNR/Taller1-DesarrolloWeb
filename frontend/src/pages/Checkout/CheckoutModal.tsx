@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { createDocumento, createDetalleDocumento, type DocumentoResponse } from '../../api/api';
 const styles: { [key: string]: string } = {};
 
 type CheckoutModalProps = {
@@ -42,13 +43,15 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const [opcionSeleccionada, setOpcionSeleccionada] = useState<OpcionEnvio | null>(null);
   const [codigoCupon, setCodigoCupon] = useState('');
   const [cuponAplicado, setCuponAplicado] = useState<any>(null);
-  const [successOrder, setSuccessOrder] = useState<any | null>(null);
+  const [successOrder, setSuccessOrder] = useState<{ numero: string; total: number } | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/data/envios.json').then(r => r.json()).then((d: any[]) => setOpcionesEnvio(d)).catch(() => setOpcionesEnvio([]));
   }, []);
 
-  const subtotal = cart.reduce((s, p) => s + (p.precio ?? 0) * 1, 0);
+  const subtotal = cart.reduce((s, p) => s + (p.precio ?? 0) * (p.cantidad ?? 1), 0);
 
   function formatearPrecio(v: number) { return v.toLocaleString(); }
 
@@ -72,11 +75,47 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   }
 
 
-  function confirmarCompra() {
-    const orden = { numero: Math.floor(Math.random() * 900000) + 100000, total: getTotalConEnvio() };
-    setSuccessOrder(orden);
-    // clear cart (simple)
-    cart.forEach(item => removeFromCart(item.id));
+  async function confirmarCompra() {
+    if (!user || cart.length === 0) {
+      setError('Debes estar autenticado y tener items en el carrito');
+      return;
+    }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      // Crear documento (orden) con estado "completado"
+      const documento: DocumentoResponse = await createDocumento('completado');
+      
+      // Crear detalles para cada item del carrito
+      const detallesPromises = cart.map(item =>
+        createDetalleDocumento(
+          documento.id,
+          item.nombre,
+          item.precio,
+          item.cantidad
+        )
+      );
+
+      await Promise.all(detallesPromises);
+
+      // Mostrar éxito con el ID del documento
+      const orden = {
+        numero: documento.id.substring(0, 8).toUpperCase(), // Mostrar primeros 8 caracteres del UUID
+        total: getTotalConEnvio()
+      };
+      setSuccessOrder(orden);
+
+      // Limpiar carrito solo si todo fue exitoso
+      cart.forEach(item => removeFromCart(item.id));
+    } catch (err: any) {
+      console.error('Error al confirmar compra:', err);
+      const errorMessage = err?.response?.data?.detail || err?.message || 'Error al procesar la compra. Por favor, intenta nuevamente.';
+      setError(errorMessage);
+    } finally {
+      setIsProcessing(false);
+    }
   }
 
   const handleSuccessAndClose = () => {
@@ -93,6 +132,19 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
       {!user && (
         <div className="alert alert-warning">
           Debes <Link to="/auth">iniciar sesión</Link> para poder completar la compra. La opción de pago está deshabilitada hasta que ingreses.
+        </div>
+      )}
+
+      {error && (
+        <div className="alert alert-danger">
+          <i className="fas fa-exclamation-circle me-2" />
+          {error}
+          <button 
+            type="button" 
+            className="btn-close ms-2" 
+            onClick={() => setError(null)}
+            aria-label="Cerrar"
+          />
         </div>
       )}
 
@@ -186,9 +238,9 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
               <div className="resumen-item d-flex justify-content-between" key={item.id}>
                 <div>
                   <h6>{item.nombre}</h6>
-                  <small className="text-muted">Cantidad: 1</small>
+                  <small className="text-muted">Cantidad: {item.cantidad}</small>
                 </div>
-                <div className="text-end"><strong>${formatearPrecio((item.precio ?? 0) * 1)}</strong></div>
+                <div className="text-end"><strong>${formatearPrecio((item.precio ?? 0) * (item.cantidad ?? 1))}</strong></div>
               </div>
             ))}
 
@@ -213,8 +265,21 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
               <strong>${formatearPrecio(getTotalConEnvio())}</strong>
             </div>
 
-            <button className="btn btn-confirmar w-100 mt-4" onClick={confirmarCompra} disabled={!user || !datos.nombre || !datos.email || cart.length === 0}> 
-              <i className="fas fa-credit-card me-2" />Confirmar Compra
+            <button 
+              className="btn btn-confirmar w-100 mt-4" 
+              onClick={confirmarCompra} 
+              disabled={!user || !datos.nombre || !datos.email || cart.length === 0 || isProcessing}
+            > 
+              {isProcessing ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+                  Procesando...
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-credit-card me-2" />Confirmar Compra
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -229,7 +294,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
               <h3 className="mb-3">¡Compra Realizada con Éxito!</h3>
               <p className="text-muted mb-4">Tu pedido ha sido procesado correctamente.<br/>Recibirás un email de confirmación en breve.</p>
               <div className="order-details bg-light p-3 rounded mb-4">
-                <p className="mb-2"><strong>Número de Orden:</strong> #{successOrder.numero}</p>
+                <p className="mb-2"><strong>ID de Orden:</strong> {successOrder.numero}</p>
                 <p className="mb-0"><strong>Total:</strong> ${formatearPrecio(successOrder.total)}</p>
               </div>
               <button className="btn btn-confirmar" onClick={() => setSuccessOrder(null)}>Entendido</button>
