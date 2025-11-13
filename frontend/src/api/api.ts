@@ -101,11 +101,15 @@ export interface UpdateUserPayload {
   apellido?: string;
   rut?: string;
   email?: string;
+  telefono?: string;
 }
 
 export async function updateCurrentUser(payload: UpdateUserPayload) {
-  // Attempt to PATCH the current user's data. Backend may support this endpoint.
-  const res = await backendClient.patch('/users/me', payload);
+  const body: any = { ...payload };
+  if (body.rut && typeof body.rut === 'string') {
+    body.rut = body.rut.replace(/[^0-9kK]/g, '').toUpperCase();
+  }
+  const res = await backendClient.put('/usuarios/me', body);
   return res.data;
 }
 
