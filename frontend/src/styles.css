@@ -2065,3 +2065,19 @@ input[type=number] {
 		padding: 2rem 0 calc(2rem + env(safe-area-inset-bottom));
 	}
 }
+
+/* Botón de mostrar/ocultar contraseña */
+.password-toggle {
+	cursor: pointer;
+	background-color: #c8c8c8;
+	border-color: var(--unab-gris-oscuro);
+	transition: background-color 0.3s ease;
+}
+
+.password-toggle:hover {
+	background-color: #919191;
+}
+
+.password-toggle:active {
+	background-color: #919191;
+}
