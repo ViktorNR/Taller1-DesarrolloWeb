@@ -137,13 +137,18 @@ export default function Carrito() {
 
         
         
-        <button
+          <button
           className="btn btn-success"
           onClick={() => {
             if (user) setShowCheckout(true);
             else navigate('/auth', { state: { from: location.pathname, openCheckout: true } });
           }}
           title={user ? 'Proceder al pago' : 'Debes iniciar sesión'}
+          disabled={cart.length === 0} // Disable when cart is empty
+          style={{
+            opacity: cart.length === 0 ? 0.6 : 1, // Visually gray it out
+            cursor: cart.length === 0 ? 'not-allowed' : 'pointer'
+          }}
         >
           Proceder al pago
         </button>

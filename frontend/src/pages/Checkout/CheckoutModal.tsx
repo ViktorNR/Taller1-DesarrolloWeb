@@ -363,8 +363,8 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
 
       {/* Success modal replacement */}
       {successOrder && (
-        <div className={styles['modal-backdrop']} onClick={() => setSuccessOrder(null)}>
-          <div className={styles['modal-container']} onClick={e => e.stopPropagation()}>
+        <div className={stylesCss['modal-backdrop']} onClick={() => setSuccessOrder(null)}>
+          <div className={stylesCss['modal-container']} onClick={e => e.stopPropagation()}>
             <div className="text-center py-4">
               <div className="success-icon mb-4"><i className="fas fa-check-circle text-success" style={{ fontSize: '5rem' }} /></div>
               <h3 className="mb-3">¡Compra Realizada con Éxito!</h3>
