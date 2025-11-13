@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS direcciones_despacho (
     metadata JSONB DEFAULT '{}',
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 -- Tabla de documentos
 CREATE TABLE IF NOT EXISTS documentos (
