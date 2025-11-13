@@ -28,22 +28,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     async function init() {
       const token = localStorage.getItem('access_token');
       if (token) {
         try {
           setAuthToken(token);
           const u = await getCurrentUser();
-          setUser(u as User);
+          if (mounted) {
+            setUser(u as User);
+          }
         } catch (e) {
           // token invalid or expired
-          setAuthToken(undefined);
-          localStorage.removeItem('access_token');
+          if (mounted) {
+            setAuthToken(undefined);
+            localStorage.removeItem('access_token');
+          }
         }
       }
-      setLoading(false);
+      if (mounted) {
+        setLoading(false);
+      }
     }
     init();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   async function login(username: string, password: string) {

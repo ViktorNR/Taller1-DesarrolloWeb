@@ -58,7 +58,7 @@ export default function Header() {
               {/* Auth link positioned between Favoritos and the search bar */}
                 <div className="navbar-nav mx-3">
                   {user ? (
-                    <div className="nav-user-dropdown" style={{ position: 'relative' }} ref={useRef(null)}>
+                    <div className="nav-user-dropdown" style={{ position: 'relative' }}>
                       <UserDropdown user={user} logout={logout} />
                     </div>
                   ) : (

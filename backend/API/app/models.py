@@ -51,6 +51,7 @@ class DetalleDocumento(Base):
     producto = Column(String(255), nullable=False)
     precio = Column(Float, nullable=False)
     cantidad = Column(Integer, default=1)
+    metadata_json = Column("metadata", JSONB, default={})
     fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
     fecha_actualizacion = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     

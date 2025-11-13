@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS documentos (
     usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
     estado VARCHAR(50) DEFAULT 'borrador',
     monto_total FLOAT DEFAULT 0,
+    ruta_documento VARCHAR(255),
+    metadata JSONB DEFAULT '{}',
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -50,6 +52,7 @@ CREATE TABLE IF NOT EXISTS detalle_documentos (
     producto VARCHAR(255) NOT NULL,
     precio NUMERIC(12,2) NOT NULL,
     cantidad INTEGER DEFAULT 1,
+    metadata JSONB DEFAULT '{}',
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -61,7 +64,9 @@ CREATE INDEX idx_usuarios_username ON usuarios(username);
 CREATE INDEX idx_usuarios_email ON usuarios(email);
 CREATE INDEX idx_documentos_usuario ON documentos(usuario_id);
 CREATE INDEX idx_documentos_estado ON documentos(estado);
+CREATE INDEX idx_documentos_metadata ON documentos USING GIN (metadata);
 CREATE INDEX idx_detalle_documento ON detalle_documentos(documento_id);
+CREATE INDEX idx_detalle_metadata ON detalle_documentos USING GIN (metadata);
 CREATE INDEX idx_direcciones_usuario ON direcciones_despacho(usuario_id);
 CREATE INDEX idx_direcciones_principal ON direcciones_despacho(usuario_id, es_principal) WHERE es_principal = true;
 CREATE INDEX idx_direcciones_activa ON direcciones_despacho(activa);
@@ -120,18 +125,3 @@ CREATE TRIGGER trigger_detalle_monto
 
 -- Usuario de prueba (password: admin123)
 -- Hash generado con bcrypt
-INSERT INTO usuarios (email, username, password_hash, nombre, apellido, rol, metadata)
-VALUES (
-    'admin@example.com',
-    'admin',
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYqHGvqAGeu',
-    'Admin',
-    'Sistema',
-    '20067969-5',
-    '+56972134846',
-    true,
-    'admin',
-    '{"permisos": ["read", "write", "delete"], "tema": "dark"}',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP
-) ON CONFLICT (email) DO NOTHING;

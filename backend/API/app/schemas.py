@@ -88,7 +88,14 @@ class DocumentoBase(BaseModel):
     monto_total: float = Field(0, ge=0)
 
 class DocumentoCreate(DocumentoBase):
-    pass
+    # Campos adicionales opcionales que se guardarán en metadata_json
+    direccion: Optional[Dict[str, Any]] = None
+    envio: Optional[Dict[str, Any]] = None
+    cupon: Optional[Dict[str, Any]] = None
+    datosPersonales: Optional[Dict[str, Any]] = None
+    
+    class Config:
+        extra = "allow"  # Permitir campos adicionales
 
 class DocumentoResponse(DocumentoBase):
     id: UUID
@@ -109,16 +116,21 @@ class DetalleDocumentoBase(BaseModel):
     cantidad: Optional[int] = Field(1, ge=1)
 
 class DetalleDocumentoCreate(DetalleDocumentoBase):
-    pass
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    
+    class Config:
+        extra = "allow"  # Permitir campos adicionales
 
 class DetalleDocumentoResponse(DetalleDocumentoBase):
     id: UUID
     documento_id: UUID
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, alias="metadata_json")
     fecha_creacion: datetime
     fecha_actualizacion: datetime
     
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 # ==================== COMPRA SCHEMAS ====================
 

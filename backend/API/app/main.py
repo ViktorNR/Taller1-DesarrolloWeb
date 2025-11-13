@@ -45,10 +45,16 @@ app = FastAPI(
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -80,6 +86,16 @@ async def login(
 def register_user(user: UsuarioCreate, db: Session = Depends(get_db)):
     """Registrar nuevo usuario"""
     errors = {}
+    
+    # Normalizar strings vacíos a None para campos opcionales
+    if user.nombre and user.nombre.strip() == "":
+        user.nombre = None
+    if user.apellido and user.apellido.strip() == "":
+        user.apellido = None
+    if user.rut and user.rut.strip() == "":
+        user.rut = None
+    if user.telefono and user.telefono.strip() == "":
+        user.telefono = None
     
     # Validar unicidad de email
     db_user = db.query(Usuario).filter(Usuario.email == user.email).first()
@@ -127,22 +143,29 @@ def register_user(user: UsuarioCreate, db: Session = Depends(get_db)):
         )
     
     # Crear usuario
-    hashed_password = get_password_hash(user.password)
-    db_user = Usuario(
-        email=user.email,
-        username=user.username,
-        password_hash=hashed_password,
-        nombre=user.nombre,
-        apellido=user.apellido,
-        rut=user.rut,
-        telefono=user.telefono,
-        metadata_json=user.metadata or {}
-    )
-    
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    try:
+        hashed_password = get_password_hash(user.password)
+        db_user = Usuario(
+            email=user.email,
+            username=user.username,
+            password_hash=hashed_password,
+            nombre=user.nombre,
+            apellido=user.apellido,
+            rut=user.rut,
+            telefono=user.telefono,
+            metadata_json=user.metadata or {}
+        )
+        
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return db_user
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al crear usuario: {str(e)}"
+        )
 
 @app.get("/users/me", response_model=UsuarioResponse)
 async def read_users_me(current_user: Usuario = Depends(get_current_user)):
@@ -443,17 +466,49 @@ def create_documento(
     current_user: Usuario = Depends(get_current_user)
 ):
     """Crear nuevo documento"""
-    db_documento = Documento(
-        usuario_id=current_user.id,
-        estado=documento.estado or "borrador",
-        # monto_total se calcula a partir de los detalles; iniciar en 0
-        monto_total=0.0,
-    )
-    
-    db.add(db_documento)
-    db.commit()
-    db.refresh(db_documento)
-    return db_documento
+    try:
+        # Construir metadata con campos adicionales
+        metadata = {}
+        if documento.direccion:
+            metadata["direccion"] = documento.direccion
+        if documento.envio:
+            metadata["envio"] = documento.envio
+        if documento.cupon:
+            metadata["cupon"] = documento.cupon
+        if documento.datosPersonales:
+            metadata["datosPersonales"] = documento.datosPersonales
+        
+        # Incluir cualquier campo adicional que pueda venir en el request
+        try:
+            documento_dict = documento.model_dump(exclude={"estado", "monto_total", "direccion", "envio", "cupon", "datosPersonales"}, exclude_none=True)
+            for key, value in documento_dict.items():
+                if value is not None:
+                    metadata[key] = value
+        except Exception as e:
+            # Si hay error al hacer model_dump, continuar sin campos adicionales
+            pass
+        
+        db_documento = Documento(
+            usuario_id=current_user.id,
+            estado=documento.estado or "borrador",
+            monto_total=documento.monto_total if documento.monto_total is not None else 0.0,
+            metadata_json=metadata if metadata else {}
+        )
+        
+        db.add(db_documento)
+        db.commit()
+        db.refresh(db_documento)
+        return db_documento
+    except Exception as e:
+        db.rollback()
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"Error al crear documento: {str(e)}")
+        print(f"Traceback: {error_trace}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al crear documento: {str(e)}"
+        )
 
 @app.get("/documentos", response_model=List[DocumentoResponse])
 def get_documentos(
@@ -552,11 +607,21 @@ def create_detalle(
     if not documento:
         raise HTTPException(status_code=404, detail="Documento no encontrado")
     
+    # Construir metadata desde el detalle
+    metadata = detalle.metadata or {}
+    
+    # Incluir cualquier campo adicional que pueda venir en el request
+    detalle_dict = detalle.model_dump(exclude={"producto", "precio", "cantidad", "metadata"}, exclude_none=True)
+    for key, value in detalle_dict.items():
+        if value is not None:
+            metadata[key] = value
+    
     db_detalle = DetalleDocumento(
         documento_id=documento_id,
         producto=detalle.producto,
         precio=detalle.precio,
         cantidad=detalle.cantidad or 1,
+        metadata_json=metadata if metadata else {}
     )
     
     db.add(db_detalle)
@@ -643,34 +708,84 @@ def get_documento_pdf(
 
 def _cargar_productos() -> Dict[int, Dict[str, Any]]:
     """Cargar productos desde JSON"""
-    try:
-        # Intentar cargar desde el directorio del frontend
-        productos_path = os.path.join(
+    productos = {}
+    
+    # Intentar múltiples rutas posibles
+    posibles_rutas = [
+        # Ruta relativa desde el backend (desarrollo local)
+        os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
             "frontend", "public", "data", "productos.json"
-        )
-        if os.path.exists(productos_path):
-            with open(productos_path, 'r', encoding='utf-8') as f:
-                productos = json.load(f)
-                return {p['id']: p for p in productos}
-    except Exception:
-        pass
-    return {}
+        ),
+        # Ruta absoluta desde el directorio actual
+        os.path.join(os.getcwd(), "frontend", "public", "data", "productos.json"),
+        # Ruta desde el directorio padre
+        os.path.join(os.path.dirname(os.getcwd()), "frontend", "public", "data", "productos.json"),
+        # Ruta en Docker (si está montado)
+        "/app/frontend/public/data/productos.json",
+    ]
+    
+    for productos_path in posibles_rutas:
+        try:
+            productos_path = os.path.normpath(productos_path)
+            if os.path.exists(productos_path):
+                with open(productos_path, 'r', encoding='utf-8') as f:
+                    productos_list = json.load(f)
+                    productos = {p['id']: p for p in productos_list}
+                    print(f"Productos cargados desde: {productos_path}")
+                    break
+        except Exception as e:
+            print(f"Error al cargar productos desde {productos_path}: {e}")
+            continue
+    
+    if not productos:
+        print("Advertencia: No se pudieron cargar productos desde ningún archivo")
+    
+    return productos
 
 def _cargar_metodos_envio() -> Dict[int, Dict[str, Any]]:
     """Cargar métodos de envío desde JSON"""
-    try:
-        envios_path = os.path.join(
+    envios = {}
+    
+    # Intentar múltiples rutas posibles
+    posibles_rutas = [
+        # Ruta relativa desde el backend (desarrollo local)
+        os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
             "frontend", "public", "data", "envios.json"
-        )
-        if os.path.exists(envios_path):
-            with open(envios_path, 'r', encoding='utf-8') as f:
-                envios = json.load(f)
-                return {e['id']: e for e in envios}
-    except Exception:
-        pass
-    return {}
+        ),
+        # Ruta absoluta desde el directorio actual
+        os.path.join(os.getcwd(), "frontend", "public", "data", "envios.json"),
+        # Ruta desde el directorio padre
+        os.path.join(os.path.dirname(os.getcwd()), "frontend", "public", "data", "envios.json"),
+        # Ruta en Docker (si está montado)
+        "/app/frontend/public/data/envios.json",
+    ]
+    
+    for envios_path in posibles_rutas:
+        try:
+            envios_path = os.path.normpath(envios_path)
+            if os.path.exists(envios_path):
+                with open(envios_path, 'r', encoding='utf-8') as f:
+                    envios_list = json.load(f)
+                    envios = {e['id']: e for e in envios_list}
+                    print(f"Métodos de envío cargados desde: {envios_path}")
+                    break
+        except Exception as e:
+            print(f"Error al cargar métodos de envío desde {envios_path}: {e}")
+            continue
+    
+    if not envios:
+        print("Advertencia: No se pudieron cargar métodos de envío desde ningún archivo")
+        # Datos por defecto si no se encuentra el archivo
+        envios = {
+            1: {"id": 1, "nombre": "Envío Estándar UNAB", "precio": 5.0},
+            2: {"id": 2, "nombre": "Envío Express UNAB", "precio": 12.0},
+            3: {"id": 3, "nombre": "Envío Premium UNAB", "precio": 25.0},
+            4: {"id": 4, "nombre": "Retiro en Campus UNAB", "precio": 0.0},
+        }
+    
+    return envios
 
 @app.post("/checkout", response_model=DocumentoResponse, status_code=status.HTTP_201_CREATED)
 def checkout(
@@ -697,13 +812,23 @@ def checkout(
     
     # Validar método de envío
     metodos_envio = _cargar_metodos_envio()
+    if not metodos_envio:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No se pudieron cargar los métodos de envío. Verifique que el archivo envios.json existe."
+        )
     if checkout_data.metodo_envio_id not in metodos_envio:
-        errors["metodo_envio_id"] = f"Método de envío {checkout_data.metodo_envio_id} no disponible"
+        errors["metodo_envio_id"] = f"Método de envío {checkout_data.metodo_envio_id} no disponible. Métodos disponibles: {list(metodos_envio.keys())}"
     else:
         metodo_envio = metodos_envio[checkout_data.metodo_envio_id]
     
     # Validar productos y stock
     productos_data = _cargar_productos()
+    if not productos_data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No se pudieron cargar los productos. Verifique que el archivo productos.json existe."
+        )
     productos_validos = []
     subtotal = 0.0
     
@@ -730,7 +855,8 @@ def checkout(
             'producto_id': producto_id,
             'nombre': producto.get('nombre', f'Producto {producto_id}'),
             'cantidad': producto_checkout.cantidad,
-            'precio': precio_final
+            'precio': precio_final,
+            'producto_completo': producto  # Guardar toda la información del producto
         })
         subtotal += precio_final * producto_checkout.cantidad
     
@@ -769,11 +895,28 @@ def checkout(
     
     # Crear detalles del documento
     for producto_info in productos_validos:
+        # Guardar todas las características del producto en metadata
+        producto_completo = producto_info.get('producto_completo', {})
+        metadata_producto = {
+            'id': producto_info['producto_id'],
+            'nombre': producto_info['nombre'],
+            'descripcion': producto_completo.get('descripcion'),
+            'categoria': producto_completo.get('categoria'),
+            'stock': producto_completo.get('stock'),
+            'rating': producto_completo.get('rating'),
+            'imagenes': producto_completo.get('imagenes'),
+            'caracteristicas': producto_completo.get('caracteristicas'),
+            # Incluir cualquier otro campo que pueda tener el producto
+            **{k: v for k, v in producto_completo.items() 
+               if k not in ['id', 'nombre', 'precio', 'stock']}
+        }
+        
         db_detalle = DetalleDocumento(
             documento_id=db_documento.id,
             producto=producto_info['nombre'],
             precio=producto_info['precio'],
             cantidad=producto_info['cantidad'],
+            metadata_json=metadata_producto
         )
         db.add(db_detalle)
     
