@@ -32,7 +32,23 @@ export default function Register({ onRegistered }: { onRegistered?: (creds: { us
         navigate('/login');
       }
     } catch (err: any) {
-      setError(err?.response?.data?.detail || String(err.message || err));
+      const errorDetail = err?.response?.data?.detail;
+      let errorMessage: string;
+      
+      if (typeof errorDetail === 'object' && errorDetail !== null) {
+        // Si detail es un objeto, convertir a string legible
+        errorMessage = Object.entries(errorDetail)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(', ');
+      } else if (errorDetail) {
+        // Si detail es un string, usarlo directamente
+        errorMessage = String(errorDetail);
+      } else {
+        // Fallback al mensaje de error o el error completo
+        errorMessage = String(err?.message || err || 'Error desconocido');
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
