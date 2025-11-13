@@ -83,7 +83,7 @@ export default function Register({ onRegistered }: { onRegistered?: (creds: { us
 
   const hasErrors = Boolean(errors.email || errors.rut || errors.telefono);
   const passwordValid = Object.values(passwordRules).every(Boolean);
-  const incomplete = !email || !username || !password;
+  const incomplete = !email || !username || !password || !telefono || !nombre || !apellido || !rut;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,7 +147,7 @@ export default function Register({ onRegistered }: { onRegistered?: (creds: { us
       <h2>Registro</h2>
       <form onSubmit={onSubmit}>
         <div style={{ marginBottom: 8 }}>
-          <label>Email *</label>
+          <label>Email <span className="text-danger">*</span></label>
           <input
             className={`form-control rounded-input ${errors.email ? 'is-invalid' : ''}`}
             value={email}
@@ -161,47 +161,49 @@ export default function Register({ onRegistered }: { onRegistered?: (creds: { us
         </div>
 
         <div style={{ marginBottom: 8 }}>
-          <label>Usuario (username) *</label>
+          <label>Usuario (username) <span className="text-danger">*</span></label>
           <input className="form-control rounded-input" value={username} onChange={e => setUsername(e.target.value)} required style={{ width: '100%' }} />
         </div>
 
         <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
           <div style={{ flex: 1 }}>
-            <label>Nombre</label>
-            <input className="form-control rounded-input" value={nombre} onChange={e => setNombre(e.target.value)} style={{ width: '100%' }} />
+            <label>Nombre <span className="text-danger">*</span></label>
+            <input className="form-control rounded-input" value={nombre} onChange={e => setNombre(e.target.value)} required style={{ width: '100%' }} />
           </div>
           <div style={{ flex: 1 }}>
-            <label>Apellido</label>
-            <input className="form-control rounded-input" value={apellido} onChange={e => setApellido(e.target.value)} style={{ width: '100%' }} />
+            <label>Apellido <span className="text-danger">*</span></label>
+            <input className="form-control rounded-input" value={apellido} onChange={e => setApellido(e.target.value)} required style={{ width: '100%' }} />
           </div>
         </div>
 
         <div style={{ marginBottom: 8 }}>
-          <label>RUT</label>
+          <label>RUT <span className="text-danger">*</span></label>
           <input
             className={`form-control rounded-input ${errors.rut ? 'is-invalid' : ''}`}
             value={rut}
             onChange={e => { const formatted = formatRut(e.target.value); setRut(formatted); validateField('rut', formatted); }}
             placeholder="12.345.678-9"
+            required
             style={{ width: '100%' }}
           />
           {errors.rut && <div className="invalid-feedback" style={{ display: 'block' }}>{errors.rut}</div>}
         </div>
 
         <div style={{ marginBottom: 8 }}>
-          <label>Teléfono</label>
+          <label>Teléfono <span className="text-danger">*</span></label>
           <input
             className={`form-control rounded-input ${errors.telefono ? 'is-invalid' : ''}`}
             value={telefono}
             onChange={e => { setTelefono(e.target.value); validateField('telefono', e.target.value); }}
             placeholder="+56912345678"
+            required
             style={{ width: '100%' }}
           />
           {errors.telefono && <div className="invalid-feedback" style={{ display: 'block' }}>{errors.telefono}</div>}
         </div>
 
         <div style={{ marginBottom: 8 }}>
-          <label>Contraseña *</label>
+          <label>Contraseña <span className="text-danger">*</span></label>
           <div className={`input-group ${!passwordValid && password ? 'is-invalid' : ''}`}>
             <input
               className={`form-control rounded-input ${!passwordValid && password ? 'is-invalid' : ''}`}

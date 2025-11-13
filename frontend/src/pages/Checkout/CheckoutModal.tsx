@@ -33,7 +33,7 @@ type OpcionEnvio = {
   icono?: string;
 };
 
-
+type ErrorsState = { email?: string | null; rut?: string | null; telefono?: string | null };
 
 export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const { cart, removeFromCart } = useStore();
@@ -47,6 +47,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const [successOrder, setSuccessOrder] = useState<{ numero: string; total: number } | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<ErrorsState>({ email: null, rut: null, telefono: null });
 
   useEffect(() => {
     fetch('/data/envios.json').then(r => r.json()).then((d: any[]) => setOpcionesEnvio(d)).catch(() => setOpcionesEnvio([]));
@@ -60,7 +61,8 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
         ...d,
         nombre: nombreCompleto || d.nombre,
         email: (user.email ?? d.email),
-        rut: (user as any).rut ?? d.rut
+        rut: (user as any).rut ?? d.rut,
+        telefono: (user as any).telefono ?? d.telefono
       }));
     }
   }, [user]);
@@ -71,6 +73,69 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const subtotal = cart.reduce((s, p) => s + (p.precio ?? 0) * (p.cantidad ?? 1), 0);
 
   function formatearPrecio(v: number) { return v.toLocaleString(); }
+
+  // Validation functions
+  function validateEmail(value: string) {
+    if (!value) return false;
+    const re = /^[\w.!#$%&'*+\/=?^`{|}~-]+@[\w-]+(?:\.[\w-]+)+$/;
+    return re.test(value);
+  }
+
+  function cleanRut(value: string) {
+    return value.replace(/[^0-9kK]/g, '').toUpperCase();
+  }
+
+  function validateRut(value: string) {
+    if (!value) return false;
+    const rut = cleanRut(value);
+    if (rut.length < 2) return false;
+    const dv = rut.slice(-1);
+    const num = rut.slice(0, -1);
+    let sum = 0;
+    let mul = 2;
+    for (let i = num.length - 1; i >= 0; i--) {
+      sum += parseInt(num.charAt(i), 10) * mul;
+      mul = mul === 7 ? 2 : mul + 1;
+    }
+    const res = 11 - (sum % 11);
+    let dvExpected = '';
+    if (res === 11) dvExpected = '0';
+    else if (res === 10) dvExpected = 'K';
+    else dvExpected = String(res);
+    return dvExpected === dv;
+  }
+
+  function formatRut(value: string) {
+    if (!value) return '';
+    const cleaned = value.replace(/[^0-9kK]/g, '').toUpperCase();
+    if (!cleaned) return '';
+    if (cleaned.length === 1) return cleaned;
+    const dv = cleaned.slice(-1);
+    const num = cleaned.slice(0, -1);
+    const numFormatted = num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `${numFormatted}-${dv}`;
+  }
+
+  function validateTelefono(value: string) {
+    if (!value) return false;
+    const re = /^\+569\d{8}$/;
+    return re.test(value);
+  }
+
+  function validateField(field: 'email' | 'rut' | 'telefono', value: string) {
+    if (field === 'email') setErrors(e => ({ ...e, email: validateEmail(value) ? null : 'Email inválido' }));
+    if (field === 'rut') setErrors(e => ({ ...e, rut: validateRut(value) ? null : 'RUT inválido' }));
+    if (field === 'telefono') setErrors(e => ({ ...e, telefono: validateTelefono(value) ? null : 'Teléfono inválido (ej: +56912345678)' }));
+  }
+
+  const hasErrors = Boolean(errors.email || errors.rut || errors.telefono);
+  const requiresShippingAddress = opcionSeleccionada && opcionSeleccionada.nombre.toLowerCase() !== 'retiro en campus unab';
+  const isShippingAddressComplete = !requiresShippingAddress || (
+    direccion.direccion?.trim() &&
+    direccion.codigoPostal?.trim() &&
+    direccion.comuna?.trim() &&
+    direccion.ciudad?.trim()
+  );
 
   function aplicarCupon() {
     // simple local logic: search promos.json
@@ -89,52 +154,6 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     const envio = opcionSeleccionada?.precio ?? 0;
     const descuento = cuponAplicado?.descuento ?? 0;
     return subtotal + envio - descuento;
-  }
-
-
-// Validar email
-  function isEmailValido(email: string): boolean {
-    return email.includes('@') && email.includes('.');
-  }
-
-  // Validar teléfono chileno (+56 9 12345678)
-  function isTelefonoValido(telefono: string): boolean {
-    const regex = /^\+56\s?9\s?\d{8}$/;
-    return regex.test(telefono.replace(/\s+/g, ' '));
-  }
-
-  // Validar RUT chileno
-  function isRutValido(rut: string): boolean {
-    // Eliminar puntos y guión
-    const rutLimpio = rut.replace(/\./g, '').replace(/-/g, '');
-    if (rutLimpio.length < 2) return false;
-
-    const cuerpo = rutLimpio.slice(0, -1);
-    const dv = rutLimpio.slice(-1).toUpperCase();
-
-    // Calcular dígito verificador
-    let suma = 0;
-    let multiplicador = 2;
-
-    for (let i = cuerpo.length - 1; i >= 0; i--) {
-      suma += parseInt(cuerpo[i]) * multiplicador;
-      multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
-    }
-
-    const dvCalculado = 11 - (suma % 11);
-    const dvEsperado = dvCalculado === 11 ? '0' : dvCalculado === 10 ? 'K' : dvCalculado.toString();
-
-    return dv === dvEsperado;
-  }
-
-  // Validar que todos los datos personales requeridos estén completos
-  function isDatosPersonalesCompletos(): boolean {
-    return !!(
-      datos.nombre.trim() &&
-      isRutValido(datos.rut) &&
-      isEmailValido(datos.email) &&
-      isTelefonoValido(datos.telefono)
-    );
   }
 
   async function confirmarCompra() {
@@ -232,41 +251,72 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
               </div>
               <div className="col-md-6 mb-3">
                 <label className="form-label">RUT <span className="text-danger">*</span></label>
-                <input className={`form-control`} value={datos.rut} onChange={e => setDatos(d => ({ ...d, rut: e.target.value }))} placeholder="12.345.678-9" />
+                <input 
+                  className={`form-control ${errors.rut ? 'is-invalid' : ''}`} 
+                  value={datos.rut} 
+                  onChange={e => { 
+                    const formatted = formatRut(e.target.value); 
+                    setDatos(d => ({ ...d, rut: formatted })); 
+                    validateField('rut', formatted); 
+                  }} 
+                  placeholder="12.345.678-9" 
+                />
+                {errors.rut && <div className="invalid-feedback" style={{ display: 'block' }}>{errors.rut}</div>}
               </div>
 
               <div className="col-md-6 mb-3">
                 <label className="form-label">Email <span className="text-danger">*</span></label>
-                <input type="email" className={`form-control`} value={datos.email} onChange={e => setDatos(d => ({ ...d, email: e.target.value }))} />
+                <input 
+                  type="email" 
+                  className={`form-control ${errors.email ? 'is-invalid' : ''}`} 
+                  value={datos.email} 
+                  onChange={e => { 
+                    setDatos(d => ({ ...d, email: e.target.value })); 
+                    validateField('email', e.target.value); 
+                  }} 
+                  placeholder="mail@ejemplo.cl"
+                />
+                {errors.email && <div className="invalid-feedback" style={{ display: 'block' }}>{errors.email}</div>}
               </div>
               <div className="col-md-6 mb-3">
                 <label className="form-label">Teléfono <span className="text-danger">*</span></label>
-                <input className={`form-control`} value={datos.telefono} onChange={e => setDatos(d => ({ ...d, telefono: e.target.value }))} />
+                <input 
+                  className={`form-control ${errors.telefono ? 'is-invalid' : ''}`} 
+                  value={datos.telefono} 
+                  onChange={e => { 
+                    setDatos(d => ({ ...d, telefono: e.target.value })); 
+                    validateField('telefono', e.target.value); 
+                  }} 
+                  placeholder="+56912345678"
+                />
+                {errors.telefono && <div className="invalid-feedback" style={{ display: 'block' }}>{errors.telefono}</div>}
               </div>
             </div>
           </div>
 
-          <div className="mb-5">
-            <h4 className="checkout-section-title">Dirección de Envío</h4>
-            <div className="row">
-              <div className="col-md-8 mb-3">
-                <label className="form-label">Dirección</label>
-                <input className="form-control" value={direccion.direccion ?? ''} onChange={e => setDireccion(d => ({ ...d, direccion: e.target.value }))} />
-              </div>
-              <div className="col-md-4 mb-3">
-                <label className="form-label">Código Postal</label>
-                <input className="form-control" value={direccion.codigoPostal ?? ''} onChange={e => setDireccion(d => ({ ...d, codigoPostal: e.target.value }))} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Comuna</label>
-                <input className="form-control" value={direccion.comuna ?? ''} onChange={e => setDireccion(d => ({ ...d, comuna: e.target.value }))} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Ciudad</label>
-                <input className="form-control" value={direccion.ciudad ?? ''} onChange={e => setDireccion(d => ({ ...d, ciudad: e.target.value }))} />
+          {requiresShippingAddress && (
+            <div className="mb-5">
+              <h4 className="checkout-section-title">Dirección de Envío</h4>
+              <div className="row">
+                <div className="col-md-8 mb-3">
+                  <label className="form-label">Dirección <span className="text-danger">*</span></label>
+                  <input className="form-control" value={direccion.direccion ?? ''} onChange={e => setDireccion(d => ({ ...d, direccion: e.target.value }))} required />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Código Postal <span className="text-danger">*</span></label>
+                  <input className="form-control" value={direccion.codigoPostal ?? ''} onChange={e => setDireccion(d => ({ ...d, codigoPostal: e.target.value }))} required />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Comuna <span className="text-danger">*</span></label>
+                  <input className="form-control" value={direccion.comuna ?? ''} onChange={e => setDireccion(d => ({ ...d, comuna: e.target.value }))} required />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Ciudad <span className="text-danger">*</span></label>
+                  <input className="form-control" value={direccion.ciudad ?? ''} onChange={e => setDireccion(d => ({ ...d, ciudad: e.target.value }))} required />
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="mb-5">
             <h4 className="checkout-section-title">Opciones de Envío</h4>
@@ -343,8 +393,13 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
               onClick={confirmarCompra} 
               disabled={
                     !user ||
-                    !isDatosPersonalesCompletos() ||
+                    hasErrors ||
+                    !datos.nombre.trim() ||
+                    !validateEmail(datos.email) ||
+                    !validateRut(datos.rut) ||
+                    !validateTelefono(datos.telefono) ||
                     !opcionSeleccionada ||
+                    !isShippingAddressComplete ||
                     cart.length === 0 ||
                     isProcessing
                     }
