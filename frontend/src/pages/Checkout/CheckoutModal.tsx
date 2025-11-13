@@ -65,6 +65,9 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     }
   }, [user]);
 
+
+
+
   const subtotal = cart.reduce((s, p) => s + (p.precio ?? 0) * (p.cantidad ?? 1), 0);
 
   function formatearPrecio(v: number) { return v.toLocaleString(); }
@@ -363,7 +366,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
 
       {/* Success modal replacement */}
       {successOrder && (
-        <div className={stylesCss['modal-backdrop']} onClick={() => setSuccessOrder(null)}>
+        <div className={stylesCss['modal-backdrop']} onClick={handleSuccessAndClose}>
           <div className={stylesCss['modal-container']} onClick={e => e.stopPropagation()}>
             <div className="text-center py-4">
               <div className="success-icon mb-4"><i className="fas fa-check-circle text-success" style={{ fontSize: '5rem' }} /></div>
@@ -373,7 +376,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
                 <p className="mb-2"><strong>ID de Orden:</strong> {successOrder.numero}</p>
                 <p className="mb-0"><strong>Total:</strong> ${formatearPrecio(successOrder.total)}</p>
               </div>
-              <button className="btn btn-confirmar" onClick={() => setSuccessOrder(null)}>Entendido</button>
+              <button className="btn btn-confirmar" onClick={handleSuccessAndClose}>Entendido</button>
             </div>
           </div>
         </div>
