@@ -1,0 +1,26 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "backenddb",
+            "database": "minimktplacesql",
+            "username": "app_user"
+        },
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "100.107.210.9",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "backendProd",
+            "database": "minimarketplaceunab",
+            "username": "app_user",
+            "password": ""
+        }
+    ]
+}
