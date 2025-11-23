@@ -123,6 +123,8 @@ export default function Checkout({ onClose }: CheckoutProps) {
 
     try {
       const documentoPayload = {
+        titulo: "Orden de compra",
+        usuario_id: user.id,
         estado: 'completado',
         direccion: direccion,
         envio: opcionSeleccionada,
@@ -130,6 +132,30 @@ export default function Checkout({ onClose }: CheckoutProps) {
         datosPersonales: datos,
         monto_total: getTotalConEnvio()
       };
+
+    const documentoPayloadNotInUse: any = {
+      estado: 'completado',
+      monto_total: getTotalConEnvio()
+    };
+
+    if (direccion && typeof direccion === 'object') {
+      documentoPayload.direccion = direccion;
+    }
+
+    if (opcionSeleccionada && typeof opcionSeleccionada === 'object') {
+      documentoPayload.envio = opcionSeleccionada;
+    }
+
+    if (cuponAplicado && typeof cuponAplicado === 'object') {
+      documentoPayload.cupon = cuponAplicado;
+    }
+
+    if (datos && typeof datos === 'object') {
+      documentoPayload.datosPersonales = datos;
+    }
+
+    console.log('Payload de documento:', documentoPayload);
+
       const documento = await createDocumento(documentoPayload);
       
       const detallesPromises = cart.map(item =>
@@ -151,6 +177,7 @@ export default function Checkout({ onClose }: CheckoutProps) {
 
       cart.forEach(item => removeFromCart(item.id));
     } catch (err: any) {
+      console.log(JSON.stringify(err.response.data, null, 2));
       console.error('Error al confirmar compra:', err);
       const errorMessage = err?.response?.data?.detail || err?.message || 'Error al procesar la compra. Por favor, intenta nuevamente.';
       setError(errorMessage);

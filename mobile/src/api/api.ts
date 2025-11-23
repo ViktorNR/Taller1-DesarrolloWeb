@@ -1,11 +1,12 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Product } from '../context/StoreContext';
 
 const REMOTE_BASE = 'https://dummyjson.com';
 const remoteClient = axios.create({ baseURL: REMOTE_BASE });
 
-const BACKEND_BASE = Constants.expoConfig?.extra?.apiUrl ?? 'http://172.20.10.3:8000';
+const BACKEND_BASE = Constants.expoConfig?.extra?.apiUrl ?? 'http://localhost:8000';
 const backendClient = axios.create({ baseURL: BACKEND_BASE });
 
 async function loadLocalList(): Promise<Product[]> {
@@ -43,7 +44,7 @@ export async function getProducts(): Promise<Product[]> {
     const remoteProductsRaw = (res.data?.products ?? []) as any[];
     const remoteProducts = remoteProductsRaw.map(normalizeRemote);
     const filtered = remoteProducts.filter(p => localIds.has(p.id));
-    return filtered.length ? filtered : local;
+    return local.length ? filtered : remoteProducts;
   } catch (e) {
     return local;
   }
@@ -154,7 +155,18 @@ export interface DetalleDocumentoCreate {
 }
 
 export async function createDocumento(payload: any = { estado: 'completado' }): Promise<DocumentoResponse> {
-  const res = await backendClient.post('/documentos', payload);
+  const token = await AsyncStorage.getItem('access_token');
+
+  const res = await backendClient.post(
+    '/documentos',
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
   return res.data;
 }
 
